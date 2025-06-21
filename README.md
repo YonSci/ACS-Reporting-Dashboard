@@ -96,5 +96,81 @@ The dashboard organizes development initiatives into four main Strategic Result 
    - Civil Registration and Vital Statistics enhancement
 
 
+## Deployment
+
+### Deploying to Netlify
+
+You can deploy this application to Netlify in two ways:
+
+#### Option 1: Deploy with Git (Recommended)
+
+1. Push your code to a Git repository (GitHub, GitLab, or Bitbucket)
+
+2. Log in to [Netlify](https://app.netlify.com/)
+
+3. Click "New site from Git"
+
+4. Choose your Git provider and select your repository
+
+5. Configure the build settings:
+   - Build command: `npm run build`
+   - Publish directory: `dist`
+   - Node version: `16` (or higher)
+
+6. Click "Deploy site"
+
+#### Option 2: Deploy manually
+
+1. Build your project locally:
+```bash
+npm run build
+```
+
+2. Install Netlify CLI:
+```bash
+npm install netlify-cli -g
+```
+
+3. Login to Netlify:
+```bash
+netlify login
+```
+
+4. Deploy using Netlify CLI:
+```bash
+netlify deploy
+```
+
+5. Follow the prompts and choose:
+   - Select `dist` as your publish directory
+   - Confirm the deployment
+
+6. To deploy to production:
+```bash
+netlify deploy --prod
+```
+
+### Environment Variables
+If you need to set environment variables:
+
+1. Go to Site settings > Build & deploy > Environment
+2. Add your environment variables
+3. Rebuild and deploy your site
+
+### Custom Domain
+To set up a custom domain:
+
+1. Go to Site settings > Domain management
+2. Add your custom domain
+3. Follow the DNS configuration instructions
+
+### Deployment Features
+- Continuous Deployment from Git
+- Automatic HTTPS
+- CDN Distribution
+- Asset Optimization
+- Preview Deployments
+- Roll-backs
+
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
