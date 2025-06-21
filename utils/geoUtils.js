@@ -11,8 +11,8 @@ const defaultMapData = [
 
 export const generateMapData = async () => {
   try {
-    // Dynamically import the GeoJSON file
-    const response = await fetch('/data/africa.geojson');
+    // Use the correct path for both development and production
+    const response = await fetch(new URL('../data/africa.geojson', import.meta.url));
     const africaGeoJSON = await response.json();
 
     // Create a projection centered on Africa
