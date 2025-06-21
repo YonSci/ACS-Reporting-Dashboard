@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CalendarDaysIcon, BanknotesIcon, BriefcaseIconC, GlobeAltIconC, UsersIconC, ChevronDownIcon, ChevronUpIcon, LinkIcon, SparklesIcon } from './icons/MiniIcons';
+import { STRATEGIC_RESULT_AREAS } from '../constants';
 
 const ReportCard = ({ report }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -18,7 +19,7 @@ const ReportCard = ({ report }) => {
       {/* Header Section */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-blue-400">{report.strategicResultArea}</h3>
+          <h3 className="text-lg font-semibold text-blue-400">{STRATEGIC_RESULT_AREAS[report.strategicResultArea] || report.strategicResultArea}</h3>
           {report.subStrategicResultArea && (
             <p className="text-sm text-gray-300 mt-1 leading-relaxed">
               <span className="text-gray-400">Sub Strategic Result Area: </span>

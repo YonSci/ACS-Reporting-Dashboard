@@ -261,9 +261,9 @@ const App = () => {
                 reportData={reports}
               />
             )}
-             <p className="mt-4 text-xs text-gray-400 text-center">
+             {/* <p className="mt-4 text-xs text-gray-400 text-center">
                 Click a country on the map to filter reports. Paths are illustrative.
-             </p>
+             </p> */}
           </div>
 
           {/* Reports List */}
