@@ -18,7 +18,7 @@ const App = () => {
   const [filters, setFilters] = useState({
     strategicResultArea: '',
     subStrategicResultArea: '',
-    interventionCountry: '',
+    interventionCountries: [],
     partnership: '',
   });
 
@@ -27,7 +27,7 @@ const App = () => {
   const [countryOptions, setCountryOptions] = useState(['All Countries']);
   const [partnershipOptions, setPartnershipOptions] = useState([]);
 
-  const [selectedCountry, setSelectedCountry] = useState(null);
+  const [selectedCountries, setSelectedCountries] = useState(new Set());
   const [mapData, setMapData] = useState(INITIAL_MAP_DATA);
 
   useEffect(() => {
@@ -86,24 +86,29 @@ const App = () => {
   const handleFilterChange = useCallback((filterName, value) => {
     setFilters(prevFilters => {
       const newFilters = { ...prevFilters };
-      const resetValue = 
-        value === 'All Strategic Result Areas' || 
-        value === 'All Countries' || 
-        value === 'All Partnerships' ||
-        value === 'All Sub Categories' ||
-        value === 'All Areas'
-        ? '' : value;
       
-      newFilters[filterName] = resetValue;
+      if (filterName === 'interventionCountries') {
+        // Handle array of countries
+        newFilters.interventionCountries = value === 'All Countries' ? [] : value;
+      } else {
+        const resetValue = 
+          value === 'All Strategic Result Areas' || 
+          value === 'All Partnerships' ||
+          value === 'All Sub Categories' ||
+          value === 'All Areas'
+          ? '' : value;
+        
+        newFilters[filterName] = resetValue;
+      }
 
       // If main SRA is changed, reset sub SRA
       if (filterName === 'strategicResultArea') {
         newFilters.subStrategicResultArea = ''; 
       }
 
-      // Reset selected country if changing country filter
-      if (filterName === 'interventionCountry' && value === 'All Countries') {
-        setSelectedCountry(null);
+      // Reset selected countries if clearing country filter
+      if (filterName === 'interventionCountries' && value === 'All Countries') {
+        setSelectedCountries(new Set());
       }
 
       return newFilters;
@@ -111,11 +116,26 @@ const App = () => {
   }, []);
 
   const handleCountrySelectOnMap = useCallback((countryName) => {
+    setSelectedCountries(prev => {
+      const newSelection = new Set(prev);
+      if (countryName) {
+        if (newSelection.has(countryName)) {
+          newSelection.delete(countryName);
+        } else {
+          newSelection.add(countryName);
+        }
+      } else {
+        newSelection.clear();
+      }
+      return newSelection;
+    });
+
     setFilters(prevFilters => ({
       ...prevFilters,
-      interventionCountry: countryName || 'All Countries',
+      interventionCountries: countryName ? 
+        Array.from(new Set([...prevFilters.interventionCountries, countryName])) :
+        []
     }));
-    setSelectedCountry(countryName);
   }, []);
 
   const handleClearFilters = () => {
@@ -127,12 +147,12 @@ const App = () => {
     setFilters({
       strategicResultArea: '',
       subStrategicResultArea: '',
-      interventionCountry: '',
+      interventionCountries: [],
       partnership: '',
     });
     
-    // Reset selected country on map
-    setSelectedCountry(null);
+    // Reset selected countries on map
+    setSelectedCountries(new Set());
     
     // Reset sub-SRA options to include all
     setSubSraOptions(['All Sub Categories']);
@@ -160,7 +180,8 @@ const App = () => {
         refinedSubSraMatch = report.subStrategicResultArea === filters.subStrategicResultArea;
       }
 
-      const countryMatch = !filters.interventionCountry || report.interventionCountry === filters.interventionCountry;
+      const countryMatch = filters.interventionCountries.length === 0 || 
+        filters.interventionCountries.includes(report.interventionCountry);
       
       const partnershipMatch = !filters.partnership || 
         (Array.isArray(report.partnerships) ? 
@@ -219,10 +240,18 @@ const App = () => {
               disabled={isSubSraDropdownDisabled}
             />
             <FilterDropdown
-              label="Intervention Country"
+              label="Intervention Countries"
               options={['All Countries', ...ALL_AFRICAN_COUNTRIES]}
-              selectedValue={filters.interventionCountry || 'All Countries'}
-              onChange={value => handleFilterChange('interventionCountry', value)}
+              selectedValue={filters.interventionCountries.length === 1 ? filters.interventionCountries[0] : 'All Countries'}
+              onChange={value => {
+                if (value === 'All Countries') {
+                  setFilters(prev => ({...prev, interventionCountries: []}));
+                  setSelectedCountries(new Set());
+                } else {
+                  setFilters(prev => ({...prev, interventionCountries: [value]}));
+                  setSelectedCountries(new Set([value]));
+                }
+              }}
               icon={<GlobeAltIcon className="w-5 h-5 text-green-400" />}
             />
             <FilterDropdown
@@ -256,7 +285,7 @@ const App = () => {
             ) : (
               <AfricaMap
                 mapData={mapData}
-                selectedCountry={selectedCountry}
+                selectedCountries={selectedCountries}
                 onCountrySelect={handleCountrySelectOnMap}
                 reportData={reports}
               />

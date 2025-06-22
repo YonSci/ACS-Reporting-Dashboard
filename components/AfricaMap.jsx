@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { getMapViewBox } from '../utils/geoUtils';
 import '../index.css';
 
-const AfricaMap = ({ mapData, selectedCountry, onCountrySelect, reportData }) => {
+const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) => {
   const [tooltip, setTooltip] = useState(null);
   const [zoom, setZoom] = useState(2.0);
   const [pan, setPan] = useState({ x: 0, y: 0 });
@@ -10,17 +10,14 @@ const AfricaMap = ({ mapData, selectedCountry, onCountrySelect, reportData }) =>
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   
   const countriesWithReports = React.useMemo(() => {
-    if (!selectedCountry) {
-      return new Set();
-    }
-    return new Set([selectedCountry]);
-  }, [selectedCountry]);
+    return new Set(Array.from(selectedCountries));
+  }, [selectedCountries]);
 
   React.useEffect(() => {
-    if (!selectedCountry) {
+    if (selectedCountries.size === 0) {
       setTooltip(null);
     }
-  }, [selectedCountry]);
+  }, [selectedCountries]);
 
   const handleMouseMove = (event, countryName) => {
     if (!isDragging) {
@@ -116,14 +113,14 @@ const AfricaMap = ({ mapData, selectedCountry, onCountrySelect, reportData }) =>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-blue-500 rounded"></div>
-            <span className="text-sm">Selected Country</span>
+            <span className="text-sm">Selected Countries</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-4 h-4 bg-slate-300 rounded"></div>
             <span className="text-sm">Available Countries</span>
           </div>
           <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-            <span>Click a country to filter reports</span>
+            <span>Click countries to select multiple</span>
           </div>
         </div>
       </div>
@@ -152,7 +149,7 @@ const AfricaMap = ({ mapData, selectedCountry, onCountrySelect, reportData }) =>
 
         <g className="countries">
           {mapData.map(country => {
-            const isSelected = selectedCountry === country.name;
+            const isSelected = selectedCountries.has(country.name);
             const hasReports = reportData.filter(r => r.interventionCountry === country.name).length > 0;
             const reports = reportData.filter(r => r.interventionCountry === country.name);
 
@@ -174,9 +171,7 @@ const AfricaMap = ({ mapData, selectedCountry, onCountrySelect, reportData }) =>
                 style={{
                   ...isSelected ? { filter: 'url(#glow)'} : {}
                 }}
-                onClick={() => {
-                  onCountrySelect(isSelected ? null : country.name);
-                }}
+                onClick={() => onCountrySelect(country.name)}
                 onMouseMove={(e) => handleMouseMove(e, country.name)}
                 onMouseLeave={handleMouseLeave}
                 data-country-name={country.name}
@@ -186,7 +181,7 @@ const AfricaMap = ({ mapData, selectedCountry, onCountrySelect, reportData }) =>
                 onKeyDown={(e) => { 
                   if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
-                    onCountrySelect(isSelected ? null : country.name);
+                    onCountrySelect(country.name);
                   }
                 }}
               />
@@ -211,6 +206,9 @@ const AfricaMap = ({ mapData, selectedCountry, onCountrySelect, reportData }) =>
               {tooltip.reports} intervention{tooltip.reports !== 1 ? 's' : ''}
             </p>
           )}
+          <p className="text-xs text-gray-300 mt-1">
+            {selectedCountries.has(tooltip.content) ? 'Click to deselect' : 'Click to select'}
+          </p>
         </div>
       )}
     </div>
