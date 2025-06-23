@@ -14,6 +14,7 @@ import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBu
 import { generateMapData } from './utils/geoUtils';
 import InterventionHeatMap from './components/InterventionHeatMap';
 import RegionalBarChart from './components/RegionalBarChart';
+import Pagination from './components/Pagination';
 
 const App = () => {
   const [reports, setReports] = useState([]);
@@ -35,6 +36,8 @@ const App = () => {
 
   const [selectedCountries, setSelectedCountries] = useState(new Set());
   const [mapData, setMapData] = useState(INITIAL_MAP_DATA);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
   useEffect(() => {
     // Simulate loading data
@@ -213,6 +216,27 @@ const App = () => {
     return Object.values(filters).filter(value => value !== '').length;
   }, [filters]);
 
+  // Calculate pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredReports.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
+
+  // Handle page change
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of reports section
+    const reportsSection = document.querySelector('#reports-section');
+    if (reportsSection) {
+      reportsSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Reset to first page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filters, selectedCountries]);
+
   if (isLoading) {
     return (
       <ThemeProvider>
@@ -355,7 +379,7 @@ const App = () => {
 
             {/* Right Column: Reports List */}
             <div className="lg:w-1/2">
-              <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+              <div id="reports-section" className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
                 <div className="flex justify-between items-center mb-4">
                   <h2 className="text-xl font-semibold flex items-center">
                     <ListBulletIcon className="w-5 h-5 mr-2 text-blue-400" />
@@ -366,7 +390,7 @@ const App = () => {
                   </h2>
                 </div>
                 <div className="space-y-4">
-                  {filteredReports.map(report => (
+                  {currentItems.map(report => (
                     <ReportCard key={report.id} report={report} />
                   ))}
                   {filteredReports.length === 0 && (
@@ -375,6 +399,13 @@ const App = () => {
                     </div>
                   )}
                 </div>
+                {filteredReports.length > itemsPerPage && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
               </div>
             </div>
           </div>
