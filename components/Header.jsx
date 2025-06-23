@@ -1,8 +1,11 @@
 import React from 'react';
 import { ChartBarIcon } from './icons/MiniIcons';
 import ThemeToggle from './ThemeToggle';
+import { useTheme } from '../utils/themeContext';
 
 const Header = () => {
+  const { isDarkMode } = useTheme();
+
   return (
     <header className="bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 py-4 px-6 mb-2">
       <div className="container mx-auto flex items-center justify-between">
@@ -10,7 +13,7 @@ const Header = () => {
           <img 
             src="/assets/uneca_logo.svg" 
             alt="UNECA Logo" 
-            className="h-10 w-auto filter-blue dark:filter-white"
+            className={`h-10 w-auto ${isDarkMode ? 'filter-blue' : ''}`}
           />
           <div className="flex items-center space-x-3">
             <ChartBarIcon className="h-8 w-8 text-blue-500" />
