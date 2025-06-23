@@ -270,7 +270,7 @@ const App = () => {
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-900 dark:to-slate-800 text-slate-900 dark:text-gray-200 flex flex-col transition-colors duration-300">
         <Header />
         
-        <main className="flex-grow p-4 md:p-6 lg:p-8 space-y-6">
+        <main className="flex-grow p-4 md:p-6 lg:p-6 space-y-8">
           {/* Filters Section */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
             <div className="flex flex-col space-y-4">
@@ -354,7 +354,7 @@ const App = () => {
             {/* Left Column: Map and Chart */}
             <div className="lg:w-1/2 flex flex-col gap-6">
               {/* Africa Map */}
-              <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+              <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
                 <AfricaMap
                   mapData={mapData}
                   selectedCountries={selectedCountries}
@@ -365,13 +365,13 @@ const App = () => {
               
               {/* Heat Map and Regional Analysis Section */}
               <div className="space-y-6">
-                <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+                <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
                   <InterventionHeatMap
                     mapData={mapData}
                     reportData={reports}
                   />
                 </div>
-                <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+                <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
                   <RegionalBarChart reportData={reports} />
                 </div>
               </div>
@@ -379,15 +379,29 @@ const App = () => {
 
             {/* Right Column: Reports List */}
             <div className="lg:w-1/2">
-              <div id="reports-section" className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+              <div id="reports-section" className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold flex items-center">
-                    <ListBulletIcon className="w-5 h-5 mr-2 text-blue-400" />
-                    Reports
-                    <span className="ml-2 text-sm font-normal text-gray-400">
-                      ({filteredReports.length} {filteredReports.length === 1 ? 'report' : 'reports'})
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-6 h-6 text-slate-950 dark:text-gray-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
+                      Reports
+                    </h2>
+                    <span className="ml-2 px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-950 dark:bg-blue-900 dark:text-blue-200">
+                      {filteredReports.length} reports
                     </span>
-                  </h2>
+                  </div>
                 </div>
                 <div className="space-y-4">
                   {currentItems.map(report => (

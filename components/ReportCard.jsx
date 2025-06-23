@@ -14,6 +14,32 @@ const ReportCard = ({ report }) => {
     ? report.partnerships.join(', ')
     : report.partnerships;
 
+  const getStatusColor = (status) => {
+    switch (status.toLowerCase()) {
+      case 'completed':
+        return 'bg-green-100 text-green-950 dark:bg-green-900 dark:text-green-200 font-semibold';
+      case 'in progress':
+        return 'bg-blue-100 text-blue-950 dark:bg-blue-900 dark:text-blue-200 font-semibold';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-950 dark:bg-yellow-900 dark:text-yellow-200 font-semibold';
+      default:
+        return 'bg-gray-100 text-gray-950 dark:bg-gray-900 dark:text-gray-200 font-semibold';
+    }
+  };
+
+  const getPriorityColor = (priority) => {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return 'text-red-950 dark:text-red-400 font-semibold';
+      case 'medium':
+        return 'text-yellow-950 dark:text-yellow-400 font-semibold';
+      case 'low':
+        return 'text-green-950 dark:text-green-400 font-semibold';
+      default:
+        return 'text-gray-950 dark:text-gray-400 font-semibold';
+    }
+  };
+
   return (
     <div className="bg-slate-800/70 backdrop-blur-md shadow-xl rounded-lg p-5 hover:shadow-2xl transition-all duration-300 ease-in-out border border-slate-700 hover:border-blue-500/50">
       {/* Header Section */}

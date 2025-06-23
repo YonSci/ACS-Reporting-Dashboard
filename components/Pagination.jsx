@@ -9,10 +9,10 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <button
           key={page}
           onClick={() => onPageChange(page)}
-          className={`px-3 py-1 rounded-md ${
+          className={`px-3 py-1 rounded-md transition-colors ${
             currentPage === page
-              ? 'bg-blue-500 text-white'
-              : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+              ? 'bg-blue-600 text-white shadow-sm'
+              : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 shadow-sm'
           }`}
         >
           {page}
@@ -34,12 +34,12 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         key={index}
         onClick={() => page !== '...' && onPageChange(page)}
         disabled={page === '...'}
-        className={`px-3 py-1 rounded-md ${
+        className={`px-3 py-1 rounded-md transition-colors ${
           currentPage === page
-            ? 'bg-blue-500 text-white'
+            ? 'bg-blue-600 text-white shadow-sm'
             : page === '...'
-            ? 'text-slate-400 cursor-default'
-            : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+            ? 'text-slate-500 dark:text-slate-400 cursor-default bg-transparent'
+            : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 bg-white dark:bg-slate-800 shadow-sm'
         }`}
       >
         {page}
@@ -48,18 +48,18 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   };
 
   return (
-    <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-700">
+    <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200 dark:border-slate-700 mt-4">
       <div className="flex items-center">
-        <p className="text-sm text-slate-700 dark:text-slate-300">
-          Showing page <span className="font-medium">{currentPage}</span> of{' '}
-          <span className="font-medium">{totalPages}</span>
+        <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">
+          Showing page <span className="text-blue-600 dark:text-blue-400">{currentPage}</span> of{' '}
+          <span className="text-blue-600 dark:text-blue-400">{totalPages}</span>
         </p>
       </div>
       <div className="flex gap-2">
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="px-3 py-1 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1 rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors"
         >
           Previous
         </button>
@@ -69,7 +69,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="px-3 py-1 rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-1 rounded-md bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed shadow-sm transition-colors"
         >
           Next
         </button>
