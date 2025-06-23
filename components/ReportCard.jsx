@@ -41,7 +41,7 @@ const ReportCard = ({ report }) => {
   };
 
   return (
-    <div className="bg-gray-100 dark:bg-slate-800/70 backdrop-blur-md shadow-xl rounded-lg p-5 hover:shadow-2xl transition-all duration-300 ease-in-out border-2 border-gray-200 dark:border-slate-700 hover:border-blue-500/50">
+    <div className="bg-gray-100 dark:bg-slate-900 backdrop-blur-md shadow-xl rounded-lg p-5 hover:shadow-2xl transition-all duration-300 ease-in-out border-2 border-gray-200 dark:border-slate-700 hover:border-blue-500/50">
       {/* Header Section */}
       <div className="flex justify-between items-start mb-4">
         <div className="flex-1">

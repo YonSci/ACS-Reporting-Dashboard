@@ -10,7 +10,8 @@ const MapTile = memo(({
   onCountrySelect, 
   colors,
   onMouseMove,
-  onMouseLeave
+  onMouseLeave,
+  isDarkMode = false
 }) => {
   const tileFeatures = getTileFeatures(features, tileX, tileY);
   
@@ -34,15 +35,21 @@ const MapTile = memo(({
               ? feature.geometry.coordinates.map(coords => coords[0].map(coord => coord.join(',')).join(' ')).join(' ')
               : feature.geometry.coordinates[0].map(coord => coord.join(',')).join(' ')
             }
-            fill={isSelected ? colors.selected : colors.unselected}
-            stroke={colors.stroke}
+            fill={isSelected 
+              ? (isDarkMode ? colors.selected.dark : colors.selected.light)
+              : (isDarkMode ? colors.unselected.dark : colors.unselected.light)
+            }
+            stroke={isDarkMode ? colors.stroke.dark : colors.stroke.light}
             strokeWidth={isSelected ? "1.5" : "0.5"}
             className={`
               transform-gpu
               transition-colors
               duration-200
               hover:cursor-pointer
-              ${isSelected ? 'hover:fill-blue-400' : 'hover:fill-gray-300'}
+              ${isSelected 
+                ? 'hover:fill-blue-400 dark:hover:fill-blue-300' 
+                : 'hover:fill-gray-300 dark:hover:fill-gray-600'
+              }
             `}
             onClick={() => onCountrySelect(countryName)}
             onMouseMove={(e) => onMouseMove(e, countryName)}
