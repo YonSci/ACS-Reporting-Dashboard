@@ -43,21 +43,18 @@ This dashboard serves as a centralized platform to:
   - Supporting links
   - Detailed project descriptions
 
-### 4. Partnership Tracking
-- Display of multi-stakeholder partnerships
 
-
-### 5: 
+### 4: Map features  
 - Multiple Country selection/deselection
 - Interactive tooltips showing country details
 - Clear selection button
 
-### 6: Data Visualization Components:
+### 5: Data Visualization Components:
 - Intervention Heat Map
 - Regional Bar Chart showing intervention distribution
 - Dynamic legends adapting to visualization modes
 
-### 7: General Features
+### 6: General Features
 - Modern and clean React-based architecture
 - Responsive design for all screen sizes
 - Data Export and Sharing: URL-based filter sharing
