@@ -5,7 +5,7 @@ import '../index.css';
 
 const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) => {
   const [tooltip, setTooltip] = useState(null);
-  const [zoom, setZoom] = useState(1.9);
+  const [zoom, setZoom] = useState(1.6);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
@@ -104,36 +104,89 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
 
   return (
     <div ref={containerRef} className="relative w-full h-[600px] bg-white rounded-lg shadow-lg overflow-hidden">
-      {/* Zoom Controls */}
-      <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
-        <button
-          onClick={() => handleZoom(0.2)}
-          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-          aria-label="Zoom in"
-        >
-          <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-          </svg>
-        </button>
-        <button
-          onClick={() => handleZoom(-0.2)}
-          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-          aria-label="Zoom out"
-        >
-          <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-          </svg>
-        </button>
-        <button
-          onClick={handleResetView}
-          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-          aria-label="Reset view"
-        >
-          <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v7h7M20 20v-7h-7" />
-          </svg>
-        </button>
+      {/* Selected Countries Badge */}
+      <div className="absolute top-4 left-4 z-10 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+        <span>Selected Countries</span>
+        <span className="bg-blue-500 px-2 py-0.5 rounded-full text-xs">
+          {selectedCountries.size}
+        </span>
       </div>
+
+      {/* Zoom Controls with Tooltips */}
+      <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
+        <div className="relative group">
+          <button
+            onClick={() => handleZoom(0.2)}
+            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+            aria-label="Zoom in"
+          >
+            <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </button>
+          <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block">
+            <div className="bg-slate-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              Zoom in
+            </div>
+          </div>
+        </div>
+        
+        <div className="relative group">
+          <button
+            onClick={() => handleZoom(-0.2)}
+            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+            aria-label="Zoom out"
+          >
+            <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+            </svg>
+          </button>
+          <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block">
+            <div className="bg-slate-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              Zoom out
+            </div>
+          </div>
+        </div>
+
+        <div className="relative group">
+          <button
+            onClick={handleResetView}
+            className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
+            aria-label="Reset view"
+          >
+            <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v7h7M20 20v-7h-7" />
+            </svg>
+          </button>
+          <div className="absolute right-full mr-2 top-1/2 -translate-y-1/2 hidden group-hover:block">
+            <div className="bg-slate-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap">
+              Reset view
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Summary Panel for Selected Countries */}
+      {selectedCountries.size > 0 && (
+        <div className="absolute left-4 bottom-4 z-10 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg border border-slate-200">
+          <h4 className="font-semibold text-slate-900 text-sm mb-2">Selected Countries Summary</h4>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-slate-600">Total Countries:</span>
+              <span className="font-medium text-slate-900">{selectedCountries.size}</span>
+            </div>
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-slate-600">Total Interventions:</span>
+              <span className="font-medium text-slate-900">
+                {reportData.filter(r => selectedCountries.has(r.interventionCountry)).length}
+              </span>
+            </div>
+            <div className="text-xs text-slate-500 mt-1">
+              Click countries to update selection
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Legend */}
       <div className="absolute bottom-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md border border-slate-200">
