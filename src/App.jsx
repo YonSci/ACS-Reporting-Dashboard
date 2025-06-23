@@ -9,6 +9,7 @@ import Button from './components/Button';
 import ConfirmDialog from './components/ConfirmDialog';
 import InterventionChart from './components/InterventionChart';
 import ExportSharePanel from './components/ExportSharePanel';
+import ReportManagement from './components/ReportManagement';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
@@ -245,137 +246,55 @@ const App = () => {
         <Header />
         
         <main className="flex-grow p-4 md:p-6 lg:p-8 space-y-6">
-          {/* Filters Section */}
+          {/* Report Management Section */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
-            <div className="flex flex-col space-y-4">
-              {/* Title and Actions Row */}
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-semibold flex items-center text-slate-900 dark:text-gray-200">
-                  <FunnelIcon className="w-6 h-6 mr-2 text-blue-400" />
-                  Filter Reports
-                  {activeFilterCount > 0 && (
-                    <span className="ml-2 text-sm font-normal text-slate-600 dark:text-gray-400">
-                      ({activeFilterCount} active)
-                    </span>
-                  )}
-                </h2>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2 border-r border-slate-600 pr-3">
-                    <ExportSharePanel
-                      reports={filteredReports}
-                      filters={filters}
-                      selectedCountries={selectedCountries}
-                    />
-                  </div>
-                  <Button 
-                    onClick={handleClearFilters}
-                    disabled={activeFilterCount === 0}
-                    variant="danger"
-                    size="sm"
-                    className="flex items-center whitespace-nowrap"
-                  >
-                    <XCircleIcon className="w-4 h-4 mr-1" />
-                    Clear All
-                  </Button>
-                </div>
-              </div>
+            <ReportManagement
+              reports={reports}
+              onFilteredReportsChange={(filteredResults) => {
+                // Update the filtered reports in the parent state if needed
+                setReports(filteredResults);
+              }}
+            />
+          </div>
 
-              {/* Filter Controls */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                <FilterDropdown
-                  label="Strategic Result Area"
-                  options={sraOptions}
-                  selectedValue={filters.strategicResultArea || 'All Areas'}
-                  onChange={value => handleFilterChange('strategicResultArea', value)}
-                  icon={<BriefcaseIcon className="w-5 h-5 text-blue-400" />}
-                />
-                <FilterDropdown
-                  label="Sub Strategic Result Area"
-                  options={subSraOptions}
-                  selectedValue={filters.subStrategicResultArea || 'All Sub Categories'}
-                  onChange={value => handleFilterChange('subStrategicResultArea', value)}
-                  icon={<ListBulletIcon className="w-5 h-5 text-cyan-400" />}
-                  disabled={isSubSraDropdownDisabled}
-                />
-                <FilterDropdown
-                  label="Intervention Countries"
-                  options={['All Countries', ...ALL_AFRICAN_COUNTRIES]}
-                  selectedValue={filters.interventionCountries.length === 1 ? filters.interventionCountries[0] : 'All Countries'}
-                  onChange={value => {
-                    if (value === 'All Countries') {
-                      setFilters(prev => ({...prev, interventionCountries: []}));
-                      setSelectedCountries(new Set());
-                    } else {
-                      setFilters(prev => ({...prev, interventionCountries: [value]}));
-                      setSelectedCountries(new Set([value]));
-                    }
-                  }}
-                  icon={<GlobeAltIcon className="w-5 h-5 text-green-400" />}
-                />
-                <FilterDropdown
-                  label="Partnership"
-                  options={partnershipOptions}
-                  selectedValue={filters.partnership || 'All Partnerships'}
-                  onChange={value => handleFilterChange('partnership', value)}
-                  icon={<UsersIcon className="w-5 h-5 text-purple-400" />}
-                />
-              </div>
+          {/* Map Section */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+              <AfricaMap
+                mapData={mapData}
+                selectedCountries={selectedCountries}
+                onCountrySelect={handleCountrySelectOnMap}
+              />
+            </div>
+            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+              <InterventionChart data={reports} />
             </div>
           </div>
 
-          {/* Main Content: Map, Chart and Reports */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            {/* Left Column: Map and Chart */}
-            <div className="lg:w-1/2 flex flex-col gap-6">
-              {/* Africa Map */}
-              <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
-                <AfricaMap
-                  mapData={mapData}
-                  selectedCountries={selectedCountries}
-                  onCountrySelect={handleCountrySelectOnMap}
-                  reportData={reports}
-                />
-              </div>
-              
-              {/* Intervention Chart */}
-              <InterventionChart reportData={filteredReports} />
-            </div>
-
-            {/* Right Column: Reports List */}
-            <div className="lg:w-1/2">
-              <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-xl font-semibold flex items-center">
-                    <ListBulletIcon className="w-5 h-5 mr-2 text-blue-400" />
-                    Reports
-                    <span className="ml-2 text-sm font-normal text-gray-400">
-                      ({filteredReports.length} {filteredReports.length === 1 ? 'report' : 'reports'})
-                    </span>
-                  </h2>
-                </div>
-                <div className="space-y-4">
-                  {filteredReports.map(report => (
-                    <ReportCard key={report.id} report={report} />
-                  ))}
-                  {filteredReports.length === 0 && (
-                    <div className="text-center py-8 text-gray-400">
-                      No reports match the selected filters
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+          {/* Reports Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reports.map((report, index) => (
+              <ReportCard key={index} report={report} />
+            ))}
           </div>
         </main>
 
-        {/* Confirm Dialog */}
-        <ConfirmDialog
-          isOpen={isConfirmDialogOpen}
-          onClose={() => setIsConfirmDialogOpen(false)}
-          onConfirm={confirmClearFilters}
-          title="Clear All Filters"
-          message="Are you sure you want to clear all filters? This will reset all your selections."
+        {/* Export/Share Panel */}
+        <ExportSharePanel
+          reports={reports}
+          filters={filters}
+          selectedCountries={selectedCountries}
         />
+
+        {/* Confirm Dialog */}
+        {isConfirmDialogOpen && (
+          <ConfirmDialog
+            title="Clear All Filters"
+            message="Are you sure you want to clear all filters? This will reset all your selections."
+            onConfirm={confirmClearFilters}
+            onCancel={() => setIsConfirmDialogOpen(false)}
+          />
+        )}
 
         <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
           © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.

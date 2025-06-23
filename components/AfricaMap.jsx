@@ -1,23 +1,45 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
 import { getMapViewBox } from '../utils/geoUtils';
+import MiniMap from './MiniMap';
 import '../index.css';
 
 const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) => {
   const [tooltip, setTooltip] = useState(null);
-  const [zoom, setZoom] = useState(2.0);
+  const [zoom, setZoom] = useState(1.0);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [viewportSize, setViewportSize] = useState({ width: 0, height: 0 });
+  const mapRef = useRef(null);
+  const containerRef = useRef(null);
   
-  const countriesWithReports = React.useMemo(() => {
-    return new Set(Array.from(selectedCountries));
-  }, [selectedCountries]);
+  // Enhanced color palette with theme colors
+  const colors = {
+    selected: "#2563eb", // Base blue for selected
+    unselected: "#94a3b8", // Base gray for unselected
+    background: "#ffffff",
+    stroke: "#1e293b",
+    legendText: "#1e293b",
+    legendBackground: "#ffffff",
+    hoverOutline: "#3b82f6", // Bright blue for hover
+    glowColor: "rgba(59, 130, 246, 0.5)" // Semi-transparent blue for glow
+  };
 
-  React.useEffect(() => {
-    if (selectedCountries.size === 0) {
-      setTooltip(null);
-    }
-  }, [selectedCountries]);
+  // Track viewport size
+  useEffect(() => {
+    const updateViewportSize = () => {
+      if (containerRef.current) {
+        setViewportSize({
+          width: containerRef.current.clientWidth,
+          height: containerRef.current.clientHeight
+        });
+      }
+    };
+
+    updateViewportSize();
+    window.addEventListener('resize', updateViewportSize);
+    return () => window.removeEventListener('resize', updateViewportSize);
+  }, []);
 
   const handleMouseMove = (event, countryName) => {
     if (!isDragging) {
@@ -43,7 +65,7 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
   };
 
   const handleMouseDown = useCallback((e) => {
-    if (e.button === 0) { // Left click only
+    if (e.button === 0) {
       setIsDragging(true);
       setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
     }
@@ -71,105 +93,142 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
     };
   }, [handleMouseUp, handleMouseDrag]);
 
+  const handleViewportChange = (newPan) => {
+    setPan(newPan);
+  };
+
+  const handleResetView = useCallback(() => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  }, []);
+
   return (
-    <div className="relative w-full h-[600px] bg-slate-50 rounded-lg shadow-lg overflow-hidden">
+    <div ref={containerRef} className="relative w-full h-[600px] bg-white rounded-lg shadow-lg overflow-hidden">
       {/* Zoom Controls */}
       <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
         <button
           onClick={() => handleZoom(0.2)}
-          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
           aria-label="Zoom in"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
           </svg>
         </button>
         <button
           onClick={() => handleZoom(-0.2)}
-          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
           aria-label="Zoom out"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
           </svg>
         </button>
         <button
-          onClick={() => {
-            setZoom(1);
-            setPan({ x: 0, y: 0 });
-          }}
-          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          onClick={handleResetView}
+          className="p-2 bg-white rounded-full shadow-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
           aria-label="Reset view"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v7h7M20 20v-7h-7" />
           </svg>
         </button>
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 z-10 bg-white p-3 rounded-lg shadow-md">
-        <h4 className="font-semibold text-sm mb-2">Map Legend</h4>
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-blue-500 rounded"></div>
-            <span className="text-sm">Selected Countries</span>
+      <div className="absolute bottom-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md border border-slate-200">
+        <h4 className="font-semibold text-slate-900 text-sm mb-3">Map Legend</h4>
+        <div className="flex flex-col gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 rounded" style={{ backgroundColor: colors.selected }}></div>
+            <span className="text-sm text-slate-900">Selected Countries</span>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 bg-slate-300 rounded"></div>
-            <span className="text-sm">Available Countries</span>
+          <div className="flex items-center gap-3">
+            <div className="w-4 h-4 rounded" style={{ backgroundColor: colors.unselected }}></div>
+            <span className="text-sm text-slate-900">Available Countries</span>
           </div>
-          <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-            <span>Click countries to select multiple</span>
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-xs text-slate-700">Click to select countries</span>
           </div>
         </div>
       </div>
 
+      {zoom > 2.5 && (
+        <MiniMap
+          mapData={mapData}
+          zoom={zoom}
+          pan={pan}
+          viewportWidth={viewportSize.width}
+          viewportHeight={viewportSize.height}
+          onViewportChange={handleViewportChange}
+        />
+      )}
+
       <svg 
+        ref={mapRef}
         viewBox={getMapViewBox()}
         className="w-full h-full cursor-grab active:cursor-grabbing"
         style={{ 
-          backgroundColor: '#f8fafc',
-          transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`
+          backgroundColor: colors.background,
+          transform: `scale(${zoom}) translate(${pan.x}px, ${pan.y}px)`,
+          transition: isDragging ? 'none' : 'transform 0.3s ease-in-out'
         }}
         onMouseDown={handleMouseDown}
       >
         <defs>
-          <filter id="glow">
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          {/* Enhanced glow effect */}
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+            <feFlood floodColor={colors.glowColor} result="glowColor"/>
+            <feComposite in="glowColor" in2="coloredBlur" operator="in" result="softGlow"/>
             <feMerge>
-              <feMergeNode in="coloredBlur"/>
+              <feMergeNode in="softGlow"/>
+              <feMergeNode in="softGlow"/>
               <feMergeNode in="SourceGraphic"/>
             </feMerge>
           </filter>
-          <pattern id="stripes" patternUnits="userSpaceOnUse" width="6" height="6">
-            <path d="M0 0L6 6M-1 5L1 7M5 -1L7 1" stroke="rgba(255,255,255,0.5)" strokeWidth="1"/>
-          </pattern>
+          
+          {/* Enhanced hover effect */}
+          <filter id="hover-outline" x="-10%" y="-10%" width="120%" height="120%">
+            <feMorphology operator="dilate" radius="1.5" in="SourceAlpha" result="expanded"/>
+            <feFlood floodColor={colors.hoverOutline} result="color"/>
+            <feComposite in="color" in2="expanded" operator="in" result="border"/>
+            <feGaussianBlur in="border" stdDeviation="1.5" result="blur"/>
+            <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+          </filter>
         </defs>
 
         <g className="countries">
           {mapData.map(country => {
             const isSelected = selectedCountries.has(country.name);
-            const hasReports = reportData.filter(r => r.interventionCountry === country.name).length > 0;
             const reports = reportData.filter(r => r.interventionCountry === country.name);
 
             return (
               <path
                 key={country.id}
                 d={country.path}
-                fill={isSelected ? "#3b82f6" : "#cbd5e1"}
-                stroke="white"
-                strokeWidth={isSelected ? "1" : "0.5"}
+                fill={isSelected ? colors.selected : colors.unselected}
+                stroke={colors.stroke}
+                strokeWidth={isSelected ? "1.5" : "0.5"}
                 className={`
-                  transition-all 
-                  duration-200 
-                  ease-in-out 
+                  transform-gpu
+                  transition-all
+                  duration-300
+                  ease-in-out
                   hover:opacity-90
-                  hover:stroke-2
-                  ${isSelected ? 'filter-glow' : ''}
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-blue-600
+                  focus:ring-offset-2
+                  ${isSelected ? 'filter-glow scale-[1.02]' : 'scale-100'}
                 `}
                 style={{
-                  ...isSelected ? { filter: 'url(#glow)'} : {}
+                  filter: isSelected ? 'url(#glow)' : 'none',
+                  transition: 'all 0.3s ease-in-out',
+                  '&:hover': {
+                    filter: 'url(#hover-outline)',
+                    strokeWidth: '2',
+                  },
                 }}
                 onClick={() => onCountrySelect(country.name)}
                 onMouseMove={(e) => handleMouseMove(e, country.name)}
@@ -190,23 +249,25 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
         </g>
       </svg>
 
+      {/* Enhanced Tooltip */}
       {tooltip && (
         <div 
-          className="absolute z-20 p-3 bg-slate-800/90 backdrop-blur-sm rounded-lg shadow-lg border border-slate-700 text-white"
+          className="absolute z-20 p-3 bg-slate-900 rounded-lg shadow-lg border border-slate-700 text-white transform transition-all duration-200 ease-in-out"
           style={{ 
             left: `${tooltip.x}px`, 
             top: `${tooltip.y}px`,
-            transform: 'translate(-50%, -120%)',
+            transform: 'translate(-50%, -120%) scale(1)',
+            opacity: 1,
             pointerEvents: 'none'
           }}
         >
           <h3 className="font-semibold text-white">{tooltip.content}</h3>
           {tooltip.reports > 0 && (
-            <p className="text-sm text-gray-200 mt-1">
+            <p className="text-sm text-gray-100 mt-1">
               {tooltip.reports} intervention{tooltip.reports !== 1 ? 's' : ''}
             </p>
           )}
-          <p className="text-xs text-gray-300 mt-1">
+          <p className="text-xs text-gray-200 mt-1">
             {selectedCountries.has(tooltip.content) ? 'Click to deselect' : 'Click to select'}
           </p>
         </div>
