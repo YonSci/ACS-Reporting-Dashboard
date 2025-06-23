@@ -2,16 +2,31 @@ import React, { useMemo } from 'react';
 import { getMapViewBox } from '../utils/geoUtils';
 
 const InterventionHeatMap = ({ mapData, reportData }) => {
-  // Enhanced color palette for heat map
+  // Enhanced color palette for heat map with light/dark mode
   const colors = {
-    background: "#1e293b", // Dark background to match the dashboard theme
-    stroke: "#475569", // Lighter stroke for borders
+    background: {
+      light: "#f1f5f9",
+      dark: "#1e293b"
+    },
+    stroke: {
+      light: "#64748b",
+      dark: "#475569"
+    },
     heatmap: {
-      0: "#94a3b8", // No reports - light gray
-      1: "#60a5fa", // Few reports - light blue
-      2: "#3b82f6", // Some reports - medium blue
-      3: "#2563eb", // Many reports - bright blue
-      4: "#1d4ed8", // Most reports - dark blue
+      light: {
+        0: "#cbd5e1", // No reports - light gray
+        1: "#93c5fd", // Few reports - light blue
+        2: "#60a5fa", // Some reports - medium blue
+        3: "#3b82f6", // Many reports - bright blue
+        4: "#2563eb", // Most reports - dark blue
+      },
+      dark: {
+        0: "#94a3b8", // No reports - light gray
+        1: "#60a5fa", // Few reports - light blue
+        2: "#3b82f6", // Some reports - medium blue
+        3: "#2563eb", // Many reports - bright blue
+        4: "#1d4ed8", // Most reports - dark blue
+      }
     }
   };
 
@@ -32,32 +47,33 @@ const InterventionHeatMap = ({ mapData, reportData }) => {
   }, [mapData, reportData]);
 
   // Calculate heat map color based on report count
-  const getHeatMapColor = (countryName) => {
+  const getHeatMapColor = (countryName, isDark = false) => {
     const reports = reportData.filter(r => r.interventionCountry === countryName).length;
     const maxReports = Math.max(...mapData.map(country => 
       reportData.filter(r => r.interventionCountry === country.name).length
     ));
     
-    if (reports === 0) return colors.heatmap[0];
+    if (reports === 0) return isDark ? colors.heatmap.dark[0] : colors.heatmap.light[0];
     const normalized = Math.ceil((reports / maxReports) * 4);
-    return colors.heatmap[normalized];
+    return isDark ? colors.heatmap.dark[normalized] : colors.heatmap.light[normalized];
   };
 
   return (
-    <div className="w-full h-[400px] bg-slate-900 rounded-lg shadow-lg overflow-hidden relative">
+    <div className="w-full h-[400px] bg-gray-100 dark:bg-slate-900 rounded-lg shadow-lg overflow-hidden relative border-2 border-gray-200 dark:border-slate-700">
       {/* Heat Map Title */}
       <div className="absolute left-4 top-4 z-10">
-        <h3 className="text-white text-base font-semibold">Interventions Heat Map</h3>
-        <p className="text-slate-400 text-xs mt-1">Distribution of interventions across regions</p>
+        <h3 className="text-gray-900 dark:text-white text-base font-semibold">Interventions Heat Map</h3>
+        <p className="text-gray-600 dark:text-slate-400 text-xs mt-1">Distribution of interventions across regions</p>
       </div>
 
       {/* Legend */}
-      <div className="absolute right-4 top-4 bg-slate-800/50 p-2 rounded z-10">
+      <div className="absolute right-4 top-4 bg-white/70 dark:bg-slate-800/50 p-2 rounded z-10 shadow-md">
         <div className="flex flex-col gap-1">
-          {Object.entries(colors.heatmap).map(([level, color], index) => (
+          {Object.entries(colors.heatmap.light).map(([level, color], index) => (
             <div key={level} className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded" style={{ backgroundColor: color }}></div>
-              <span className="text-xs text-slate-300 min-w-[100px]">
+              <div className="w-3 h-3 rounded hidden dark:block" style={{ backgroundColor: colors.heatmap.dark[level] }}></div>
+              <div className="w-3 h-3 rounded dark:hidden" style={{ backgroundColor: colors.heatmap.light[level] }}></div>
+              <span className="text-xs text-gray-700 dark:text-slate-300 min-w-[100px]">
                 {index === 0 ? `No reports (${ranges[0]})` :
                  index === 1 ? `Few (${ranges[1]})` :
                  index === 2 ? `Some (${ranges[2]})` :
@@ -82,23 +98,31 @@ const InterventionHeatMap = ({ mapData, reportData }) => {
               transformOrigin: 'center center'
             }}
           >
-            <g className="countries">
-              {mapData.map(country => {
-                const reports = reportData.filter(r => r.interventionCountry === country.name).length;
-                const heatMapColor = getHeatMapColor(country.name);
-
-                return (
-                  <path
-                    key={country.id}
-                    d={country.path}
-                    fill={heatMapColor}
-                    stroke={colors.stroke}
-                    strokeWidth="0.3"
-                    style={{ pointerEvents: 'none' }}
-                    aria-hidden="true"
-                  />
-                );
-              })}
+            <g className="countries dark:hidden">
+              {mapData.map(country => (
+                <path
+                  key={country.id}
+                  d={country.path}
+                  fill={getHeatMapColor(country.name, false)}
+                  stroke={colors.stroke.light}
+                  strokeWidth="0.3"
+                  style={{ pointerEvents: 'none' }}
+                  aria-hidden="true"
+                />
+              ))}
+            </g>
+            <g className="countries hidden dark:block">
+              {mapData.map(country => (
+                <path
+                  key={country.id}
+                  d={country.path}
+                  fill={getHeatMapColor(country.name, true)}
+                  stroke={colors.stroke.dark}
+                  strokeWidth="0.3"
+                  style={{ pointerEvents: 'none' }}
+                  aria-hidden="true"
+                />
+              ))}
             </g>
           </svg>
         </div>
