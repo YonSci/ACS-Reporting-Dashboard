@@ -214,9 +214,9 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
         </div>
       )}
 
-      {/* Legend */}
-      <div className="absolute bottom-4 left-4 z-10 bg-white p-4 rounded-lg shadow-md border border-slate-200">
-        <h4 className="font-semibold text-slate-900 text-sm mb-3">Map Legend</h4>
+             {/* Legend */}
+       <div className="absolute bottom-4 right-4 z-10 bg-white p-4 rounded-lg shadow-md border border-slate-200">
+         <h4 className="font-semibold text-slate-900 text-sm mb-3">Map Legend</h4>
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <div className="w-4 h-4 rounded" style={{ backgroundColor: colors.selected }}></div>
