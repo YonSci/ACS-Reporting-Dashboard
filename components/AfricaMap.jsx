@@ -25,6 +25,15 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
     glowColor: "rgba(59, 130, 246, 0.5)" // Semi-transparent blue for glow
   };
 
+  // Define regions
+  const regions = {
+    'North Africa': ['Algeria', 'Egypt', 'Libya', 'Morocco', 'Tunisia'],
+    'West Africa': ['Benin', 'Burkina Faso', 'Cape Verde', 'Ivory Coast', 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau', 'Liberia', 'Mali', 'Mauritania', 'Niger', 'Nigeria', 'Senegal', 'Sierra Leone', 'Togo'],
+    'Central Africa': ['Cameroon', 'Central African Republic', 'Chad', 'Congo', 'DR Congo', 'Equatorial Guinea', 'Gabon', 'São Tomé and Príncipe'],
+    'East Africa': ['Burundi', 'Comoros', 'Djibouti', 'Eritrea', 'Ethiopia', 'Kenya', 'Madagascar', 'Rwanda', 'Seychelles', 'Somalia', 'South Sudan', 'Sudan', 'Tanzania', 'Uganda'],
+    'Southern Africa': ['Angola', 'Botswana', 'Eswatini', 'Lesotho', 'Malawi', 'Mozambique', 'Namibia', 'South Africa', 'Zambia', 'Zimbabwe']
+  };
+
   // Track viewport size
   useEffect(() => {
     const updateViewportSize = () => {
@@ -102,14 +111,31 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
     setPan({ x: 0, y: 0 });
   }, []);
 
+  // Clear all selections
+  const handleClearSelection = () => {
+    onCountrySelect(null, new Set());
+  };
+
   return (
     <div ref={containerRef} className="relative w-full h-[600px] bg-white rounded-lg shadow-lg overflow-hidden">
-      {/* Selected Countries Badge */}
-      <div className="absolute top-4 left-4 z-10 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
-        <span>Selected Countries</span>
-        <span className="bg-blue-500 px-2 py-0.5 rounded-full text-xs">
-          {selectedCountries.size}
-        </span>
+      {/* Selected Countries Badge and Clear Button */}
+      <div className="absolute top-4 left-4 z-10 flex items-center gap-2">
+        <div className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-2">
+          <span>Selected Countries</span>
+          <span className="bg-blue-500 px-2 py-0.5 rounded-full text-xs">
+            {selectedCountries.size}
+          </span>
+        </div>
+        
+        {selectedCountries.size > 0 && (
+          <button
+            onClick={handleClearSelection}
+            className="bg-red-600 text-white px-3 py-1 rounded-full text-sm font-medium hover:bg-red-700 transition-colors"
+            title="Clear all selections"
+          >
+            Clear
+          </button>
+        )}
       </div>
 
       {/* Zoom Controls with Tooltips */}
