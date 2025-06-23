@@ -15,12 +15,12 @@ This dashboard serves as a centralized platform to:
 
 ### 1. Interactive African Map
 - Visual representation of intervention countries
-- Click-to-select country functionality
-- Color-coded visualization of selected and available countries
 - Responsive tooltips showing country information
+- Multiple Country selection/deselection
+- Clear selection button
 
 ### 2. Advanced Filtering System
-- Filter by Strategic Result Areas:
+- Filter by Strategic Result Areas (4):
   - Production and Dissemination of Comparable Economic Data
   - Integration of Statistical and Geospatial Information Frameworks
   - Digital Transformation and Modernization of Statistical Systems
@@ -43,18 +43,12 @@ This dashboard serves as a centralized platform to:
   - Supporting links
   - Detailed project descriptions
 
-
-### 4: Map features  
-- Multiple Country selection/deselection
-- Interactive tooltips showing country details
-- Clear selection button
-
-### 5: Data Visualization Components:
+### 4: Data Visualization Components:
 - Intervention Heat Map
 - Regional Bar Chart showing intervention distribution
 - Dynamic legends adapting to visualization modes
 
-### 6: General Features
+### 5: General Features
 - Modern and clean React-based architecture
 - Responsive design for all screen sizes
 - Data Export and Sharing: URL-based filter sharing
