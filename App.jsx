@@ -12,6 +12,8 @@ import ExportSharePanel from './components/ExportSharePanel';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
+import InterventionHeatMap from './components/InterventionHeatMap';
+import RegionalBarChart from './components/RegionalBarChart';
 
 const App = () => {
   const [reports, setReports] = useState([]);
@@ -337,8 +339,18 @@ const App = () => {
                 />
               </div>
               
-              {/* Intervention Chart */}
-              <InterventionChart reportData={filteredReports} />
+              {/* Heat Map and Regional Analysis Section */}
+              <div className="space-y-6">
+                <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+                  <InterventionHeatMap
+                    mapData={mapData}
+                    reportData={reports}
+                  />
+                </div>
+                <div className="bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+                  <RegionalBarChart reportData={reports} />
+                </div>
+              </div>
             </div>
 
             {/* Right Column: Reports List */}

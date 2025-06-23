@@ -5,7 +5,7 @@ import '../index.css';
 
 const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) => {
   const [tooltip, setTooltip] = useState(null);
-  const [zoom, setZoom] = useState(1.0);
+  const [zoom, setZoom] = useState(1.9);
   const [pan, setPan] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
