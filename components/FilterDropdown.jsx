@@ -33,11 +33,6 @@ const FilterDropdown = ({
                    dark:text-gray-200 hover:border-gray-400 dark:hover:border-gray-500
                    transition-colors duration-200"
         >
-          {!isMulti && (
-            <option value="" className="text-slate-950 dark:text-gray-200 font-medium">
-              {placeholder}
-            </option>
-          )}
           {options.map((option) => (
             <option 
               key={option} 
