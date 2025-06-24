@@ -6,7 +6,7 @@ const RegionalBarChart = ({ reportData }) => {
     'North Africa': ['Algeria', 'Egypt', 'Libya', 'Morocco', 'Tunisia'],
     'West Africa': ['Benin', 'Burkina Faso', 'Cape Verde', 'Ivory Coast', 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau', 'Liberia', 'Mali', 'Mauritania', 'Niger', 'Nigeria', 'Senegal', 'Sierra Leone', 'Togo'],
     'Central Africa': ['Cameroon', 'Central African Republic', 'Chad', 'Congo', 'DR Congo', 'Equatorial Guinea', 'Gabon', 'São Tomé and Príncipe'],
-    'East Africa': ['Burundi', 'Comoros', 'Djibouti', 'Eritrea', 'Ethiopia', 'Kenya', 'Madagascar', 'Rwanda', 'Seychelles', 'Somalia', 'South Sudan', 'Sudan', 'Tanzania', 'Uganda'],
+    'Eastern Africa': ['Burundi', 'Comoros', 'Djibouti', 'Eritrea', 'Ethiopia', 'Kenya', 'Madagascar', 'Rwanda', 'Seychelles', 'Somalia', 'South Sudan', 'Sudan', 'Tanzania', 'Uganda'],
     'Southern Africa': ['Angola', 'Botswana', 'Eswatini', 'Lesotho', 'Malawi', 'Mozambique', 'Namibia', 'South Africa', 'Zambia', 'Zimbabwe']
   };
 
@@ -32,14 +32,14 @@ const RegionalBarChart = ({ reportData }) => {
       'North Africa': '#93c5fd',
       'West Africa': '#60a5fa',
       'Central Africa': '#3b82f6',
-      'East Africa': '#2563eb',
+      'Eastern Africa': '#2563eb',
       'Southern Africa': '#1d4ed8'
     },
     dark: {
       'North Africa': '#60a5fa',
       'West Africa': '#3b82f6',
       'Central Africa': '#2563eb',
-      'East Africa': '#1d4ed8',
+      'Eastern Africa': '#1d4ed8',
       'Southern Africa': '#1e40af'
     }
   };
@@ -49,8 +49,8 @@ const RegionalBarChart = ({ reportData }) => {
       {/* Header Section */}
       <div className="flex justify-between items-center mb-6">
         <div className="flex-1">
-          <h3 className="text-gray-900 dark:text-white text-base font-semibold">Interventions by Region</h3>
-          <p className="text-gray-600 dark:text-slate-400 text-xs mt-1">Distribution of interventions across African regions</p>
+          <h3 className="text-gray-900 dark:text-white text-base font-semibold">Interventions by Subregion</h3>
+          <p className="text-gray-600 dark:text-slate-400 text-xs mt-1">Distribution of interventions across African subregions</p>
         </div>
         <div className="text-sm text-gray-700 dark:text-slate-300 font-medium ml-4">
           Total: {reportData.length} interventions
