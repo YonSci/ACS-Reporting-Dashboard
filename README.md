@@ -13,13 +13,22 @@ This dashboard serves as a centralized platform to:
 
 ## Key Features
 
-### 1. Interactive African Map
+### 1: General Features
+- Modern and clean React-based architecture
+- Responsive design for all screen sizes
+- Dark/Light theme support
+- Data Export and Sharing: URL-based filter sharing
+- It support page pagination for long content 
+
+### 2. Interactive African Map
 - Visual representation of intervention countries
 - Responsive tooltips showing country information
 - Multiple Country selection/deselection
-- Clear selection button
+- Selection counter and clear selection button
+- Dynamic legends adapting to visualization modes
 
-### 2. Advanced Filtering System
+
+### 3. Advanced Filtering System
 - Filter by Strategic Result Areas (4):
   - Production and Dissemination of Comparable Economic Data
   - Integration of Statistical and Geospatial Information Frameworks
@@ -28,7 +37,7 @@ This dashboard serves as a centralized platform to:
 - Sub-strategic result area filtering
 - Country-specific filtering
 - Partnership-based filtering
-- Clear all filters functionality
+- Clear selection button
 
 
 ### 3. Detailed Report Cards
@@ -46,14 +55,6 @@ This dashboard serves as a centralized platform to:
 ### 4: Data Visualization Components:
 - Intervention Heat Map
 - Regional Bar Chart showing intervention distribution
-- Dynamic legends adapting to visualization modes
-
-### 5: General Features
-- Modern and clean React-based architecture
-- Responsive design for all screen sizes
-- Data Export and Sharing: URL-based filter sharing
-- Dark/Light theme support
-- Responsive design for all screen sizes
 
 
 ## Technology Stack
