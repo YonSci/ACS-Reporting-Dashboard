@@ -1,15 +1,8 @@
-# African Development Reporting Dashboard
+# African Centre for Statistics Reporting Dashboard
 
 ## Overview
-The African Development Reporting Dashboard is an interactive web application designed to visualize and track development initiatives across Africa. The dashboard provides comprehensive insights into various strategic interventions, partnerships, and development projects implemented by the Economic Commission for Africa (ECA) and its partners.
+African Centre for Statistics Reporting Dashboard is an **interactive** web application designed to **visualize** and **track** projects across Africa. The dashboard provides comprehensive **insights** into various strategic **interventions**, **partnerships**, and **development projects** implemented by the **African Centre for Statistics** Economic Commission for Africa (ECA) and its partners.
 
-## Purpose
-This dashboard serves as a centralized platform to:
-- Monitor and evaluate development projects across African nations
-- Track strategic interventions in different result areas
-- Visualize geographical distribution of initiatives
-- Facilitate data-driven decision making
-- Enhance transparency in development reporting
 
 ## Key Features
 
