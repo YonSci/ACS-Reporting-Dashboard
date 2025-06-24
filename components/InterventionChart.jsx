@@ -26,7 +26,7 @@ const InterventionChart = ({ reportData }) => {
       'North Africa': ['Algeria', 'Egypt', 'Libya', 'Morocco', 'Tunisia'],
       'West Africa': ['Benin', 'Burkina Faso', 'Cape Verde', 'Ivory Coast', 'Gambia', 'Ghana', 'Guinea', 'Guinea-Bissau', 'Liberia', 'Mali', 'Mauritania', 'Niger', 'Nigeria', 'Senegal', 'Sierra Leone', 'Togo'],
       'Central Africa': ['Cameroon', 'Central African Republic', 'Chad', 'Congo', 'DR Congo', 'Equatorial Guinea', 'Gabon', 'São Tomé and Príncipe'],
-      'East Africa': ['Burundi', 'Comoros', 'Djibouti', 'Eritrea', 'Ethiopia', 'Kenya', 'Madagascar', 'Malawi', 'Mauritius', 'Mozambique', 'Rwanda', 'Seychelles', 'Somalia', 'South Sudan', 'Sudan', 'Tanzania', 'Uganda'],
+      'Eastern Africa': ['Burundi', 'Comoros', 'Djibouti', 'Eritrea', 'Ethiopia', 'Kenya', 'Madagascar', 'Malawi', 'Mauritius', 'Mozambique', 'Rwanda', 'Seychelles', 'Somalia', 'South Sudan', 'Sudan', 'Tanzania', 'Uganda'],
       'Southern Africa': ['Angola', 'Botswana', 'Eswatini', 'Lesotho', 'Namibia', 'South Africa', 'Zambia', 'Zimbabwe']
     };
 
@@ -34,7 +34,7 @@ const InterventionChart = ({ reportData }) => {
       'North Africa': 0,
       'West Africa': 0,
       'Central Africa': 0,
-      'East Africa': 0,
+      'Eastern Africa': 0,
       'Southern Africa': 0
     };
 
@@ -84,7 +84,7 @@ const InterventionChart = ({ reportData }) => {
       },
       title: {
         display: true,
-        text: 'Interventions by Region',
+        text: 'Interventions by Subregion',
         color: '#e2e8f0',
         font: {
           size: 16,

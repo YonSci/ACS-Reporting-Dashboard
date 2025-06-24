@@ -29,7 +29,7 @@ const App = () => {
     partnership: '',
   });
 
-  const [sraOptions, setSraOptions] = useState(['All Areas']);
+  const [sraOptions, setSraOptions] = useState(['All Strategic Result Areas']);
   const [subSraOptions, setSubSraOptions] = useState(['All Sub Categories']);
   const [countryOptions, setCountryOptions] = useState(['All Countries']);
   const [partnershipOptions, setPartnershipOptions] = useState([]);
@@ -311,7 +311,7 @@ const App = () => {
                 <FilterDropdown
                   label="Strategic Result Area"
                   options={sraOptions}
-                  selectedValue={filters.strategicResultArea || 'All Areas'}
+                  selectedValue={filters.strategicResultArea || 'All Strategic Result Areas'}
                   onChange={value => handleFilterChange('strategicResultArea', value)}
                   icon={<BriefcaseIcon className="w-5 h-5 text-blue-400" />}
                 />
