@@ -1,32 +1,52 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { convertToCSV, downloadCSV, generateShareableLink } from '../utils/exportUtils';
+import { convertToCSV, downloadCSV, generateShareableLink, exportToExcel, exportToPDF } from '../utils/exportUtils';
 import Button from './Button';
-import { ArrowDownTrayIcon, ShareIcon, DocumentDuplicateIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ArrowDownTrayIcon, ShareIcon, DocumentDuplicateIcon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
 const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
-  // Close dialog on escape key
+  // Close dialogs on escape key or outside click
   useEffect(() => {
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         setShowShareDialog(false);
+        setShowExportOptions(false);
       }
     };
-    if (showShareDialog) {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.export-options')) {
+        setShowExportOptions(false);
+      }
+    };
+    if (showShareDialog || showExportOptions) {
       document.addEventListener('keydown', handleEscape);
+      document.addEventListener('click', handleClickOutside);
     }
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('click', handleClickOutside);
     };
-  }, [showShareDialog]);
+  }, [showShareDialog, showExportOptions]);
 
   const handleExportCSV = () => {
     const csvContent = convertToCSV(reports);
     const timestamp = new Date().toISOString().split('T')[0];
     downloadCSV(csvContent, `african-development-reports-${timestamp}.csv`);
+    setShowExportOptions(false);
+  };
+
+  const handleExportExcel = () => {
+    exportToExcel(reports);
+    setShowExportOptions(false);
+  };
+
+  const handleExportPDF = () => {
+    exportToPDF(reports);
+    setShowExportOptions(false);
   };
 
   const handleShare = () => {
@@ -117,20 +137,45 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
 
   return (
     <>
-      <div className="relative">
+      <div className="relative export-options">
         <div className="flex items-center gap-2">
-          <Button
-            onClick={handleExportCSV}
-            variant="primary"
-            className="flex items-center px-4 py-2 text-sm"
-            title="Export filtered reports as CSV"
-          >
-            <ArrowDownTrayIcon className="w-4 h-4 mr-2" />
-            Export
-            <span className="ml-1 text-xs text-blue-200">
-              ({reports.length})
-            </span>
-          </Button>
+          <div className="relative">
+            <Button
+              onClick={() => setShowExportOptions(!showExportOptions)}
+              variant="primary"
+              className="flex items-center px-4 py-2 text-sm"
+              title="Export filtered reports"
+            >
+              <ArrowDownTrayIcon className="w-4 h-4 mr-2" />
+              Export
+              <ChevronDownIcon className="w-4 h-4 ml-1" />
+              <span className="ml-1 text-xs text-blue-200">
+                ({reports.length})
+              </span>
+            </Button>
+            {showExportOptions && (
+              <div className="absolute top-full left-0 mt-1 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg border border-gray-200 dark:border-slate-700 py-1 z-50">
+                <button
+                  onClick={handleExportCSV}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700"
+                >
+                  Export as CSV
+                </button>
+                <button
+                  onClick={handleExportExcel}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700"
+                >
+                  Export as Excel
+                </button>
+                <button
+                  onClick={handleExportPDF}
+                  className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-slate-700"
+                >
+                  Export as PDF
+                </button>
+              </div>
+            )}
+          </div>
           <Button
             onClick={handleShare}
             variant="secondary"
