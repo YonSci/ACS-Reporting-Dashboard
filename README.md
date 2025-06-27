@@ -1,9 +1,9 @@
 # African Centre for Statistics Reporting Dashboard
 
 ## Overview
-African Centre for Statistics Reporting Dashboard is an **interactive** web application designed to **visualize** and **track** projects across Africa. 
+**African Centre for Statistics Reporting Dashboard** is an **interactive web application** designed to **visualize** and **track** projects across Africa. 
 
-The dashboard provides comprehensive **insights** into various strategic **interventions**, **partnerships**, and **development projects** implemented by the **African Centre for Statistics** Economic Commission for Africa (ECA) and its partners.
+The dashboard provides comprehensive **insights** into various strategic **interventions**, **partnerships**, and **development projects** implemented by the **African Centre for Statistics** Economic Commission for Africa (ECA) and its **partners**.
 
 
 - The reporting dashboard is built using **React**, a popular **JavaScript library** for building user interfaces.
