@@ -1,7 +1,20 @@
 # African Centre for Statistics Reporting Dashboard
 
 ## Overview
-African Centre for Statistics Reporting Dashboard is an **interactive** web application designed to **visualize** and **track** projects across Africa. The dashboard provides comprehensive **insights** into various strategic **interventions**, **partnerships**, and **development projects** implemented by the **African Centre for Statistics** Economic Commission for Africa (ECA) and its partners.
+African Centre for Statistics Reporting Dashboard is an **interactive** web application designed to **visualize** and **track** projects across Africa. 
+
+The dashboard provides comprehensive **insights** into various strategic **interventions**, **partnerships**, and **development projects** implemented by the **African Centre for Statistics** Economic Commission for Africa (ECA) and its partners.
+
+
+- The reporting dashboard is built using **React**, a popular **JavaScript library** for building user interfaces.
+
+- **vite** is used for fast development.
+
+- **Tailwind CSS** for styling and **ESLint** for code quality.
+
+- **JSON** for data storage and structure.
+
+- **GeoJSON** for geographical data mapping.
 
 
 ## Key Features
@@ -49,18 +62,6 @@ African Centre for Statistics Reporting Dashboard is an **interactive** web appl
 - Intervention Heat Map
 - Regional Bar Chart showing intervention distribution
 
-
-## Technology Stack
-
-### Frontend
-- **React.js** - Core frontend framework
-- **Vite** - Build tool and development server
-- **Tailwind CSS** - framework for styling
-
-
-### Data Format
-- **JSON** - Data storage and structure
-- **GeoJSON** - Geographical data for the Africa map
 
 
 
