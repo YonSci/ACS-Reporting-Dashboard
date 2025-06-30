@@ -1,8 +1,22 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-const ThemeContext = createContext();
+// Initialize context with default values to avoid undefined check
+const ThemeContext = createContext({
+  isDark: false,
+  toggleTheme: () => {},
+});
 
-export function ThemeProvider({ children }) {
+// Custom hook for using theme
+const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};
+
+// Theme provider component
+const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
     // Check for saved theme preference or system preference
     if (typeof window !== 'undefined') {
@@ -30,17 +44,16 @@ export function ThemeProvider({ children }) {
     setIsDark(prev => !prev);
   };
 
+  const value = React.useMemo(() => ({
+    isDark,
+    toggleTheme
+  }), [isDark]);
+
   return (
-    <ThemeContext.Provider value={{ isDark, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );
-}
+};
 
-export function useTheme() {
-  const context = useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  return context;
-} 
+export { ThemeProvider, useTheme }; 

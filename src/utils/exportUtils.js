@@ -1,3 +1,7 @@
+import * as XLSX from 'xlsx';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable';
+
 export const convertToCSV = (reports) => {
   // Define the columns we want to export
   const columns = [
@@ -106,4 +110,72 @@ export const parseShareableLink = () => {
   });
 
   return { filters, selectedCountries };
+};
+
+export const exportToExcel = (reports) => {
+  // Convert reports to worksheet format
+  const worksheet = XLSX.utils.json_to_sheet(reports.map(report => ({
+    ID: report.id,
+    Title: report.title,
+    Description: report.description,
+    'Intervention Country': report.interventionCountry,
+    'Strategic Result Area': report.strategicResultArea,
+    'Sub Strategic Result Area': report.subStrategicResultArea,
+    Partnerships: Array.isArray(report.partnerships) ? report.partnerships.join(', ') : report.partnerships,
+    Status: report.status,
+    Date: report.date,
+    Impact: report.impact
+  })));
+
+  // Create workbook and append worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Reports');
+
+  // Generate Excel file
+  const timestamp = new Date().toISOString().split('T')[0];
+  XLSX.writeFile(workbook, `african-development-reports-${timestamp}.xlsx`);
+};
+
+export const exportToPDF = (reports) => {
+  // Create new PDF document
+  const doc = new jsPDF();
+  
+  // Add title
+  doc.setFontSize(16);
+  doc.text('African Development Reports', 20, 20);
+  
+  // Configure the table
+  const headers = [
+    ['ID', 'Title', 'Country', 'Strategic Area', 'Status', 'Date']
+  ];
+  
+  const data = reports.map(report => [
+    report.id,
+    report.title.substring(0, 30) + (report.title.length > 30 ? '...' : ''),
+    report.interventionCountry,
+    report.strategicResultArea,
+    report.status,
+    report.date
+  ]);
+  
+  // Add the table
+  doc.autoTable({
+    head: headers,
+    body: data,
+    startY: 30,
+    margin: { top: 20 },
+    styles: { overflow: 'linebreak' },
+    columnStyles: {
+      0: { cellWidth: 20 },
+      1: { cellWidth: 50 },
+      2: { cellWidth: 30 },
+      3: { cellWidth: 40 },
+      4: { cellWidth: 25 },
+      5: { cellWidth: 25 }
+    }
+  });
+  
+  // Save the PDF
+  const timestamp = new Date().toISOString().split('T')[0];
+  doc.save(`african-development-reports-${timestamp}.pdf`);
 }; 

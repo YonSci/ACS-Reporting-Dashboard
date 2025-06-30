@@ -90,3 +90,25 @@ export const deleteFilterPreset = (presetId) => {
   localStorage.setItem(FILTER_PRESETS_KEY, JSON.stringify(updatedPresets));
   return updatedPresets;
 }; 
+
+export const submitReportData = async (reportData) => {
+  try {
+    const response = await fetch('http://localhost:3001/api/reports', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(reportData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to submit report data');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error submitting report data:', error);
+    throw error;
+  }
+};

@@ -1,0 +1,25 @@
+{
+  "title": "Sample Development Report 2024",
+  "reportDate": "2024-03-20",
+  "region": "Eastern Africa",
+  "indicators": [
+    {
+      "name": "GDP Growth Rate",
+      "value": 5.2,
+      "year": 2023,
+      "unit": "percent"
+    },
+    {
+      "name": "Literacy Rate",
+      "value": 82.5,
+      "year": 2023,
+      "unit": "percent"
+    },
+    {
+      "name": "Access to Clean Water",
+      "value": 76.8,
+      "year": 2023,
+      "unit": "percent"
+    }
+  ]
+} 
