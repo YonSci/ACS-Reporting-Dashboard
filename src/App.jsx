@@ -17,6 +17,7 @@ import { generateMapData } from './utils/geoUtils';
 import InterventionHeatMap from './components/InterventionHeatMap';
 import RegionalBarChart from './components/RegionalBarChart';
 import Pagination from './components/Pagination';
+import { fetchReportsByCountry, fetchReportsByYear } from './utils/reportUtils';
 
 const theme = createTheme({
   palette: {
@@ -134,13 +135,30 @@ const App = () => {
     }
   }, []);
 
-  const handleFilterChange = useCallback((filterName, value) => {
+  const handleFilterChange = useCallback(async (filterName, value) => {
     setFilters(prevFilters => {
       const newFilters = { ...prevFilters };
       
       if (filterName === 'interventionCountries') {
         // Handle array of countries
         newFilters.interventionCountries = value === 'All Countries' ? [] : value;
+        
+        // If a single country is selected, fetch its reports directly
+        if (Array.isArray(value) && value.length === 1) {
+          fetchReportsByCountry(value[0])
+            .then(countryReports => {
+              setReports(countryReports);
+            })
+            .catch(error => {
+              console.error('Error fetching country reports:', error);
+              // Fallback to full reports list
+              fetchReports();
+            });
+        } else {
+          // If no country is selected or multiple countries are selected,
+          // fetch all reports
+          fetchReports();
+        }
       } else {
         const resetValue = 
           value === 'All Strategic Result Areas' || 
@@ -164,7 +182,7 @@ const App = () => {
 
       return newFilters;
     });
-  }, []);
+  }, [fetchReports]);
 
   const handleCountrySelectOnMap = useCallback((countryName) => {
     setSelectedCountries(prev => {

@@ -4,9 +4,15 @@ import { useTheme } from '../utils/themeContext';
 const ThemeToggle = () => {
   const { isDark, toggleTheme } = useTheme();
 
+  const handleToggle = () => {
+    console.log('Current theme before toggle:', isDark);
+    toggleTheme();
+    console.log('Theme toggled');
+  };
+
   return (
     <button
-      onClick={toggleTheme}
+      onClick={handleToggle}
       className="relative inline-flex items-center justify-center w-12 h-6 rounded-full bg-slate-200 dark:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
       aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >

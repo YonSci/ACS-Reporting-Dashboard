@@ -106,9 +106,56 @@ export const submitReportData = async (reportData) => {
       throw new Error(errorData.message || 'Failed to submit report data');
     }
 
-    return await response.json();
+    const result = await response.json();
+    
+    // Validate the response data
+    if (!result.id) {
+      throw new Error('Invalid response from server: Missing report ID');
+    }
+
+    return result;
   } catch (error) {
     console.error('Error submitting report data:', error);
+    // Add more specific error messages
+    if (error.message.includes('SQLITE_CONSTRAINT')) {
+      throw new Error('A report with this information already exists');
+    } else if (error.message.includes('SQLITE_ERROR')) {
+      throw new Error('Database error occurred. Please try again');
+    }
+    throw error;
+  }
+};
+
+// Add new utility function for fetching reports by country
+export const fetchReportsByCountry = async (country) => {
+  try {
+    const response = await fetch(`http://localhost:3001/api/reports/country/${encodeURIComponent(country)}`);
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Failed to fetch reports for ${country}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching reports for ${country}:`, error);
+    throw error;
+  }
+};
+
+// Add new utility function for fetching reports by year
+export const fetchReportsByYear = async (year) => {
+  try {
+    const response = await fetch(`http://localhost:3001/api/reports/year/${year}`);
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `Failed to fetch reports for year ${year}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error(`Error fetching reports for year ${year}:`, error);
     throw error;
   }
 };
