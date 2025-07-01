@@ -76,29 +76,22 @@ export const STRATEGIC_RESULTS_HIERARCHY = {
     "Developing Fundamental Datasets and Standards: National Geospatial Datasets",
     "Implementation of the African Geodetic Reference Frame (AFREF)",
     "Geopatial Land Management and Adminstration",
-    "Spatial Analysis Angola: Geo-statistics for the development of urban spatial frameworks in Africa",
-    "Spatial Analysis-Madagascar Nexus-Water-Energy-Food",
-    "Spatial Analysis-Nexus-Climate Change-Environment-Food Security"
+    "Spatial Analysis- [Nexus-Climate Change-Environment-Food Security]"
   ],
   "Strategic Result Area 3": [
-    "Implementation of the Roadmap for Transformation and Modernization of Statistics in Africa",
-    "Modernizing Agropastoral data",
-    "Modernizing Turnover Index",
-    "Modernizing GDP data Production",
-    "Advancing South-South Cooperation Measurement",
-    "SDG Dashboard Work Package",
-    "National Quality Assurance Framework",
-    "The UN regional Hub on Big Data and Data Science for Africa",
-    "Performace Dashboard",
     "Support on Census Field Monitoring System",
-    "Common data reporting and exchange mechanisms for SDGs, Agenda 2063 and socio-economic datasets"
+    "Modernizing GDP data Production",
+    "Modernizing Agropastoral data",
+    "Common data reporting and exchange mechanisms for SDGs, Agenda 2063 and socio-economic datasets",
+    "National Quality Assurance Framework",
+    "Performace Dashboard"
   ],
   "Strategic Result Area 4": [
     "CVRS Mentorship",
-    "Capacity development on CRVS Applied Research",
     "Tablet Support and Dashboard",
-    "Support on the 4th Population and Health Survey"
-  ],
+    "Support on the 4th Population and Health Survey",
+    "Capacity development on CRVS Applied Research"
+  ]
 };
 
 export const ALL_AFRICAN_COUNTRIES = Object.values(AfricaCountryCodes).sort();
@@ -129,6 +122,23 @@ export const PARTNERSHIPS = [
   'WFP',
   'WTO'
 ];
+
+export const COMMON_PARTNERSHIPS = [
+  "WTO",
+  "OECD",
+  "UNRCO",
+  "European Union",
+  "National Statistics Offices",
+  "KNBS",
+  "UN Statistics Division",
+  "African Union Commission",
+  "World Bank",
+  "IMF",
+  "Regional Economic Communities"
+];
+
+// Generate a list of years from 2020 to 2030
+export const REPORT_YEARS = Array.from({ length: 11 }, (_, i) => (2020 + i).toString());
 
 // Update the mock reports to use these partnerships
 export const MOCK_REPORTS = [
