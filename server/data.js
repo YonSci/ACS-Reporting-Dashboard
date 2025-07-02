@@ -1,5 +1,3 @@
-
-
 export const AfricaCountryCodes = {
   ALGERIA: 'Algeria',
   ANGOLA: 'Angola',
@@ -1696,3 +1694,11 @@ export const MOCK_REPORTS = [
       "details": ""
     }
 ];
+
+export const getFilters = () => {
+  return {
+    strategicResultHierarchy: STRATEGIC_RESULTS_HIERARCHY,
+    allAfricanCountries: ALL_AFRICAN_COUNTRIES,
+    partnerships: PARTNERSHIPS
+  };
+};

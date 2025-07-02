@@ -85,8 +85,8 @@ export const getReportsByYear = async (year) => {
     return all('SELECT * FROM reports WHERE year = ? ORDER BY interventionCountry', [year]);
 };
 
-export const addReport = async (report) => {
-    return run(
+export const addNewReport = async (report) => {
+    const result = await run(
         `INSERT INTO reports (
             strategicResultArea, subStrategicResultArea, interventionCountry,
             partnerships, year, sdgContribution, supportingLinks, details
@@ -102,6 +102,12 @@ export const addReport = async (report) => {
             Array.isArray(report.details) ? report.details.join('\n') : report.details
         ]
     );
+    
+    // Return the newly created report
+    if (result.id) {
+        return get('SELECT * FROM reports WHERE id = ?', [result.id]);
+    }
+    throw new Error('Failed to create report');
 };
 
 export default db; 

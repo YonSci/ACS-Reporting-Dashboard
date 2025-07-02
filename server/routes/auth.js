@@ -1,23 +1,48 @@
 import express from 'express';
-import { body } from 'express-validator';
-import { login, logout, verifyAuth } from '../controllers/authController.js';
+import jwt from 'jsonwebtoken';
+import { authConfig } from '../config/auth.js';
 import { verifyToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// Validation middleware
-const validateLogin = [
-    body('email')
-        .isEmail()
-        .withMessage('Please enter a valid email'),
-    body('password')
-        .isLength({ min: 6 })
-        .withMessage('Password must be at least 6 characters long')
+// Mock user data - replace with your database
+const users = [
+  { id: 1, email: 'admin@uneca.org', password: 'admin123', role: 'admin' },
+  { id: 2, email: 'user@uneca.org', password: 'user123', role: 'user' }
 ];
 
-// Routes
-router.post('/login', validateLogin, login);
-router.post('/logout', logout);
-router.get('/verify', verifyToken, verifyAuth);
+router.post('/login', (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    const user = users.find(u => u.email === email && u.password === password);
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      authConfig.jwtSecret,
+      { expiresIn: authConfig.jwtExpiration }
+    );
+    
+    res.cookie('token', token, authConfig.cookieOptions);
+    
+    res.json({ 
+      user: {
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
-export default router; 
+router.get('/verify', verifyToken, (req, res) => {
+  res.json({ message: 'Token is valid', user: req.user });
+});
+
+export { router }; 

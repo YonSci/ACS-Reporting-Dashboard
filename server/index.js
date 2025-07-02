@@ -1,77 +1,80 @@
 import express from 'express';
 import cors from 'cors';
-import { getAllReports, getReportsByCountry, getReportsByYear, addReport } from './db.js';
-import { STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from './data.js';
+import cookieParser from 'cookie-parser';
+import { router as authRoutes } from './routes/auth.js';
+import { verifyToken } from './middleware/auth.js';
+import { getAllReports, addNewReport } from './db.js';
+import { getFilters } from './data.js';
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3002;
 
-app.use(cors());
+// CORS configuration
+app.use(cors({
+  origin: 'http://localhost:5173', // Default Vite port
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+// Middleware
+app.use(cookieParser());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// Root endpoint
-app.get('/', (req, res) => {
-    res.send('Welcome to the ACS Reporting Dashboard API');
-});
+// API Routes
+app.use('/api/auth', authRoutes);
 
-// Get filters endpoint
-app.get('/api/filters', (req, res) => {
-    try {
-        res.json({
-            strategicResultHierarchy: STRATEGIC_RESULTS_HIERARCHY,
-            allAfricanCountries: ALL_AFRICAN_COUNTRIES,
-            partnerships: PARTNERSHIPS
-        });
-    } catch (error) {
-        console.error('Error fetching filters:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
-// Get all reports
+// Reports endpoints
 app.get('/api/reports', async (req, res) => {
-    try {
-        const reports = await getAllReports();
-        res.json(reports);
-    } catch (error) {
-        console.error('Error fetching reports:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+  try {
+    const reports = await getAllReports();
+    res.json(reports);
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    res.status(500).json({ error: 'Failed to fetch reports' });
+  }
 });
 
-// Get reports by country
-app.get('/api/reports/country/:country', async (req, res) => {
-    try {
-        const reports = await getReportsByCountry(req.params.country);
-        res.json(reports);
-    } catch (error) {
-        console.error('Error fetching reports by country:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+app.post('/api/reports', verifyToken, async (req, res) => {
+  try {
+    const report = await addNewReport(req.body);
+    res.status(201).json(report);
+  } catch (error) {
+    console.error('Error adding report:', error);
+    res.status(500).json({ error: 'Failed to add report' });
+  }
 });
 
-// Get reports by year
-app.get('/api/reports/year/:year', async (req, res) => {
-    try {
-        const reports = await getReportsByYear(parseInt(req.params.year));
-        res.json(reports);
-    } catch (error) {
-        console.error('Error fetching reports by year:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
+// Filters endpoint
+app.get('/api/filters', async (req, res) => {
+  try {
+    const filters = await getFilters();
+    res.json(filters);
+  } catch (error) {
+    console.error('Error fetching filters:', error);
+    res.status(500).json({ error: 'Failed to fetch filters' });
+  }
 });
 
-// Add a new report
-app.post('/api/reports', async (req, res) => {
-    try {
-        const newReport = await addReport(req.body);
-        res.status(201).json(newReport);
-    } catch (error) {
-        console.error('Error adding report:', error);
-        res.status(500).json({ error: 'Internal server error' });
+// API root endpoint
+app.get('/api', (req, res) => {
+  res.json({ 
+    message: 'ACS Reporting Dashboard API',
+    endpoints: {
+      auth: '/api/auth/*',
+      reports: '/api/reports',
+      filters: '/api/filters'
     }
+  });
+});
+
+// Redirect all other requests to the frontend
+app.get('*', (req, res) => {
+  res.redirect('http://localhost:5175');
 });
 
 app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+  console.log(`API server is running on port ${PORT}`);
+  console.log(`API is available at http://localhost:${PORT}/api`);
 });
