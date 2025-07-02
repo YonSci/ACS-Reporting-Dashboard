@@ -1,17 +1,24 @@
 {
   "name": "acs-reporting-dashboard-server",
   "version": "1.0.0",
-  "description": "Backend server for the ACS Reporting Dashboard",
+  "description": "Server for ACS Reporting Dashboard",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2"
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "nodemailer": "^6.9.7",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
   }
 }

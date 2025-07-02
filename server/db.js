@@ -1,100 +1,107 @@
-import Database from 'better-sqlite3';
-import { MOCK_REPORTS } from './data.js';
+import sqlite3 from 'sqlite3';
 
 // Initialize database
-const db = new Database('reports.db', { verbose: console.log });
+const db = new sqlite3.Database('reports.db', (err) => {
+    if (err) {
+        console.error('Error opening database:', err);
+    } else {
+        console.log('Connected to the SQLite database.');
+        initDb();
+    }
+});
 
-// Create tables
-const initDb = () => {
-    // Create reports table
-    db.exec(`
-        CREATE TABLE IF NOT EXISTS reports (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            strategicResultArea TEXT,
-            subStrategicResultArea TEXT,
-            interventionCountry TEXT NOT NULL,
-            partnerships TEXT,
-            year INTEGER NOT NULL,
-            sdgContribution TEXT,
-            supportingLinks TEXT,
-            details TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )
-    `);
-
-    // Check if we need to import initial data
-    const count = db.prepare('SELECT COUNT(*) as count FROM reports').get();
-    if (count.count === 0) {
-        // Import mock data
-        const insert = db.prepare(`
-            INSERT INTO reports (
-                strategicResultArea, subStrategicResultArea, interventionCountry,
-                partnerships, year, sdgContribution, supportingLinks, details
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `);
-
-        MOCK_REPORTS.forEach(report => {
-            insert.run(
-                report.strategicResultArea,
-                report.subStrategicResultArea,
-                report.interventionCountry,
-                Array.isArray(report.partnerships) ? report.partnerships.join(',') : report.partnerships,
-                report.year,
-                report.sdgContribution,
-                Array.isArray(report.supportingLinks) ? report.supportingLinks.join(',') : report.supportingLinks,
-                Array.isArray(report.details) ? report.details.join('\n') : report.details
-            );
+// Promisify db.run
+const run = (sql, params = []) => {
+    return new Promise((resolve, reject) => {
+        db.run(sql, params, function(err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve({ id: this.lastID, changes: this.changes });
+            }
         });
+    });
+};
+
+// Promisify db.get
+const get = (sql, params = []) => {
+    return new Promise((resolve, reject) => {
+        db.get(sql, params, (err, result) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+};
+
+// Promisify db.all
+const all = (sql, params = []) => {
+    return new Promise((resolve, reject) => {
+        db.all(sql, params, (err, rows) => {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(rows);
+            }
+        });
+    });
+};
+
+// Initialize database
+const initDb = async () => {
+    try {
+        // Create reports table
+        await run(`
+            CREATE TABLE IF NOT EXISTS reports (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                strategicResultArea TEXT,
+                subStrategicResultArea TEXT,
+                interventionCountry TEXT NOT NULL,
+                partnerships TEXT,
+                year INTEGER NOT NULL,
+                sdgContribution TEXT,
+                supportingLinks TEXT,
+                details TEXT,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+    } catch (error) {
+        console.error('Error initializing database:', error);
     }
 };
 
-// Initialize the database
-initDb();
-
-// Database operations
-export const getAllReports = () => {
-    const reports = db.prepare('SELECT * FROM reports ORDER BY year DESC').all();
-    return reports.map(formatReport);
+// Report operations
+export const getAllReports = async () => {
+    return all('SELECT * FROM reports ORDER BY created_at DESC');
 };
 
-export const getReportsByCountry = (country) => {
-    const reports = db.prepare('SELECT * FROM reports WHERE interventionCountry = ? ORDER BY year DESC').all(country);
-    return reports.map(formatReport);
+export const getReportsByCountry = async (country) => {
+    return all('SELECT * FROM reports WHERE interventionCountry = ? ORDER BY year DESC', [country]);
 };
 
-export const getReportsByYear = (year) => {
-    const reports = db.prepare('SELECT * FROM reports WHERE year = ? ORDER BY interventionCountry').all(year);
-    return reports.map(formatReport);
+export const getReportsByYear = async (year) => {
+    return all('SELECT * FROM reports WHERE year = ? ORDER BY interventionCountry', [year]);
 };
 
-export const addReport = (report) => {
-    const insert = db.prepare(`
-        INSERT INTO reports (
+export const addReport = async (report) => {
+    return run(
+        `INSERT INTO reports (
             strategicResultArea, subStrategicResultArea, interventionCountry,
             partnerships, year, sdgContribution, supportingLinks, details
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    const result = insert.run(
-        report.strategicResultArea,
-        report.subStrategicResultArea,
-        report.interventionCountry,
-        Array.isArray(report.partnerships) ? report.partnerships.join(',') : report.partnerships,
-        report.year,
-        report.sdgContribution,
-        Array.isArray(report.supportingLinks) ? report.supportingLinks.join(',') : report.supportingLinks,
-        Array.isArray(report.details) ? report.details.join('\n') : report.details
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        [
+            report.strategicResultArea,
+            report.subStrategicResultArea,
+            report.interventionCountry,
+            Array.isArray(report.partnerships) ? report.partnerships.join(',') : report.partnerships,
+            report.year,
+            report.sdgContribution,
+            Array.isArray(report.supportingLinks) ? report.supportingLinks.join(',') : report.supportingLinks,
+            Array.isArray(report.details) ? report.details.join('\n') : report.details
+        ]
     );
-
-    return { ...report, id: result.lastInsertRowid };
 };
-
-// Helper function to format report data
-const formatReport = (report) => ({
-    ...report,
-    partnerships: report.partnerships ? report.partnerships.split(',') : [],
-    supportingLinks: report.supportingLinks ? report.supportingLinks.split(',') : [],
-    details: report.details ? report.details.split('\n').filter(Boolean) : []
-});
 
 export default db; 

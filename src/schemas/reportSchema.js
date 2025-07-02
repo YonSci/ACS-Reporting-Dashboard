@@ -116,3 +116,44 @@ export const uiSchema = {
     "ui:placeholder": "Enter intervention details"
   }
 }; 
+
+export const validateReport = (report) => {
+  const requiredFields = reportSchema.required;
+  const missingFields = [];
+
+  // Check required fields
+  for (const field of requiredFields) {
+    if (!report[field] || report[field].trim() === '') {
+      missingFields.push(field);
+    }
+  }
+
+  if (missingFields.length > 0) {
+    return `Missing required fields: ${missingFields.join(', ')}`;
+  }
+
+  // Validate Strategic Result Area
+  if (!Object.keys(STRATEGIC_RESULT_AREAS).includes(report.strategicResultArea)) {
+    return 'Invalid Strategic Result Area';
+  }
+
+  // Validate Sub Strategic Result Area
+  const validSubAreas = STRATEGIC_RESULTS_HIERARCHY[report.strategicResultArea] || [];
+  if (!validSubAreas.includes(report.subStrategicResultArea)) {
+    return 'Invalid Sub Strategic Result Area';
+  }
+
+  // Validate Country
+  if (!ALL_AFRICAN_COUNTRIES.includes(report.interventionCountry)) {
+    return 'Invalid Intervention Country';
+  }
+
+  // Validate Year
+  const year = parseInt(report.year);
+  if (isNaN(year) || !REPORT_YEARS.includes(year.toString())) {
+    return 'Invalid Year';
+  }
+
+  // If all validations pass
+  return null;
+}; 

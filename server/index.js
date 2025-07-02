@@ -4,13 +4,14 @@ import { getAllReports, getReportsByCountry, getReportsByYear, addReport } from 
 import { STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from './data.js';
 
 const app = express();
-const port = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
 
+// Root endpoint
 app.get('/', (req, res) => {
-  res.send('Welcome to the ACS Reporting Dashboard API!');
+    res.send('Welcome to the ACS Reporting Dashboard API');
 });
 
 // Get filters endpoint
@@ -28,9 +29,9 @@ app.get('/api/filters', (req, res) => {
 });
 
 // Get all reports
-app.get('/api/reports', (req, res) => {
+app.get('/api/reports', async (req, res) => {
     try {
-        const reports = getAllReports();
+        const reports = await getAllReports();
         res.json(reports);
     } catch (error) {
         console.error('Error fetching reports:', error);
@@ -39,9 +40,9 @@ app.get('/api/reports', (req, res) => {
 });
 
 // Get reports by country
-app.get('/api/reports/country/:country', (req, res) => {
+app.get('/api/reports/country/:country', async (req, res) => {
     try {
-        const reports = getReportsByCountry(req.params.country);
+        const reports = await getReportsByCountry(req.params.country);
         res.json(reports);
     } catch (error) {
         console.error('Error fetching reports by country:', error);
@@ -50,9 +51,9 @@ app.get('/api/reports/country/:country', (req, res) => {
 });
 
 // Get reports by year
-app.get('/api/reports/year/:year', (req, res) => {
+app.get('/api/reports/year/:year', async (req, res) => {
     try {
-        const reports = getReportsByYear(parseInt(req.params.year));
+        const reports = await getReportsByYear(parseInt(req.params.year));
         res.json(reports);
     } catch (error) {
         console.error('Error fetching reports by year:', error);
@@ -61,9 +62,9 @@ app.get('/api/reports/year/:year', (req, res) => {
 });
 
 // Add a new report
-app.post('/api/reports', (req, res) => {
+app.post('/api/reports', async (req, res) => {
     try {
-        const newReport = addReport(req.body);
+        const newReport = await addReport(req.body);
         res.status(201).json(newReport);
     } catch (error) {
         console.error('Error adding report:', error);
@@ -71,6 +72,6 @@ app.post('/api/reports', (req, res) => {
     }
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
 });
