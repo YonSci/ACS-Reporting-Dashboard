@@ -1,14 +1,14 @@
 // API base URL
-export const API_BASE_URL = 'http://localhost:3002/api';
+export const API_BASE_URL = 'http://localhost:3001/api';
 
 // API endpoints
 export const ENDPOINTS = {
     // Auth
-    LOGIN: '/api/auth/login',
-    VERIFY: '/api/auth/verify',
+    LOGIN: '/auth/login',
+    VERIFY: '/auth/verify',
 
     // Reports
-    REPORTS: '/api/reports',
+    REPORTS: '/reports',
     REPORTS_BY_COUNTRY: (country) => `/reports/country/${country}`,
     REPORTS_BY_YEAR: (year) => `/reports/year/${year}`,
 
@@ -16,7 +16,7 @@ export const ENDPOINTS = {
     STRATEGIC_AREAS: '/strategic-areas',
     COUNTRIES: '/countries',
     PARTNERSHIPS: '/partnerships',
-    FILTERS: '/api/filters'
+    FILTERS: '/filters'
 };
 
 // Helper function to construct full API URL
@@ -25,9 +25,19 @@ export const getApiUrl = (endpoint) => `${API_BASE_URL}${endpoint}`;
 // Helper function to handle API responses
 export const handleApiResponse = async (response) => {
     if (!response.ok) {
-        const errorData = await response.text();
-        console.error('API Error Response:', errorData);
-        throw new Error(`HTTP error! status: ${response.status}`);
+        try {
+            const errorData = await response.json();
+            console.error('API Error Response:', errorData);
+            throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+        } catch (e) {
+            if (e instanceof SyntaxError) {
+                // If response is not JSON
+                const errorText = await response.text();
+                console.error('API Error Response (non-JSON):', errorText);
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            throw e;
+        }
     }
     
     const contentType = response.headers.get('content-type');
@@ -42,22 +52,20 @@ export const handleApiResponse = async (response) => {
 export const getAuthHeaders = () => {
     const token = localStorage.getItem('token');
     return {
-        headers: {
-            'Content-Type': 'application/json',
-            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        credentials: 'include'
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
     };
 };
 
 export const makeApiRequest = async (endpoint, options = {}) => {
     try {
-        const response = await fetch(endpoint, {
+        const response = await fetch(getApiUrl(endpoint), {
             ...options,
             headers: {
-                'Content-Type': 'application/json',
+                ...getAuthHeaders(),
                 ...options.headers,
             },
+            credentials: 'include'
         });
         return await handleApiResponse(response);
     } catch (error) {

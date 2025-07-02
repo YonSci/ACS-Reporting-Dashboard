@@ -52,7 +52,7 @@ const all = (sql, params = []) => {
 // Initialize database
 const initDb = async () => {
     try {
-        // Create reports table
+        // Create reports table with submittedBy field
         await run(`
             CREATE TABLE IF NOT EXISTS reports (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -64,9 +64,20 @@ const initDb = async () => {
                 sdgContribution TEXT,
                 supportingLinks TEXT,
                 details TEXT,
+                submittedBy TEXT NOT NULL,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         `);
+
+        // Add submittedBy column if it doesn't exist (for existing databases)
+        try {
+            await run("ALTER TABLE reports ADD COLUMN submittedBy TEXT");
+        } catch (error) {
+            // Column might already exist, ignore the error
+            if (!error.message.includes('duplicate column name')) {
+                throw error;
+            }
+        }
     } catch (error) {
         console.error('Error initializing database:', error);
     }
@@ -85,12 +96,17 @@ export const getReportsByYear = async (year) => {
     return all('SELECT * FROM reports WHERE year = ? ORDER BY interventionCountry', [year]);
 };
 
-export const addNewReport = async (report) => {
+export const addNewReport = async (report, userEmail) => {
+    if (!userEmail) {
+        throw new Error('User email is required to submit a report');
+    }
+
     const result = await run(
         `INSERT INTO reports (
             strategicResultArea, subStrategicResultArea, interventionCountry,
-            partnerships, year, sdgContribution, supportingLinks, details
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            partnerships, year, sdgContribution, supportingLinks, details,
+            submittedBy
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
             report.strategicResultArea,
             report.subStrategicResultArea,
@@ -99,7 +115,8 @@ export const addNewReport = async (report) => {
             report.year,
             report.sdgContribution,
             Array.isArray(report.supportingLinks) ? report.supportingLinks.join(',') : report.supportingLinks,
-            Array.isArray(report.details) ? report.details.join('\n') : report.details
+            Array.isArray(report.details) ? report.details.join('\n') : report.details,
+            userEmail
         ]
     );
     

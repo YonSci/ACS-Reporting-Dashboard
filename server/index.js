@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3002;
 
 // CORS configuration
 app.use(cors({
-  origin: 'http://localhost:5173', // Default Vite port
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175'], // Allow all Vite dev ports
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -38,11 +38,11 @@ app.get('/api/reports', async (req, res) => {
 
 app.post('/api/reports', verifyToken, async (req, res) => {
   try {
-    const report = await addNewReport(req.body);
+    const report = await addNewReport(req.body, req.user.email);
     res.status(201).json(report);
   } catch (error) {
     console.error('Error adding report:', error);
-    res.status(500).json({ error: 'Failed to add report' });
+    res.status(500).json({ error: error.message || 'Failed to add report' });
   }
 });
 

@@ -2,8 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button, TextField, Select, MenuItem, FormControl, InputLabel, Box, Typography, Alert, Chip } from '@mui/material';
 import { validateReport } from '../schemas/reportSchema';
 import { STRATEGIC_RESULT_AREAS, STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, COMMON_PARTNERSHIPS, REPORT_YEARS } from '../constants';
+import { useAuth } from '../contexts/AuthContext';
+import { makeApiRequest, ENDPOINTS } from '../config/api';
 
 const DataImportForm = () => {
+    const { user } = useAuth();
     const [formData, setFormData] = useState({
         strategicResultArea: '',
         subStrategicResultArea: '',
@@ -52,6 +55,11 @@ const DataImportForm = () => {
         setError(null);
         setSuccess(false);
 
+        if (!user?.email) {
+            setError('User must be logged in to submit reports');
+            return;
+        }
+
         try {
             // Validate the report data
             const validationError = validateReport(formData);
@@ -60,18 +68,14 @@ const DataImportForm = () => {
                 return;
             }
 
-            // Submit the report
-            const response = await fetch('http://localhost:3001/api/reports', {
+            // Submit the report with user email
+            await makeApiRequest(ENDPOINTS.REPORTS, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    ...formData,
+                    submittedBy: user.email
+                })
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to submit report');
-            }
 
             setSuccess(true);
             setFormData({
@@ -86,6 +90,7 @@ const DataImportForm = () => {
             });
         } catch (err) {
             setError(err.message);
+            console.error('Error submitting report:', err);
         }
     };
 
