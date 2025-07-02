@@ -7,8 +7,8 @@ const router = express.Router();
 
 // Mock user data - replace with your database
 const users = [
-  { id: 1, email: 'admin@uneca.org', password: 'admin123', role: 'admin' },
-  { id: 2, email: 'user@uneca.org', password: 'user123', role: 'user' }
+  { id: 1, email: 'yonas.mersha14@gmail.com', password: 'user123', role: 'user' },
+  { id: 2, email: 'yonas.yigezu@un.org', password: 'admin123', role: 'admin' }
 ];
 
 router.post('/login', (req, res) => {
