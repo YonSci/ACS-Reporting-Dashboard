@@ -3,7 +3,7 @@ import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/st
 
 import Header from './components/Header';
 import Modal from './components/Modal';
-import DataImportForm from './components/DataImportForm';
+import AuthenticatedDataImport from './components/auth/AuthenticatedDataImport';
 import FilterDropdown from './components/FilterDropdown';
 import AfricaMap from './components/AfricaMap';
 import ReportCard from './components/ReportCard';
@@ -499,7 +499,7 @@ const App = () => {
           onClose={() => setIsImportModalOpen(false)}
           title="Add New Report"
         >
-          <DataImportForm onClose={() => setIsImportModalOpen(false)} />
+          <AuthenticatedDataImport onClose={() => setIsImportModalOpen(false)} />
         </Modal>
 
         <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
