@@ -16,6 +16,11 @@ const connectToDatabase = async () => {
 };
 
 exports.handler = async (event, context) => {
+  // Add debug logs to identify issues
+  console.log('Event:', event);
+  console.log('Context:', context);
+  console.log('MONGO_URI:', mongoUri);
+
   try {
     await connectToDatabase();
 
