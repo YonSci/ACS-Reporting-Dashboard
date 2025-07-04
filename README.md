@@ -97,21 +97,41 @@ The dashboard will include the following core features:
 ### 4. Implementation Plan (High-Level Timeline)
 
 The implementation involves several key steps:
-- Week 1: Review ABP and PPB documents. 
-- Week 2: Define data structure and design the data collection tool. 
-- Week 3: Pilot data collection with 3-5 countries and develop a prototype. 
-- Week 5: Internal validation and feedback session. 
-- Week 6: Finalize dashboard with full data and visualizations. 
-- Week 7: Prepare Standard Operating Procedures (SOP) and internal rollout, followed by final validation and approval. 
+- Week 1: Review ABP and PPB documents (PMO). 
+- Week 2: Define data structure and design the data collection tool (PMO). 
+- Week 3: Pilot data collection with 3-5 countries and develop a prototype (PMO). 
+- Week 4-5: Dashboard devlopment and deployment (Dev Team).
+- Week 6: Testing and debugging (Dev Team).
+- Week 7: First review and approval (OiC- ACS, SDDIOS, EIASS).
+- Week 8: Prepare Standard Operating Procedures (SOP) and internal rollout, followed by final validation and approval. (OiC- ACS and section chiefs)
+- Week 9: Finalize and deploy the tool to all countries (Dev Team).
 
+prepare markdown table for the implementation plan
+
+| Week | Task | Responsible | Status |
+|------|------|-------------|--------|
+| 1    | Review ABP and PPB documents | PMO | Completed |
+| 2    | Define data structure and design the data collection tool | PMO | Completed |
+| 3    | Pilot data collection with 3-5 countries and develop a prototype | PMO | Completed |
+| 4 -5    | Dashboard devlopment and deployment | Dev Team | Completed |
+| 6    | Testing and debugging | Dev Team | Completed |
+| 7    | First review and approval | OiC- ACS, SDDIOS, EIASS | Completed |
+| 8    | Prepare Standard Operating Procedures (SOP) and internal rollout | OiC
+-ACS and section chiefs | Ongoing |
+| 9    | Final validation and approval | OiC- ACS and section chiefs | Ongoing |
+| 10   | Finalize and document the project | PMO | Ongoing |
 
 ### 5. Information Collected
 
-The dashboard will incorporate information across various ACS activities, including:
+The dashboard incorporated information across various ACS activities, including:
 
 - Parliamentary Documentation and Substantive Meetings/Conferences (e.g., StatCom-Africa, UN-GGIM: Africa, CRVS Conference). 
 
-- RPTC (Regular Programme for Technical Cooperation) Projects. 
+- RPTC (Regular Programme for Technical Cooperation) Projects.
+
+- XB Projects (Extra-Budgetary Projects). 
+
+- DA Projects (Development Assistance Projects). 
 
 - Seminars, Workshops, and Trainings. 
 
@@ -125,32 +145,6 @@ The dashboard will incorporate information across various ACS activities, includ
 
 - Partnerships (UNCTs, inter-agency, bilateral, private sector, academia). 
 
-### 6. Suggested Data Collection Form Contents (Google Form Structure)
-
-The data collection structured into several sections, including:
-
-- General Information (Country, ACS Section, Reporting Period). 
-
-- Parliamentary Documentation & Conferences. 
-
-- RPTC Projects. 
-
-- XB Projects (Extra-Budgetary Projects). 
-
-- DA Projects (Development Assistance Projects). 
-
-- Seminars, Workshops, Trainings. 
-
-- Publications. 
-
-- Digital Tools & Databases. 
-
-- Technical Advisory & Support. 
-
-- Outreach Events. 
-
-- Partnerships. 
-
 - Strategic Linkages (SDGs, Cross-cutting Focus Areas). 
 
 - Supporting Documentation. 
@@ -162,7 +156,7 @@ The data collection structured into several sections, including:
 
 - Economic, Infrastructure and Agriculture Statistics Section (EIASS).
 
-- Collaborative Unit: Statistical Development, Data Innovation and Outreach Section (SDDIOS). 
+- Statistical Development, Data Innovation and Outreach Section (SDDIOS). 
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
