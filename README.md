@@ -116,8 +116,7 @@ prepare markdown table for the implementation plan
 | 4 -5    | Dashboard devlopment and deployment | Dev Team | Completed |
 | 6    | Testing and debugging | Dev Team | Completed |
 | 7    | First review and approval | OiC- ACS, SDDIOS, EIASS | Completed |
-| 8    | Prepare Standard Operating Procedures (SOP) and internal rollout | OiC
--ACS and section chiefs | Ongoing |
+| 8    | Prepare Standard Operating Procedures (SOP) and internal rollout | OiC ACS and section chiefs | Ongoing |
 | 9    | Final validation and approval | OiC- ACS and section chiefs | Ongoing |
 | 10   | Finalize and document the project | PMO | Ongoing |
 
