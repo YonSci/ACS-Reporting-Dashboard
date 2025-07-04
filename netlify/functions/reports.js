@@ -21,8 +21,13 @@ exports.handler = async (event, context) => {
 
     if (event.httpMethod === 'GET') {
       const reports = await Report.find();
+      // Add CORS headers to the response
       return {
         statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*', // Replace '*' with your Netlify domain for better security
+          'Access-Control-Allow-Methods': 'GET, POST',
+        },
         body: JSON.stringify(reports),
       };
     }
