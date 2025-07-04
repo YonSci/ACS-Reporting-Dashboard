@@ -83,6 +83,28 @@ The dashboard will include the following core features:
 - **GeoJSON** for geographical data mapping.
 
 
+### 4. Tech stacks
+
+#### Frontend:
+
+- **React**: A popular JavaScript library for building user interfaces.
+- **Vite**: A fast development build tool for modern web projects.
+- **Tailwind CSS**: A utility-first CSS framework for styling.
+- **ESLint**: A tool for maintaining code quality and enforcing coding standards.
+
+#### Backend:
+
+- **Node.js**: A JavaScript runtime for building server-side applications.
+- **Express.js**: A web application framework for Node.js.
+- **MongoDB Atlas**: A cloud-based NoSQL database for storing and managing data.
+- **Mongoose**: An ODM (Object Data Modeling) library for MongoDB.
+
+#### Data Formats:
+
+- **JSON**: Used for data storage and structure.
+- **GeoJSON**: Used for geographical data mapping.
+
+
 ### 4. Implementation Plan (High-Level Timeline)
 
 The implementation involves several key steps:
