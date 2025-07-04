@@ -18,7 +18,7 @@ const Header = () => {
           <div className="flex items-center space-x-3">
             <ChartBarIcon className="h-8 w-8 text-blue-500" />
             <h1 className="text-2xl font-bold text-slate-950 dark:text-white tracking-tight">
-              African Centre for Statistics (ACS) <span className="text-blue-400">Reporting Dashboard</span>
+              African Centre for Statistics (ACS) <span className="text-blue-400">Country-Based Reporting Dashboard</span>
             </h1>
           </div>
         </div>
