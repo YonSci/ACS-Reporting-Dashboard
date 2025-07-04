@@ -50,6 +50,7 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // Update fetchReports to use the new API endpoint
   const fetchReports = useCallback(async () => {
     try {
       const response = await fetch('http://localhost:3001/api/reports');
