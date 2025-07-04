@@ -1,18 +1,19 @@
 # African Centre for Statistics Country-Based Reporting Dashboard
 
-This repository contains the concept and related documentation for the `African Centre for Statistics (ACS) Country Engagement Dashboard`, an internal reporting tool designed to enhance `visibility`, `accountability`, and `strategic alignment` of ACS interventions across African countries.
+This repository contains the concept and related documentation for the African Centre for Statistics (ACS) Country Engagement Dashboard, an internal reporting tool designed to enhance visibility, accountability, and strategic alignment of ACS interventions across African countries.
 
 
 ### 1. Overview
 
 The ACS Country Engagement Dashboard addresses the current lack of a centralized, dynamic platform for a country-level overview of ACS engagements. 
 
-It aims to provide a `clear` and `interactive` overview of ACS activities in each African country, linked directly to UNECA's `strategic frameworks` and `delivery indicators`. 
+It aims to provide a clear and interactive overview of ACS activities in each African country, linked directly to UNECA's strategic frameworks and delivery indicators. 
 
 The dashboard will help in monitoring ACS's delivery, identifying gaps, and reporting results, particularly at the country level.
 
 
 ### 2. Objectives
+
 The dashboard is designed to:
 
 - Display ACS activities by country, mapped against Programme `Planning and Budgeting (PPB)` outputs and `Annual Business Plan (ABP)` priorities. 
@@ -28,14 +29,14 @@ The dashboard is designed to:
 The dashboard will include the following core features:
 
 
-#### 1: General Features
+#### General Features
 - Modern and clean React-based architecture
 - Responsive design for all screen sizes
 - Dark/Light theme support
 - Data Export and Sharing: URL-based filter sharing
 - It support page pagination for long content 
 
-#### 2. Interactive African Map
+#### Interactive African Map
 - Visual representation of intervention countries
 - Responsive tooltips showing country information
 - Multiple Country selection/deselection
@@ -43,7 +44,7 @@ The dashboard will include the following core features:
 - Dynamic legends adapting to visualization modes
 
 
-#### 3. Advanced Filtering System
+#### Advanced Filtering System
 - Filter by Strategic Result Areas (4):
   - Production and Dissemination of Comparable Economic Data
   - Integration of Statistical and Geospatial Information Frameworks
@@ -55,7 +56,7 @@ The dashboard will include the following core features:
 - Clear selection button
 
 
-#### 3. Detailed Report Cards
+#### Detailed Report Cards
 - Comprehensive project information display
 - Expandable/collapsible detailed view
 - Report cards showing intervention details including:
@@ -67,10 +68,9 @@ The dashboard will include the following core features:
   - Supporting links
   - Detailed project descriptions
 
-#### 4: Data Visualization Components:
+#### Data Visualization Components:
 - Intervention Heat Map
 - Regional Bar Chart showing intervention distribution
-
 
 - The reporting dashboard is built using **React**, a popular **JavaScript library** for building user interfaces.
 
@@ -94,16 +94,7 @@ The implementation involves several key steps:
 - Week 7: Prepare Standard Operating Procedures (SOP) and internal rollout, followed by final validation and approval. 
 
 
-### 5. Lead and Collaborative Units
-
-- Lead Unit: Project Management Office (PMO), African Centre for Statistics (ACS). 
-
-- Economic, Infrastructure and Agriculture Statistics Section (EIASS).
-
-- Collaborative Unit: Statistical Development, Data Innovation and Outreach Section (SDDIOS). 
-
-
-### 6. Information to be Collected
+### 5. Information to be Collected
 
 The dashboard will incorporate information across various ACS activities, including:
 
@@ -123,7 +114,7 @@ The dashboard will incorporate information across various ACS activities, includ
 
 - Partnerships (UNCTs, inter-agency, bilateral, private sector, academia). 
 
-### 7. Suggested Data Collection Form Contents (Google Form Structure)
+### 6. Suggested Data Collection Form Contents (Google Form Structure)
 
 The data collection will be structured into several sections, including:
 
@@ -152,6 +143,15 @@ The data collection will be structured into several sections, including:
 - Strategic Linkages (SDGs, Cross-cutting Focus Areas). 
 
 - Supporting Documentation. 
+
+
+## Lead and Collaborative Units
+
+- Lead Unit: Project Management Office (PMO), African Centre for Statistics (ACS). 
+
+- Economic, Infrastructure and Agriculture Statistics Section (EIASS).
+
+- Collaborative Unit: Statistical Development, Data Innovation and Outreach Section (SDDIOS). 
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
