@@ -16,7 +16,7 @@ The dashboard will help in monitoring ACS's delivery, identifying gaps, and repo
 
 The dashboard is designed to:
 
-- Display ACS activities by country, mapped against Programme `Planning and Budgeting (PPB)` outputs and `Annual Business Plan (ABP)` priorities. 
+- Display ACS activities by country, mapped against `Programme Planning and Budgeting (PPB)` outputs and `Annual Business Plan (ABP)` priorities. 
 
 - Facilitate evidence-based reporting, strategic oversight, and coordination. 
 
@@ -97,16 +97,6 @@ The dashboard will include the following core features:
 ### 4. Implementation Plan (High-Level Timeline)
 
 The implementation involves several key steps:
-- Week 1: Review ABP and PPB documents (PMO). 
-- Week 2: Define data structure and design the data collection tool (PMO). 
-- Week 3: Pilot data collection with 3-5 countries and develop a prototype (PMO). 
-- Week 4-5: Dashboard devlopment and deployment (Dev Team).
-- Week 6: Testing and debugging (Dev Team).
-- Week 7: First review and approval (OiC- ACS, SDDIOS, EIASS).
-- Week 8: Prepare Standard Operating Procedures (SOP) and internal rollout, followed by final validation and approval. (OiC- ACS and section chiefs)
-- Week 9: Finalize and deploy the tool to all countries (Dev Team).
-
-prepare markdown table for the implementation plan
 
 | Week | Task | Responsible | Status |
 |------|------|-------------|--------|
