@@ -72,17 +72,6 @@ The dashboard will include the following core features:
 - Intervention Heat Map
 - Regional Bar Chart showing intervention distribution
 
-- The reporting dashboard is built using **React**, a popular **JavaScript library** for building user interfaces.
-
-- **vite** is used for fast development.
-
-- **Tailwind CSS** for styling and **ESLint** for code quality.
-
-- **JSON** for data storage and structure.
-
-- **GeoJSON** for geographical data mapping.
-
-
 ### 4. Tech stacks
 
 #### Frontend:
@@ -116,7 +105,7 @@ The implementation involves several key steps:
 - Week 7: Prepare Standard Operating Procedures (SOP) and internal rollout, followed by final validation and approval. 
 
 
-### 5. Information to be Collected
+### 5. Information Collected
 
 The dashboard will incorporate information across various ACS activities, including:
 
@@ -138,7 +127,7 @@ The dashboard will incorporate information across various ACS activities, includ
 
 ### 6. Suggested Data Collection Form Contents (Google Form Structure)
 
-The data collection will be structured into several sections, including:
+The data collection structured into several sections, including:
 
 - General Information (Country, ACS Section, Reporting Period). 
 
