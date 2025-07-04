@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 // Update the schema to include fields from MOCK_REPORTS
 const reportSchema = new mongoose.Schema({
@@ -17,4 +17,4 @@ const reportSchema = new mongoose.Schema({
 // Create the model for a report
 const Report = mongoose.model('Report', reportSchema);
 
-export default Report;
+module.exports = Report;
