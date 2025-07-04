@@ -50,10 +50,10 @@ const App = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Update fetchReports to use the new API endpoint
+  // Update fetchReports to use the new Netlify serverless function endpoint
   const fetchReports = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/reports');
+      const response = await fetch('/.netlify/functions/reports');
       if (!response.ok) {
         throw new Error('Failed to fetch reports');
       }
