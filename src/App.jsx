@@ -18,6 +18,7 @@ import InterventionHeatMap from './components/InterventionHeatMap';
 import RegionalBarChart from './components/RegionalBarChart';
 import Pagination from './components/Pagination';
 import { ThemeProvider } from '../utils/themeContext';
+import LoginModal from './components/LoginModal';
 
 const theme = createTheme({
   palette: {
@@ -31,6 +32,7 @@ const App = () => {
   const [error, setError] = useState(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
   const [filters, setFilters] = useState({
     strategicResultArea: '',
@@ -53,7 +55,11 @@ const App = () => {
   // Update fetchReports to use the new Netlify serverless function endpoint
   const fetchReports = useCallback(async () => {
     try {
-      const response = await fetch('/.netlify/functions/reports');
+      // For local deployment, use the backend endpoint
+      const response = await fetch('http://localhost:3001/api/reports');
+      // For Netlify deployment, use the serverless function endpoint
+      // const response = await fetch('/.netlify/functions/reports');
+
       if (!response.ok) {
         throw new Error('Failed to fetch reports');
       }
@@ -267,6 +273,31 @@ const App = () => {
     setCurrentPage(1);
   }, [filters, selectedCountries]);
 
+  const handleLogin = async (email, password) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Login failed');
+      }
+
+      const { token } = await response.json();
+      localStorage.setItem('authToken', token);
+      alert('Login successful!');
+      setIsLoginModalOpen(false);
+    } catch (error) {
+      console.error('Login error:', error);
+      alert(error.message);
+    }
+  };
+
   if (error) {
     return (
       <MuiThemeProvider theme={theme}>
@@ -330,7 +361,7 @@ const App = () => {
                       />
                     </div>
                     <Button 
-                      onClick={() => setIsImportModalOpen(true)}
+                      onClick={() => setIsLoginModalOpen(true)}
                       variant="primary"
                       size="sm"
                       className="flex items-center whitespace-nowrap"
@@ -489,6 +520,13 @@ const App = () => {
           >
             <DataImportForm onClose={() => setIsImportModalOpen(false)} />
           </Modal>
+
+          {/* Login Modal */}
+          <LoginModal 
+            isOpen={isLoginModalOpen} 
+            onClose={() => setIsLoginModalOpen(false)} 
+            onLogin={handleLogin} 
+          />
 
           <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
             © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.

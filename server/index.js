@@ -4,6 +4,8 @@ import mongoose from 'mongoose';
 import {MOCK_REPORTS, STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from './data.js';
 import dotenv from 'dotenv';
 import Report from './models/Report.js';
+import authRoutes from './routes/auth.js';
+
 dotenv.config();
 
 const app = express();
@@ -15,10 +17,13 @@ app.use(express.json());
 // MongoDB connection
 const mongoUri = process.env.MONGO_URI || 'mongodb+srv://yonasmersha14:YMlyRM0wcEWPY9jg@acs-reporting.cxiacp4.mongodb.net/acs_reporting?retryWrites=true&w=majority';
 
-mongoose.connect(mongoUri)
-
-.then(() => console.log('Connected to MongoDB Atlas'))
-.catch((err) => console.error('Error connecting to MongoDB:', err));
+mongoose
+  .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log("Connected to MongoDB Atlas (Reporting Database)"))
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 app.get('/', (req, res) => {
   res.send('Welcome to the ACS Reporting Dashboard API!');
@@ -54,6 +59,8 @@ app.post('/api/reports', async (req, res) => {
     res.status(500).json({ error: 'Failed to save report' });
   }
 });
+
+app.use('/api/auth', authRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
