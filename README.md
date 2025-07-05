@@ -1,22 +1,23 @@
 # African Centre for Statistics Country-Based Reporting Dashboard
 
-This repository contains the concept and related documentation for the African Centre for Statistics (ACS) Country Engagement Dashboard, an internal reporting tool designed to enhance visibility, accountability, and strategic alignment of ACS interventions across African countries.
+This repository contains the concept and related documentation for the African Centre for Statistics (ACS) Country Engagement Dashboard, an internal reporting tool designed to enhance visibility, accountability, and strategic alignment of the interventions with the United Nations Economic Commission for Africa (UNECA) `Annual Business Plan (ABP)` and `Programme Planning and Budgeting (PPB)` framework.  
 
 
 ### 1. Overview
 
-The ACS Country Engagement Dashboard addresses the current lack of a centralized, dynamic platform for a country-level overview of ACS engagements. 
+The `ACS Country Engagement Dashboard` addresses the current lack of a centralized, dynamic platform for a country-level overview of ACS engagements. 
 
-It aims to provide a clear and interactive overview of ACS activities in each African country, linked directly to UNECA's strategic frameworks and delivery indicators. 
+It aims to provide a clear and interactive overview of ACS activities and interventions in each African country, linked directly to UNECA's strategic frameworks. 
+
+The mapping also organized by themes, such as `Strategic Result Areas`, `Sub Strategic Result Areas`, `Partnerships`,  `Project year`, `SDG contributions`, `Supporting links`, and `Detailed project descriptions`.  
 
 The dashboard will help in monitoring ACS's delivery, identifying gaps, and reporting results, particularly at the country level.
-
 
 ### 2. Objectives
 
 The dashboard is designed to:
 
-- Display ACS activities by country, mapped against `Programme Planning and Budgeting (PPB)` outputs and `Annual Business Plan (ABP)` priorities. 
+- Display ACS activities by country, mapped against `Annual Business Plan (ABP)` priorities and `Programme Planning and Budgeting (PPB)` outputs. 
 
 - Facilitate evidence-based reporting, strategic oversight, and coordination. 
 
@@ -26,8 +27,7 @@ The dashboard is designed to:
 
 ### 3. Core Features
 
-The dashboard will include the following core features:
-
+The dashboard include the following core features:
 
 #### General Features
 - Modern and clean React-based architecture
@@ -46,27 +46,28 @@ The dashboard will include the following core features:
 
 #### Advanced Filtering System
 - Filter by Strategic Result Areas (4):
-  - Production and Dissemination of Comparable Economic Data
-  - Integration of Statistical and Geospatial Information Frameworks
-  - Digital Transformation and Modernization of Statistical Systems
-  - Improved CRVS System
-- Sub-strategic result area filtering
-- Country-specific filtering
-- Partnership-based filtering
-- Clear selection button
+  - Strategic Result Area 1: Production and Dissemination of Comparable Economic Data  
+  - Strategic Result Area 2: Integration of Statistical and Geospatial Information Frameworks  
+  - Strategic Result Area 3: Digital Transformation and Modernization of Statistical Systems   
+  - Strategic Result Area 4: Improved CRVS System  
+
+- Sub-strategic result area filtering  
+- Country-specific filtering  
+- Partnership-based filtering  
+- Clear selection button  
 
 
 #### Detailed Report Cards
-- Comprehensive project information display
-- Expandable/collapsible detailed view
+- Comprehensive project information display  
+- Expandable/collapsible detailed view  
 - Report cards showing intervention details including:
-  - Strategic and sub-strategic result areas
-  - Intervention country
-  - Partnership information
-  - Project year
-  - SDG contributions
-  - Supporting links
-  - Detailed project descriptions
+  - Strategic and sub-strategic result areas  
+  - Intervention country  
+  - Partnership information  
+  - Project year  
+  - SDG contributions  
+  - Supporting links  
+  - Detailed project descriptions  
 
 #### Data Visualization Components:
 - Intervention Heat Map
@@ -143,9 +144,9 @@ The dashboard incorporated information across various ACS activities, including:
 
 - Lead Unit: Project Management Office (PMO), African Centre for Statistics (ACS). 
 
-- Economic, Infrastructure and Agriculture Statistics Section (EIASS).
-
 - Statistical Development, Data Innovation and Outreach Section (SDDIOS). 
+
+- Economic, Infrastructure and Agriculture Statistics Section (EIASS).
 
 ## License
 This project is licensed under the MIT License - see the LICENSE file for details.
