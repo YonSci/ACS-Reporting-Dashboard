@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Report = require('./models/Report.mjs'); // Updated to point to the local copy
+const Report = require('./models/Report.mjs').default; // Access the default export
 
 const mongoUri = process.env.MONGO_URI;
 
@@ -16,6 +16,7 @@ exports.handler = async (event, context) => {
   // Add debug logs to identify issues
   console.log('Event:', event);
   console.log('Context:', context);
+  console.log('Imported Report model:', Report); // Debug log to verify the Report model
 
   try {
     await connectToDatabase();
