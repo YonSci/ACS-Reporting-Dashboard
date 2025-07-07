@@ -71,7 +71,8 @@ const App = () => {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/filters');
+        //const response = await fetch('http://localhost:3001/api/filters');
+        const response = await fetch('/.netlify/functions/filters');
         if (!response.ok) {
           throw new Error('Failed to fetch filters');
         }
