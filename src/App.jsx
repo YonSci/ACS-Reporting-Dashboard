@@ -54,14 +54,17 @@ const App = () => {
   const fetchReports = useCallback(async () => {
     try {
       const response = await fetch('/.netlify/functions/reports');
-      //const response = await fetch('http://localhost:3001/api/reports');
-
       if (!response.ok) {
-        throw new Error('Failed to fetch reports');
+        throw new Error(`Failed to fetch reports: ${response.status} ${response.statusText}`);
+      }
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new Error('Invalid response format: Expected JSON');
       }
       const data = await response.json();
       setReports(data);
     } catch (error) {
+      console.error('Error fetching reports:', error);
       setError(error.message);
     } finally {
       setIsLoading(false);
