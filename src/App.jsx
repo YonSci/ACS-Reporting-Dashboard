@@ -11,6 +11,7 @@ import Button from './components/Button';
 import ConfirmDialog from './components/ConfirmDialog';
 import InterventionChart from './components/InterventionChart';
 import ExportSharePanel from './components/ExportSharePanel';
+import ReportManagement from './components/ReportManagement';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
@@ -55,12 +56,18 @@ const App = () => {
     try {
       const response = await fetch('/.netlify/functions/reports');
       if (!response.ok) {
-        throw new Error('Failed to fetch reports');
+        throw new Error(`Failed to fetch reports: ${response.status} ${response.statusText}`);
+      }
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        console.error('Invalid response format:', response);
+        throw new Error('Invalid response format: Expected JSON');
       }
       const data = await response.json();
       setReports(data);
     } catch (error) {
-      setError(error.message);
+      console.error('Error fetching reports:', error);
+      setError('Unable to load reports. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +76,8 @@ const App = () => {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/filters');
+        //const response = await fetch('http://localhost:3001/api/filters');
+        const response = await fetch('/.netlify/functions/filters');
         if (!response.ok) {
           throw new Error('Failed to fetch filters');
         }
@@ -222,6 +230,10 @@ const App = () => {
 
   const filteredReports = useMemo(() => {
     return reports.filter(report => {
+      if (!report || typeof report !== 'object') {
+        console.error('Invalid report data:', report);
+        return false;
+      }
       // Only apply filter if a specific value (not "All") is selected
       const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;
       
@@ -304,9 +316,15 @@ const App = () => {
   return (
     <ThemeProvider>
       <MuiThemeProvider theme={theme}>
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <Header />
           <main className="container mx-auto px-4 py-8">
+            <ReportManagement 
+              reports={reports}
+              isLoading={isLoading}
+              error={error}
+            />
+            
             {/* Filters Section */}
             <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
               <div className="flex flex-col space-y-4">

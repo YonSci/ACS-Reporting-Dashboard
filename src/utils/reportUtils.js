@@ -93,7 +93,7 @@ export const deleteFilterPreset = (presetId) => {
 
 export const submitReportData = async (reportData) => {
   try {
-    const response = await fetch('http://localhost:3001/api/reports', {
+    const response = await fetch('/.netlify/functions/reports', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -109,6 +109,27 @@ export const submitReportData = async (reportData) => {
     return await response.json();
   } catch (error) {
     console.error('Error submitting report data:', error);
+    throw error;
+  }
+};
+
+export const fetchReports = async () => {
+  try {
+    const response = await fetch('/.netlify/functions/reports', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch reports');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching reports:', error);
     throw error;
   }
 };

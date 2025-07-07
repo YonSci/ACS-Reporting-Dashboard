@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { MOCK_REPORTS } from '../data.js';
-import Report from '../models/Report.js';
+import Report from '../models/Report.mjs';
 import dotenv from 'dotenv';
 
 // Explicitly specify the path to the .env file
