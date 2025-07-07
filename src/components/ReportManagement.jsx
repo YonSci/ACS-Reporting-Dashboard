@@ -137,6 +137,7 @@ const ReportManagement = ({ reports, isLoading, error }) => {
 
   return (
     <div className="p-6 rounded-lg bg-white dark:bg-gray-800 shadow-lg border-2 border-gray-200 dark:border-gray-700">
+      {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-2">
           <ListBulletIcon className="w-6 h-6 text-slate-950 dark:text-gray-300" />
@@ -147,9 +148,6 @@ const ReportManagement = ({ reports, isLoading, error }) => {
             {reports.length} reports
           </span>
         </div>
-        <p className="mt-2 text-slate-900 dark:text-gray-300 font-medium">
-          Select a report to view its details and manage content
-        </p>
       </div>
 
       {/* Search and Basic Filters */}
@@ -209,6 +207,13 @@ const ReportManagement = ({ reports, isLoading, error }) => {
             isSelected={selectedReport?.id === report.id}
           />
         ))}
+      </div>
+
+      {/* Report Selection Instructions */}
+      <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-slate-700/50 border border-blue-100 dark:border-slate-600">
+        <p className="text-slate-900 dark:text-gray-300 font-medium">
+          Select a report from the list above to view its details and manage content
+        </p>
       </div>
 
       {/* Selected Report Details */}
