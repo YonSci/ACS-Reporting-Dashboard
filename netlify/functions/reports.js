@@ -1,12 +1,44 @@
 const mongoose = require('mongoose');
 const Report = require('./models/Report.cjs');
 
+const headers = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Content-Type': 'application/json'
+};
+
+// Sample data for initial testing
+const sampleReports = [
+  {
+    id: '1',
+    title: 'Economic Development Report 2023',
+    description: 'Annual report on economic development initiatives in Africa',
+    date: new Date('2023-12-01'),
+    strategicResultArea: 'Economic Development',
+    subStrategicResultArea: 'Trade and Industry',
+    interventionCountry: 'Kenya',
+    partnerships: ['Government Agencies', 'Private Sector'],
+    status: 'Published',
+    priority: 'High',
+    progress: 100
+  },
+  {
+    id: '2',
+    title: 'Healthcare Infrastructure Project',
+    description: 'Assessment of healthcare infrastructure development in East Africa',
+    date: new Date('2023-11-15'),
+    strategicResultArea: 'Social Development',
+    subStrategicResultArea: 'Healthcare',
+    interventionCountry: 'Tanzania',
+    partnerships: ['International Organizations', 'NGOs'],
+    status: 'In Progress',
+    priority: 'Medium',
+    progress: 60
+  }
+];
+
 const mongoUri = process.env.MONGO_URI;
-
-if (!mongoUri) {
-  console.error('MONGO_URI environment variable is not set');
-}
-
 let isConnected = false;
 
 const connectToDatabase = async () => {
@@ -22,14 +54,9 @@ const connectToDatabase = async () => {
   }
 };
 
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Content-Type': 'application/json'
-};
+exports.handler = async (event) => {
+  console.log('Function invoked with method:', event.httpMethod);
 
-exports.handler = async (event, context) => {
   // Handle preflight requests
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -39,8 +66,14 @@ exports.handler = async (event, context) => {
   }
 
   try {
+    // If MongoDB is not configured, return sample data
     if (!mongoUri) {
-      throw new Error('MongoDB connection string is not configured');
+      console.log('No MongoDB URI configured, returning sample data');
+      return {
+        statusCode: 200,
+        headers,
+        body: JSON.stringify(sampleReports)
+      };
     }
 
     await connectToDatabase();
@@ -50,19 +83,31 @@ exports.handler = async (event, context) => {
       return {
         statusCode: 200,
         headers,
-        body: JSON.stringify(reports)
+        body: JSON.stringify(reports || [])
       };
     }
 
     if (event.httpMethod === 'POST') {
-      const data = JSON.parse(event.body);
-      const newReport = new Report(data);
-      const savedReport = await newReport.save();
-      return {
-        statusCode: 201,
-        headers,
-        body: JSON.stringify(savedReport)
-      };
+      try {
+        const data = JSON.parse(event.body);
+        const newReport = new Report(data);
+        const savedReport = await newReport.save();
+        return {
+          statusCode: 201,
+          headers,
+          body: JSON.stringify(savedReport)
+        };
+      } catch (parseError) {
+        console.error('Error parsing request body:', parseError);
+        return {
+          statusCode: 400,
+          headers,
+          body: JSON.stringify({
+            error: 'Invalid request body',
+            message: parseError.message
+          })
+        };
+      }
     }
 
     return {
