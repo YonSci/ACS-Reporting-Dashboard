@@ -59,6 +59,7 @@ const App = () => {
       }
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
+        console.error('Invalid response format:', response);
         throw new Error('Invalid response format: Expected JSON');
       }
       const data = await response.json();
