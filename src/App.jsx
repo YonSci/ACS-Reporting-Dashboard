@@ -66,7 +66,7 @@ const App = () => {
       setReports(data);
     } catch (error) {
       console.error('Error fetching reports:', error);
-      setError(error.message);
+      setError('Unable to load reports. Please try again later.');
     } finally {
       setIsLoading(false);
     }
@@ -229,6 +229,10 @@ const App = () => {
 
   const filteredReports = useMemo(() => {
     return reports.filter(report => {
+      if (!report || typeof report !== 'object') {
+        console.error('Invalid report data:', report);
+        return false;
+      }
       // Only apply filter if a specific value (not "All") is selected
       const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;
       

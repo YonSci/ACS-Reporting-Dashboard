@@ -13,7 +13,6 @@ const connectToDatabase = async () => {
 };
 
 exports.handler = async (event, context) => {
-  // Add debug logs to identify issues
   console.log('Event:', event);
   console.log('Context:', context);
 
@@ -22,16 +21,15 @@ exports.handler = async (event, context) => {
 
     if (event.httpMethod === 'GET') {
       const reports = await Report.find();
-      // Add debug logs to verify the result of Report.find()
       console.log('Reports:', reports);
-      // Add CORS headers to the response
       return {
         statusCode: 200,
         headers: {
-          'Access-Control-Allow-Origin': '*', // Replace '*' with your Netlify domain for better security
+          'Access-Control-Allow-Origin': 'https://acs-reporting-dashboard.netlify.app',
           'Access-Control-Allow-Methods': 'GET, POST',
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(reports),
+        body: JSON.stringify(reports || []),
       };
     }
 
@@ -40,19 +38,28 @@ exports.handler = async (event, context) => {
       const savedReport = await newReport.save();
       return {
         statusCode: 201,
+        headers: {
+          'Content-Type': 'application/json',
+        },
         body: JSON.stringify(savedReport),
       };
     }
 
     return {
       statusCode: 405,
+      headers: {
+        'Content-Type': 'application/json',
+      },
       body: JSON.stringify({ error: 'Method not allowed' }),
     };
   } catch (error) {
     console.error('Error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal Server Error' }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ error: 'Internal Server Error', details: error.message }),
     };
   }
 };
