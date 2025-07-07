@@ -54,6 +54,8 @@ const App = () => {
   const fetchReports = useCallback(async () => {
     try {
       const response = await fetch('/.netlify/functions/reports');
+      //const response = await fetch('http://localhost:3001/api/reports');
+
       if (!response.ok) {
         throw new Error('Failed to fetch reports');
       }
