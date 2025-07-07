@@ -3,7 +3,7 @@ import cors from 'cors';
 import mongoose from 'mongoose';
 import {MOCK_REPORTS, STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from './data.js';
 import dotenv from 'dotenv';
-import Report from './models/Report.mjs';
+import Report from './models/Report.js';
 dotenv.config();
 
 const app = express();
