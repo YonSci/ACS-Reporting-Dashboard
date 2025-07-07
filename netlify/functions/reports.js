@@ -31,6 +31,7 @@ exports.handler = async (event, context) => {
         headers: {
           'Access-Control-Allow-Origin': '*', // Replace '*' with your Netlify domain for better security
           'Access-Control-Allow-Methods': 'GET, POST',
+          'Access-Control-Allow-Headers': 'Content-Type',
         },
         body: JSON.stringify(reports),
       });
@@ -39,6 +40,7 @@ exports.handler = async (event, context) => {
         headers: {
           'Access-Control-Allow-Origin': '*', // Replace '*' with your Netlify domain for better security
           'Access-Control-Allow-Methods': 'GET, POST',
+          'Access-Control-Allow-Headers': 'Content-Type',
         },
         body: JSON.stringify(reports),
       };
