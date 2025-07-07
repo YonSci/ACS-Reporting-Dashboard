@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Report = require('../../server/models/Report.mjs'); // Updated to include .mjs extension
+const Report = require('./models/Report.mjs'); // Updated to point to the local copy
 
 const mongoUri = process.env.MONGO_URI;
 
