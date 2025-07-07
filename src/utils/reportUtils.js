@@ -93,7 +93,7 @@ export const deleteFilterPreset = (presetId) => {
 
 export const submitReportData = async (reportData) => {
   try {
-    const response = await fetch('http://localhost:3001/api/reports', {
+    const response = await fetch('/.netlify/functions/reports', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
