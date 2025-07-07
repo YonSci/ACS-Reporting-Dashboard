@@ -32,6 +32,7 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*', // Replace '*' with your Netlify domain for better security
           'Access-Control-Allow-Methods': 'GET, POST',
           'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json', // Ensure response is identified as JSON
         },
         body: JSON.stringify(reports),
       });
@@ -41,6 +42,7 @@ exports.handler = async (event, context) => {
           'Access-Control-Allow-Origin': '*', // Replace '*' with your Netlify domain for better security
           'Access-Control-Allow-Methods': 'GET, POST',
           'Access-Control-Allow-Headers': 'Content-Type',
+          'Content-Type': 'application/json', // Ensure response is identified as JSON
         },
         body: JSON.stringify(reports),
       };
