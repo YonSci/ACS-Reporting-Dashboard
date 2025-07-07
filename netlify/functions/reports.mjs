@@ -26,6 +26,8 @@ export const handler = async (event, context) => {
 
     if (event.httpMethod === 'GET') {
       const reports = await Report.find();
+      // Add debug logs to verify the result of Report.find()
+      console.log('Reports:', reports);
       // Add CORS headers to the response
       return {
         statusCode: 200,
