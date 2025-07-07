@@ -11,6 +11,7 @@ import Button from './components/Button';
 import ConfirmDialog from './components/ConfirmDialog';
 import InterventionChart from './components/InterventionChart';
 import ExportSharePanel from './components/ExportSharePanel';
+import ReportManagement from './components/ReportManagement';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
@@ -315,9 +316,15 @@ const App = () => {
   return (
     <ThemeProvider>
       <MuiThemeProvider theme={theme}>
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
           <Header />
           <main className="container mx-auto px-4 py-8">
+            <ReportManagement 
+              reports={reports}
+              isLoading={isLoading}
+              error={error}
+            />
+            
             {/* Filters Section */}
             <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
               <div className="flex flex-col space-y-4">

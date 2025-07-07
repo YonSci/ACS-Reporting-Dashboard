@@ -112,3 +112,24 @@ export const submitReportData = async (reportData) => {
     throw error;
   }
 };
+
+export const fetchReports = async () => {
+  try {
+    const response = await fetch('/.netlify/functions/reports', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to fetch reports');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching reports:', error);
+    throw error;
+  }
+};
