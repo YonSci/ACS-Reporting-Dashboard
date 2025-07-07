@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Report = require('../../server/models/Report.mjs'); // Updated to include .mjs extension
+const Report = require('../../server/models/Report');
 
 const mongoUri = process.env.MONGO_URI;
 
@@ -7,7 +7,10 @@ let isConnected = false;
 
 const connectToDatabase = async () => {
   if (!isConnected) {
-    await mongoose.connect(mongoUri); // Removed deprecated options
+    await mongoose.connect(mongoUri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
     isConnected = true;
   }
 };
@@ -16,6 +19,7 @@ exports.handler = async (event, context) => {
   // Add debug logs to identify issues
   console.log('Event:', event);
   console.log('Context:', context);
+  console.log('MONGO_URI:', mongoUri);
 
   try {
     await connectToDatabase();
