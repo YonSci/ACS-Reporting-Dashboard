@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const Report = require('../../server/models/Report');
+import mongoose from 'mongoose';
+import Report from '../../server/models/Report.mjs';
 
 const mongoUri = process.env.MONGO_URI;
 
@@ -15,7 +15,7 @@ const connectToDatabase = async () => {
   }
 };
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   // Add debug logs to identify issues
   console.log('Event:', event);
   console.log('Context:', context);
