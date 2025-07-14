@@ -451,7 +451,10 @@ const App = () => {
                   </div>
                   <div className="space-y-4">
                     {currentItems.map(report => (
-                      <ReportCard key={report.id} report={report} />
+                      <ReportCard
+                        key={report._id || report.id || `${report.interventionCountry}-${report.year}-${report.strategicResultArea}`}
+                        report={report}
+                      />
                     ))}
                     {filteredReports.length === 0 && (
                       <div className="text-center py-8 text-gray-400">

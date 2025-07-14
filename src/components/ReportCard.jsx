@@ -120,7 +120,7 @@ const ReportCard = ({ report }) => {
           {Array.isArray(report.details) && report.details.length > 0 ? (
             <ul className="list-none space-y-2">
               {report.details.map((detail, index) => (
-                <li key={index} className="flex items-baseline text-sm">
+                <li key={`${report.id}-detail-${index}`} className="flex items-baseline text-sm">
                   <span className="text-blue-700 dark:text-blue-400 mr-2">{toRomanNumeral(index + 1)}.</span>
                   <span className="text-gray-700 dark:text-gray-300">{detail}</span>
                 </li>

@@ -1,0 +1,1 @@
+module.exports = require('./ACS-Reporting-Dashboard/netlify/functions/filters.js')
