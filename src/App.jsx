@@ -52,9 +52,10 @@ const App = () => {
 
   const fetchReports = useCallback(async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/reports');
+      const baseUrl = import.meta.env.PROD ? '/.netlify/functions' : 'http://localhost:3001/api';
+      const response = await fetch(`${baseUrl}/reports`);
       if (!response.ok) {
-        throw new Error('Failed to fetch reports');
+        throw new Error(`Failed to fetch reports: ${response.status}`);
       }
       const data = await response.json();
       setReports(data);
@@ -68,9 +69,10 @@ const App = () => {
   useEffect(() => {
     const fetchFilters = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/filters');
+        const baseUrl = import.meta.env.PROD ? '/.netlify/functions' : 'http://localhost:3001/api';
+        const response = await fetch(`${baseUrl}/filters`);
         if (!response.ok) {
-          throw new Error('Failed to fetch filters');
+          throw new Error(`Failed to fetch filters: ${response.status}`);
         }
         const data = await response.json();
         const { strategicResultHierarchy, allAfricanCountries, partnerships } = data;
