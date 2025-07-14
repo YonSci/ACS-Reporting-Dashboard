@@ -1,0 +1,9 @@
+{
+  "name": "acs-reporting-dashboard-functions",
+  "version": "1.0.0",
+  "description": "Netlify functions for ACS Reporting Dashboard",
+  "type": "module",
+  "dependencies": {
+    "mongoose": "^8.1.1"
+  }
+} 
