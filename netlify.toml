@@ -7,6 +7,17 @@
   node_bundler = "esbuild"
   external_node_modules = ["mongoose"]
 
+[build.environment]
+  NODE_VERSION = "18"
+
+# Production context
+[context.production.environment]
+  NODE_ENV = "production"
+
+# Development context
+[context.branch-deploy.environment]
+  NODE_ENV = "development"
+
 [[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
