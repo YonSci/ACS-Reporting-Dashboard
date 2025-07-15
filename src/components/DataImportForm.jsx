@@ -131,7 +131,7 @@ const DataImportForm = () => {
       <Box sx={{ maxWidth: 800, margin: 'auto', padding: 3 }}>
         <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
           <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', marginBottom: 3 }}>
-            Import Data
+            New Report
           </Typography>
 
           {error && (
@@ -165,7 +165,7 @@ const DataImportForm = () => {
                 sx={{ mt: 3, px: 4, py: 1.5 }}
                 fullWidth
               >
-                {isSubmitting ? 'Importing...' : 'Import Data'}
+                {isSubmitting ? 'Importing...' : 'Submit'}
               </Button>
             </Form>
           </Box>
