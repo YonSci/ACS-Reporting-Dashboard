@@ -1,12 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-// Initialize context with default values to avoid undefined check
 const ThemeContext = createContext({
   isDark: false,
   toggleTheme: () => {},
 });
 
-// Custom hook for using theme
 const useTheme = () => {
   const context = useContext(ThemeContext);
   if (!context) {
@@ -15,30 +13,49 @@ const useTheme = () => {
   return context;
 };
 
-// Theme provider component
 const ThemeProvider = ({ children }) => {
+  // Initialize theme state from localStorage or system preference
   const [isDark, setIsDark] = useState(() => {
-    // Check for saved theme preference or system preference
-    if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('theme');
-      if (saved) {
-        return saved === 'dark';
-      }
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (typeof window === 'undefined') return false;
+    
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      return savedTheme === 'dark';
     }
-    return false;
+    
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
 
+  // Update document class and localStorage when theme changes
   useEffect(() => {
-    // Update class on document.documentElement when theme changes
+    const root = window.document.documentElement;
+    
     if (isDark) {
-      document.documentElement.classList.add('dark');
+      root.classList.add('dark');
+      root.style.colorScheme = 'dark';
       localStorage.setItem('theme', 'dark');
     } else {
-      document.documentElement.classList.remove('dark');
+      root.classList.remove('dark');
+      root.style.colorScheme = 'light';
       localStorage.setItem('theme', 'light');
     }
   }, [isDark]);
+
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = (e) => {
+      const savedTheme = localStorage.getItem('theme');
+      // Only update theme if user hasn't manually set a preference
+      if (!savedTheme) {
+        setIsDark(e.matches);
+      }
+    };
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
 
   const toggleTheme = () => {
     setIsDark(prev => !prev);

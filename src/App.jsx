@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
+import { useTheme, ThemeProvider } from './utils/themeContext';
 
 import Header from './components/Header';
 import Modal from './components/Modal';
@@ -17,15 +18,16 @@ import { generateMapData } from './utils/geoUtils';
 import InterventionHeatMap from './components/InterventionHeatMap';
 import RegionalBarChart from './components/RegionalBarChart';
 import Pagination from './components/Pagination';
-import { ThemeProvider } from '../utils/themeContext';
-
-const theme = createTheme({
-  palette: {
-    mode: 'light', // We'll handle dark mode through Tailwind
-  },
-});
 
 const App = () => {
+  const { isDark } = useTheme();
+  
+  const theme = useMemo(() => createTheme({
+    palette: {
+      mode: isDark ? 'dark' : 'light',
+    },
+  }), [isDark]);
+
   const [reports, setReports] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -303,11 +305,10 @@ const App = () => {
   const isSubSraDropdownDisabled = !filters.strategicResultArea || !strategicResultHierarchy || strategicResultHierarchy[filters.strategicResultArea]?.length === 0;
 
   return (
-    <ThemeProvider>
-      <MuiThemeProvider theme={theme}>
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-          <Header />
-          <main className="container mx-auto px-4 py-8">
+    <MuiThemeProvider theme={theme}>
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+        <Header />
+        <main className="container mx-auto px-4 py-8">
             {/* Filters Section */}
             <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
               <div className="flex flex-col space-y-4">
@@ -499,8 +500,15 @@ const App = () => {
           </footer>
         </div>
       </MuiThemeProvider>
+    );
+  };
+
+const AppWrapper = () => {
+  return (
+    <ThemeProvider>
+      <App />
     </ThemeProvider>
   );
 };
 
-export default App;
+export default AppWrapper;

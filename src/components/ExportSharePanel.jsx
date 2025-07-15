@@ -3,8 +3,10 @@ import { createPortal } from 'react-dom';
 import { convertToCSV, downloadCSV, generateShareableLink, exportToExcel, exportToPDF } from '../utils/exportUtils';
 import Button from './Button';
 import { ArrowDownTrayIcon, ShareIcon, DocumentDuplicateIcon, XMarkIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
+import { useTheme } from '../utils/themeContext';
 
 const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
+  const { isDark } = useTheme();
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
@@ -74,15 +76,15 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
       />
       
       {/* Dialog */}
-      <div className="relative mt-32 w-[32rem] bg-slate-800 border border-slate-700 rounded-lg shadow-xl p-4" style={{ zIndex: 999999 }}>
+      <div className={`relative mt-32 w-[32rem] ${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'} border rounded-lg shadow-xl p-4`} style={{ zIndex: 999999 }}>
         <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-semibold text-gray-200 flex items-center">
+          <h3 className={`text-lg font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'} flex items-center`}>
             <ShareIcon className="w-5 h-5 mr-2 text-blue-400" />
             Share View
           </h3>
           <button
             onClick={() => setShowShareDialog(false)}
-            className="text-gray-400 hover:text-gray-300 transition-colors"
+            className={`${isDark ? 'text-gray-400 hover:text-gray-300' : 'text-gray-600 hover:text-gray-800'} transition-colors`}
             title="Close dialog"
           >
             <XMarkIcon className="w-5 h-5" />
@@ -90,7 +92,7 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
         </div>
         
         <div className="space-y-3">
-          <p className="text-sm text-gray-400">
+          <p className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
             Share this link to show the current view with all selected filters:
           </p>
           <div className="flex gap-2">
@@ -99,7 +101,7 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
                 type="text"
                 value={generateShareableLink(filters, selectedCountries)}
                 readOnly
-                className="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-gray-300 pr-24"
+                className={`w-full ${isDark ? 'bg-slate-900 border-slate-700 text-gray-300' : 'bg-gray-50 border-gray-200 text-gray-700'} border rounded px-3 py-2 text-sm pr-24`}
               />
               <Button
                 onClick={handleCopyLink}
@@ -113,9 +115,9 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
             </div>
           </div>
           
-          <div className="mt-4 pt-3 border-t border-slate-700">
-            <h4 className="text-sm font-medium text-gray-300 mb-2">Included in this view:</h4>
-            <ul className="text-sm text-gray-400 space-y-1">
+          <div className={`mt-4 pt-3 border-t ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
+            <h4 className={`text-sm font-medium ${isDark ? 'text-gray-300' : 'text-gray-700'} mb-2`}>Included in this view:</h4>
+            <ul className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} space-y-1`}>
               <li className="flex items-center">
                 <span className="w-4 h-4 rounded-full bg-blue-500/20 border border-blue-500/40 mr-2 flex-shrink-0" />
                 {reports.length} filtered reports

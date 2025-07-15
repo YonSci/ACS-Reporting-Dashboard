@@ -2,20 +2,20 @@ import React from 'react';
 import { useTheme } from '../utils/themeContext';
 
 const ThemeToggle = () => {
-  const { isDarkMode, toggleTheme } = useTheme();
+  const { isDark, toggleTheme } = useTheme();
 
   return (
     <button
       onClick={toggleTheme}
       className="relative inline-flex items-center justify-center w-12 h-6 rounded-full bg-slate-200 dark:bg-slate-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900"
-      aria-label={`Switch to ${isDarkMode ? 'light' : 'dark'} mode`}
+      aria-label={`Switch to ${isDark ? 'light' : 'dark'} mode`}
     >
       <span
         className={`absolute left-1 transform transition-transform duration-200 ease-in-out ${
-          isDarkMode ? 'translate-x-6' : 'translate-x-0'
+          isDark ? 'translate-x-6' : 'translate-x-0'
         }`}
       >
-        {isDarkMode ? (
+        {isDark ? (
           <svg
             className="w-4 h-4 text-yellow-400"
             fill="currentColor"

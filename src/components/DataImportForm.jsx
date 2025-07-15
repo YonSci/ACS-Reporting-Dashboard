@@ -6,56 +6,10 @@ import { createTheme } from '@mui/material/styles';
 import { reportSchema, uiSchema } from '../schemas/reportSchema';
 import { submitReportData } from '../utils/reportUtils';
 import { STRATEGIC_RESULT_AREAS, STRATEGIC_RESULTS_HIERARCHY } from '../constants';
-
-const theme = createTheme({
-  components: {
-    MuiTextField: {
-      defaultProps: {
-        variant: 'outlined',
-        fullWidth: true,
-      },
-    },
-    MuiSelect: {
-      defaultProps: {
-        variant: 'outlined',
-        fullWidth: true,
-      },
-    },
-    MuiFormControl: {
-      defaultProps: {
-        fullWidth: true,
-      },
-      styleOverrides: {
-        root: {
-          marginBottom: '1rem',
-        },
-      },
-    },
-  },
-});
-
-const customFormStyle = {
-  '& .MuiFormControl-root': {
-    marginBottom: '1.5rem',
-  },
-  '& .field-description': {
-    marginTop: '-0.5rem',
-    marginBottom: '0.5rem',
-    color: 'rgba(0, 0, 0, 0.6)',
-    fontSize: '0.875rem',
-  },
-  '& .array-item': {
-    marginBottom: '1rem',
-    padding: '1rem',
-    borderRadius: '4px',
-    border: '1px solid rgba(0, 0, 0, 0.12)',
-  },
-  '& .array-item-toolbox': {
-    marginTop: '0.5rem',
-  },
-};
+import { useTheme } from '../utils/themeContext';
 
 const DataImportForm = () => {
+  const { isDark } = useTheme();
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -126,11 +80,109 @@ const DataImportForm = () => {
     }
   };
 
+  const theme = createTheme({
+    palette: {
+      mode: isDark ? 'dark' : 'light',
+    },
+    components: {
+      MuiTextField: {
+        defaultProps: {
+          variant: 'outlined',
+          fullWidth: true,
+        },
+      },
+      MuiSelect: {
+        defaultProps: {
+          variant: 'outlined',
+          fullWidth: true,
+        },
+      },
+      MuiFormControl: {
+        defaultProps: {
+          fullWidth: true,
+        },
+        styleOverrides: {
+          root: {
+            marginBottom: '1rem',
+          },
+        },
+      },
+      MuiTypography: {
+        styleOverrides: {
+          root: {
+            color: isDark ? '#fff' : '#000',
+          },
+        },
+      },
+      MuiInputLabel: {
+        styleOverrides: {
+          root: {
+            color: isDark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+          },
+        },
+      },
+      MuiOutlinedInput: {
+        styleOverrides: {
+          root: {
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDark ? 'rgba(255, 255, 255, 0.23)' : 'rgba(0, 0, 0, 0.23)',
+            },
+            '&:hover .MuiOutlinedInput-notchedOutline': {
+              borderColor: isDark ? 'rgba(255, 255, 255, 0.4)' : 'rgba(0, 0, 0, 0.4)',
+            },
+          },
+        },
+      },
+    },
+  });
+
+  const customFormStyle = {
+    '& .MuiFormControl-root': {
+      marginBottom: '1.5rem',
+    },
+    '& .field-description': {
+      marginTop: '-0.5rem',
+      marginBottom: '0.5rem',
+      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+      fontSize: '0.875rem',
+    },
+    '& .array-item': {
+      marginBottom: '1rem',
+      padding: '1rem',
+      borderRadius: '4px',
+      border: `1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)'}`,
+    },
+    '& .array-item-toolbox': {
+      marginTop: '0.5rem',
+    },
+    '& .control-label': {
+      color: isDark ? '#fff' : '#000',
+    },
+    '& .field-description': {
+      color: isDark ? 'rgba(255, 255, 255, 0.6)' : 'rgba(0, 0, 0, 0.6)',
+    },
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <Box sx={{ maxWidth: 800, margin: 'auto', padding: 3 }}>
-        <Paper elevation={3} sx={{ padding: 3, marginBottom: 3 }}>
-          <Typography variant="h4" gutterBottom sx={{ color: 'primary.main', marginBottom: 3 }}>
+        <Paper 
+          elevation={3} 
+          sx={{ 
+            padding: 3, 
+            marginBottom: 3,
+            backgroundColor: isDark ? 'rgba(30, 41, 59, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <Typography 
+            variant="h4" 
+            gutterBottom 
+            sx={{ 
+              color: isDark ? '#fff' : '#000',
+              marginBottom: 3 
+            }}
+          >
             New Report
           </Typography>
 

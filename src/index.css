@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply transition-colors duration-200;
+  }
+
+  /* Smooth theme transitions for common elements */
+  *, *::before, *::after {
+    @apply transition-colors duration-200;
+  }
+}
+
+/* Dark mode styles */
+.dark {
+  color-scheme: dark;
+} 
