@@ -10,6 +10,7 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const [exportError, setExportError] = useState(null);
 
   // Close dialogs on escape key or outside click
   useEffect(() => {
@@ -46,9 +47,17 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
     setShowExportOptions(false);
   };
 
-  const handleExportPDF = () => {
-    exportToPDF(reports);
-    setShowExportOptions(false);
+  const handleExportPDF = async () => {
+    try {
+      setExportError(null);
+      await exportToPDF(reports);
+      setShowExportOptions(false);
+    } catch (error) {
+      console.error('PDF Export Error:', error);
+      setExportError(error.message);
+      // Clear error after 5 seconds
+      setTimeout(() => setExportError(null), 5000);
+    }
   };
 
   const handleShare = () => {
@@ -188,6 +197,15 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
             Share
           </Button>
         </div>
+        
+        {/* Error Message */}
+        {exportError && (
+          <div className="absolute top-full left-0 mt-2 w-64 bg-red-50 dark:bg-red-900/50 border border-red-200 dark:border-red-800 rounded-lg p-3 shadow-lg z-50">
+            <p className="text-sm text-red-600 dark:text-red-400">
+              {exportError}
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Share Dialog Portal */}

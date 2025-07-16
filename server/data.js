@@ -1,5 +1,3 @@
-
-
 export const AfricaCountryCodes = {
   ALGERIA: 'Algeria',
   ANGOLA: 'Angola',
@@ -132,7 +130,7 @@ export const MOCK_REPORTS = [
       "partnerships": "WTO, OECD",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": ["https://example.com/report1", "https://example.com/documentation"],
       "details": ""
     },
     
@@ -144,7 +142,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geospatial databases develped",
         "Compiled several data sets including geospatial information, satellite imagery, demographic, and socio-economic data",
@@ -161,7 +159,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -177,7 +175,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A well-organized Census Monitoring Dashboard developed",
         "Census monitoring capacities of respective countries developed"
@@ -191,7 +189,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Post-Enumeration auto-matching completed in Gambia, with IT assets such as the census monitoring dashboard, tablets/smartphones, and a field issues tracking system deployed.",
         "Capacities in the respective countries developed to undertake high quality and timely censuses that fulfil the five qualities defined by the UN of individual enumeration, universality within a defined territory, simultaneity, and defined periodicity."
@@ -205,7 +203,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "The performance Dashboard launched and in Botswana,"
       ]
@@ -218,7 +216,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework"
       ]
@@ -231,7 +229,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -244,7 +242,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -258,7 +256,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A national CRVS stakeholders coordination framework established",
         "Key national priorities through the application of the CRVS systems improvement framework identified"
@@ -272,7 +270,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed",
         "Geospatial databeses developed"
@@ -286,7 +284,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A thorough analysis of the quality and structure of agropastoral data completed",
         "Quality assurance on the centralized agropastoral data",
@@ -301,7 +299,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A well-organized Census Monitoring Dashboard developed",
         "Census monitoring capacities of respective countries developed"
@@ -315,7 +313,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Assessment of reporting and dissemination needs identified",
         "Country reporting and dissemination platform in four member States deployed",
@@ -330,7 +328,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A national CRVS stakeholders coordination framework established",
         "Key national priorities through the application of the CRVS systems improvement framework identified"
@@ -344,7 +342,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Comprehensive support provided in the form of supplying tablets, utilizing a census-monitoring dashboard and help desk tool."
       ]
@@ -357,7 +355,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -373,7 +371,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework",
         "Country Action plan developed on IGIF"
@@ -387,7 +385,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -400,7 +398,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Advisory technical support to review and validate the methodology and preliminary results of the Turnover Indices derived from administrative data",
         "A comprehensive roadmap has been prepared to finalize the production of the Turnover Index"
@@ -414,7 +412,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Advisory technical support to finalize the configuration of their national open SDG platforms.",
         "Capacities built in standardizing and harmonizing SDG data and metadata for machine-readable dissemination."
@@ -428,7 +426,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework"
       ]
@@ -441,7 +439,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -454,7 +452,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Technical advisory support provided on African Geodetic Reference Frame (AFREF) implementation"
       ]
@@ -467,7 +465,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -481,7 +479,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized multiple training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -495,7 +493,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A well-organized Census Monitoring Dashboard developed",
         "Census monitoring capacities of respective countries developed"
@@ -509,7 +507,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Post-Enumeration auto-matching completed in Gambia, with IT assets such as the census monitoring dashboard, tablets/smartphones, and a field issues tracking system deployed.",
         "Census project management toolkit provided, alongside dissemination of results and the use of Computer-Assisted Personal Interviews (CAPI)"
@@ -523,7 +521,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -539,7 +537,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized multiple training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -553,7 +551,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Capacities in the respective countries developed to undertake high quality and timely censuses that fulfil the five qualities defined by the UN of individual enumeration, universality within a defined territory, simultaneity, and defined periodicity."
       ]
@@ -568,7 +566,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Scoping missions to understand the existing practices",
         "Capacity development trainings and experience sharing stages with NSO in Kenya organized to develop institutional frameworks and enhance technical skills necessary for the regular production of GDP and other critical indicators in accordance with the 2008 System of National Accounts.",
@@ -585,7 +583,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geospatial databeses developed"
       ]
@@ -600,7 +598,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Spatial patterns and hotspots of vulnerability to climate change impacts on food security, especially in rain-fed agriculture and fragile ecosystems identified",
         "Interactions between climate variability, environmental degradation, and socioeconomic factors affecting food production and nutrition anakyzed",
@@ -618,7 +616,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Available administrative data sources relevant to GDP compilation reviewed",
         "Tools are being utilized to gather the necessary administrative data for GDP calculation"
@@ -634,7 +632,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Capacity development of NSO staff on creating a new master sampling frame, including preparation for the fourth Eritrean Population and Health Survey.",
         "Development of survey tools, including questionnaires, the computer-Assisted Personal Interview (CAPI) application, and related documentation.",
@@ -649,7 +647,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -663,7 +661,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework"
       ]
@@ -676,7 +674,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -689,7 +687,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Technical advisory support provided on African Geodetic Reference Frame (AFREF) implementation"
       ]
@@ -702,7 +700,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -716,7 +714,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Capacities in the respective countries developed to undertake high quality and timely censuses that fulfil the five qualities defined by the UN of individual enumeration, universality within a defined territory, simultaneity, and defined periodicity."
       ]
@@ -729,7 +727,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A well-organized Census Monitoring Dashboard developed",
         "Census monitoring capacities of respective countries developed"
@@ -743,7 +741,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Post-Enumeration auto-matching completed in Gambia, with IT assets such as the census monitoring dashboard, tablets/smartphones, and a field issues tracking system deployed.",
         "Capacities in the respective countries developed to undertake high quality and timely censuses that fulfil the five qualities defined by the UN of individual enumeration, universality within a defined territory, simultaneity, and defined periodicity."
@@ -757,7 +755,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Assessment of reporting and dissemination needs identified",
         "Country reporting and dissemination platform in four member States deployed",
@@ -772,7 +770,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Comprehensive support provided in the form of supplying tablets, utilizing a census-monitoring dashboard and help desk tool."
       ]
@@ -785,7 +783,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -801,7 +799,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A national CRVS stakeholders coordination framework established",
         "Key national priorities through the application of the CRVS systems improvement framework identified"
@@ -815,7 +813,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -831,7 +829,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework"
       ]
@@ -844,7 +842,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -857,7 +855,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Technical advisory support provided on African Geodetic Reference Frame (AFREF) implementation"
       ]
@@ -870,7 +868,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -884,7 +882,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -900,7 +898,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized multiple training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -914,7 +912,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized  training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -928,7 +926,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A national CRVS stakeholders coordination framework established",
         "Key national priorities through the application of the CRVS systems improvement framework identified"
@@ -942,7 +940,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geospatial databases develped"
       ]
@@ -955,7 +953,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Map and analyze the distribution of water, energy, and food resources, identifying challenges and opportunities completed",
         "Design coordinated interventions and business models to optimize benefits across sectors.",
@@ -970,7 +968,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "The technical and advisory supports tto develop the performance management dasahboard are ongoing in Malawi"
       ]
@@ -983,7 +981,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "The researchers have been studying the determinants of incomplete registration of vital events and identifying barriers to universal coverage.",
         "Findings from respective researchers have been disseminated to governments to help address barriers related to CRVS and improve registration systems."
@@ -997,7 +995,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1013,7 +1011,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework",
         "Developed country Action Plan on IGIF"
@@ -1027,7 +1025,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -1040,7 +1038,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Technical advisory support provided on African Geodetic Reference Frame (AFREF) implementation"
       ]
@@ -1053,7 +1051,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -1067,7 +1065,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1083,7 +1081,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1099,7 +1097,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1115,7 +1113,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework"
       ]
@@ -1128,7 +1126,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Technical advisory support provided on African Geodetic Reference Frame (AFREF) implementation"
       ]
@@ -1141,7 +1139,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -1155,7 +1153,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geospatial databeses developed"
       ]
@@ -1168,7 +1166,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Spatial patterns and hotspots of vulnerability to climate change impacts on food security, especially in rain-fed agriculture and fragile ecosystems identified",
         "Interactions between climate variability, environmental degradation, and socioeconomic factors affecting food production and nutrition anakyzed",
@@ -1184,7 +1182,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Technical advisory support and experience sharing visit on Framework for Measuring South-South Cooperation and its accompanying Manual conducted",
         "Training workshop on the South-South Cooperation measurement framework",
@@ -1199,7 +1197,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Assessment of reporting and dissemination needs identified",
         "Country reporting and dissemination platform in four member States deployed",
@@ -1214,7 +1212,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "The researchers have been studying the determinants of incomplete registration of vital events and identifying barriers to universal coverage.",
         "Findings from respective researchers have been disseminated to governments to help address barriers related to CRVS and improve registration systems."
@@ -1231,7 +1229,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1250,7 +1248,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized multiple training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -1267,7 +1265,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -1284,7 +1282,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "The researchers have been studying the determinants of incomplete registration of vital events and identifying barriers to universal coverage.",
         "Findings from respective researchers have been disseminated to governments to help address barriers related to CRVS and improve registration systems."
@@ -1298,7 +1296,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized  training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -1312,7 +1310,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework"
       ]
@@ -1325,7 +1323,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -1338,7 +1336,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Technical advisory support provided on African Geodetic Reference Frame (AFREF) implementation"
       ]
@@ -1351,7 +1349,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -1365,7 +1363,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Spatial patterns and hotspots of vulnerability to climate change impacts on food security, especially in rain-fed agriculture and fragile ecosystems identified",
         "Interactions between climate variability, environmental degradation, and socioeconomic factors affecting food production and nutrition anakyzed",
@@ -1381,7 +1379,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -1395,7 +1393,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1411,7 +1409,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1427,7 +1425,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Workshops and trainings facilitated on United Nations Integrated Geospatial Information Framework"
       ]
@@ -1440,7 +1438,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed.",
         "Geospatial datasets adopted for other countries"
@@ -1454,7 +1452,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Implementing land reforms and cadastral urban land management promoted",
         "Technical advisory support on land reforms and cadastral urban land management provided"
@@ -1468,7 +1466,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "The researchers have been studying the determinants of incomplete registration of vital events and identifying barriers to universal coverage.",
         "Findings from respective researchers have been disseminated to governments to help address barriers related to CRVS and improve registration systems."
@@ -1482,7 +1480,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A national CRVS stakeholders coordination framework established",
         "Key national priorities through the application of the CRVS systems improvement framework identified"
@@ -1496,7 +1494,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Advisory technical support and capacity building trainings provided to develop and endorse the national quality assurance framework on statistics",
         "The national quality assurance framework endorsed by the NSO-Togo"
@@ -1510,7 +1508,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1526,7 +1524,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized multiple training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -1543,7 +1541,7 @@ export const MOCK_REPORTS = [
       ],
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Capacities in the respective countries developed to undertake high quality and timely censuses that fulfil the five qualities defined by the UN of individual enumeration, universality within a defined territory, simultaneity, and defined periodicity."
       ]
@@ -1556,7 +1554,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Integration into the TiVA Database completed",
         "National Supply and Use Tables (SUT) aliegned to international classification standards",
@@ -1572,7 +1570,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Geocoding, Enumeration Areas mapping, Digital Address Systems, Geographic Names, spatial Analysis of Census Data developed"
       ]
@@ -1585,7 +1583,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "A well-organized Census Monitoring Dashboard developed",
         "ensus monitoring capacities of respective countries developed"
@@ -1599,7 +1597,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Census project management toolkit provided, alongside dissemination of results and the use of Computer-Assisted Personal Interviews (CAPI)"
       ]
@@ -1612,7 +1610,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "The researchers have been studying the determinants of incomplete registration of vital events and identifying barriers to universal coverage.",
         "Findings from respective researchers have been disseminated to governments to help address barriers related to CRVS and improve registration systems."
@@ -1626,7 +1624,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Organized  training sessions for national statistical offices (NSOs) in GDP nowcasting, focusing on the use of Google Trends data to estimate economic indicators in near real-time.",
         "Development of a Google Trends-based nowcasting tool to help NSOs produce more timely economic estimates."
@@ -1640,7 +1638,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Assessment of reporting and dissemination needs identified",
         "Country reporting and dissemination platform in four member States deployed",
@@ -1656,7 +1654,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
         "Assessment of reporting and dissemination needs identified",
         "Country reporting and dissemination platform in four member States deployed",
@@ -1674,7 +1672,7 @@ export const MOCK_REPORTS = [
       "partnerships": "",
       "year": 2025,
       "sdgContribution": "SGD 16.9",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": [
        "CRVS mentorship program which aims to improve and strengthen the civil registration systems and processes.", 
        "The mentorship programme is designed to support a local expert who will receive intensive training from ECA and work through the National Civil Registration Office, which is the main government department responsible for issuing civil registration documents.",
@@ -1692,7 +1690,7 @@ export const MOCK_REPORTS = [
       "partnerships": "SDG Alliance, National Mapping Agencies, NGOs",
       "year": 2025,
       "sdgContribution": "",
-      "supportingLinks": "",
+      "supportingLinks": [],
       "details": ""
     }
 ];

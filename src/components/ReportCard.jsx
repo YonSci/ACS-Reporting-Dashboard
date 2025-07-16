@@ -14,6 +14,11 @@ const ReportCard = ({ report }) => {
     ? report.partnerships.join(', ')
     : report.partnerships;
 
+  // Format supporting links
+  const formattedLinks = Array.isArray(report.supportingLinks) 
+    ? report.supportingLinks
+    : report.supportingLinks ? [report.supportingLinks] : [];
+
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case 'completed':
@@ -86,6 +91,26 @@ const ReportCard = ({ report }) => {
           <span className="font-medium text-gray-900 dark:text-gray-200 ml-1">{formattedPartnerships}</span>
         </div>
 
+        {formattedLinks.length > 0 && (
+          <div className="flex items-baseline text-sm text-gray-700 dark:text-gray-400">
+            <LinkIcon className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400 mt-1" />
+            <span className="mr-1">Links:</span>
+            <div className="flex flex-col">
+              {formattedLinks.map((link, index) => (
+                <a 
+                  key={`${report.id}-link-${index}`}
+                  href={link} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="font-medium text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 truncate max-w-[200px]"
+                >
+                  {link.length > 50 ? `${link.substring(0, 47)}...` : link}
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+
         {report.sdgContribution && (
           <div className="flex items-center text-sm text-gray-700 dark:text-gray-400">
             <SparklesIcon className="w-4 h-4 mr-2 text-amber-600 dark:text-amber-400" />
@@ -94,20 +119,6 @@ const ReportCard = ({ report }) => {
           </div>
         )}
         
-        {report.supportingLinks && (
-          <div className="flex items-center text-sm text-gray-700 dark:text-gray-400">
-            <LinkIcon className="w-4 h-4 mr-2 text-blue-600 dark:text-blue-400" />
-            <span>Links:</span>
-            <a 
-              href={report.supportingLinks} 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="font-medium text-blue-600 dark:text-blue-400 ml-1 hover:text-blue-700 dark:hover:text-blue-300 truncate max-w-[200px]"
-            >
-              View Source
-            </a>
-          </div>
-        )}
       </div>
 
       {/* Expandable Details Section */}

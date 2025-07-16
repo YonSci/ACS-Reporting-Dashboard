@@ -27,8 +27,9 @@ const reportSchema = new mongoose.Schema({
     required: false
   },
   supportingLinks: {
-    type: String,
-    required: false
+    type: [String], // Changed from String to [String] to support multiple links
+    required: false,
+    default: []
   },
   details: {
     type: [String], // Changed to array of strings
