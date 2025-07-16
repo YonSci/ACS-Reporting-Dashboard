@@ -5,16 +5,15 @@ import autoTable from 'jspdf-autotable';
 export const convertToCSV = (reports) => {
   // Define the columns we want to export
   const columns = [
-    'id',
-    'title',
-    'description',
+    //'id',
     'interventionCountry',
     'strategicResultArea',
     'subStrategicResultArea',
     'partnerships',
-    'status',
-    'date',
-    'impact'
+    'sdgContribution',
+    'supportingLinks',
+    'details',
+    'year'
   ];
 
   // Create the header row
@@ -115,16 +114,18 @@ export const parseShareableLink = () => {
 export const exportToExcel = (reports) => {
   // Convert reports to worksheet format
   const worksheet = XLSX.utils.json_to_sheet(reports.map(report => ({
-    ID: report.id,
-    Title: report.title,
-    Description: report.description,
+    // ID: report.id,
+    //ID: report._id || report.id,
+    //ID: report.id || report._id,
     'Intervention Country': report.interventionCountry,
     'Strategic Result Area': report.strategicResultArea,
     'Sub Strategic Result Area': report.subStrategicResultArea,
     Partnerships: Array.isArray(report.partnerships) ? report.partnerships.join(', ') : report.partnerships,
-    Status: report.status,
-    Date: report.date,
-    Impact: report.impact
+    'SDG Contribution': report.sdgContribution,
+    'Supporting Links': Array.isArray(report.supportingLinks) ? report.supportingLinks.join(', ') : report.supportingLinks,
+    //Details: report.details,
+    Details: Array.isArray(report.details) ? report.details.join('\n') : report.details,
+    Year: report.year
   })));
 
   // Create workbook and append worksheet
