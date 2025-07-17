@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ChartBarIcon } from './icons/MiniIcons';
 import ThemeToggle from '../components/ThemeToggle';
 import { useTheme } from '../utils/themeContext';
 import { useAuth } from '../contexts/AuthContext';
+import UserManagementModal from './UserManagementModal';
 
 const Header = () => {
   const { isDark } = useTheme();
   const { user, isAuthenticated, logout } = useAuth();
+  const [isUserMgmtOpen, setIsUserMgmtOpen] = useState(false);
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 py-4 px-6 mb-2 transition-colors duration-200">
@@ -25,6 +27,14 @@ const Header = () => {
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          {isAuthenticated && user?.role === 'admin' && (
+            <button
+              onClick={() => setIsUserMgmtOpen(true)}
+              className="px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded transition-colors font-semibold border border-blue-200 dark:border-blue-700"
+            >
+              User Management
+            </button>
+          )}
           {isAuthenticated && (
             <div className="flex items-center space-x-2 text-sm">
               <span className="text-gray-600 dark:text-gray-400">
@@ -41,6 +51,7 @@ const Header = () => {
           <ThemeToggle />
         </div>
       </div>
+      <UserManagementModal isOpen={isUserMgmtOpen} onClose={() => setIsUserMgmtOpen(false)} />
     </header>
   );
 };
