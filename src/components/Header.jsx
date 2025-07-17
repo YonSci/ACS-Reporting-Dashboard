@@ -2,9 +2,11 @@ import React from 'react';
 import { ChartBarIcon } from './icons/MiniIcons';
 import ThemeToggle from '../components/ThemeToggle';
 import { useTheme } from '../utils/themeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const Header = () => {
   const { isDark } = useTheme();
+  const { user, isAuthenticated, logout } = useAuth();
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 py-4 px-6 mb-2 transition-colors duration-200">
@@ -23,6 +25,19 @@ const Header = () => {
           </div>
         </div>
         <div className="flex items-center space-x-4">
+          {isAuthenticated && (
+            <div className="flex items-center space-x-2 text-sm">
+              <span className="text-gray-600 dark:text-gray-400">
+                Logged in as: <span className="font-medium text-gray-900 dark:text-white">{user?.fullName}</span>
+              </span>
+              <button
+                onClick={logout}
+                className="px-2 py-1 text-xs bg-red-100 hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-400 rounded transition-colors"
+              >
+                Logout
+              </button>
+            </div>
+          )}
           <ThemeToggle />
         </div>
       </div>

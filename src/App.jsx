@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import { useTheme, ThemeProvider } from './utils/themeContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 import Header from './components/Header';
 import Modal from './components/Modal';
@@ -12,6 +13,7 @@ import Button from './components/Button';
 import ConfirmDialog from './components/ConfirmDialog';
 import InterventionChart from './components/InterventionChart';
 import ExportSharePanel from './components/ExportSharePanel';
+import ProtectedForm from './components/ProtectedForm';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
@@ -486,14 +488,11 @@ const App = () => {
             message="Are you sure you want to clear all filters? This will reset all your selections."
           />
 
-          {/* Import Data Modal */}
-          <Modal
+          {/* Protected Import Data Modal */}
+          <ProtectedForm
             isOpen={isImportModalOpen}
             onClose={() => setIsImportModalOpen(false)}
-            title="Add New Report"
-          >
-            <DataImportForm onClose={() => setIsImportModalOpen(false)} />
-          </Modal>
+          />
 
           <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
             © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.
@@ -506,7 +505,9 @@ const App = () => {
 const AppWrapper = () => {
   return (
     <ThemeProvider>
-      <App />
+      <AuthProvider>
+        <App />
+      </AuthProvider>
     </ThemeProvider>
   );
 };
