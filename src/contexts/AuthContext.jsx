@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import bcrypt from 'bcryptjs';
+import { appwrite } from '../lib/appwrite';
+import { Query } from 'appwrite';
 
-// Create the authentication context
+const DATABASE_ID = '6879f6dd00088a1bd33b';
+const PROFILES_COLLECTION_ID = '687a07e9001db8b275db';
+
 const AuthContext = createContext();
 
-// Custom hook to use the auth context
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (!context) {
@@ -13,178 +15,127 @@ export const useAuth = () => {
   return context;
 };
 
-// Helper function to validate credentials against a user list
-const validateCredentials = (users, email, password) => {
-  console.log('🔍 Validating credentials for:', email);
-  console.log('🔍 Available users:', users.map(u => ({ email: u.email, password: u.password.substring(0, 10) + '...' })));
-  
-  const user = users.find(u => u.email === email);
-  if (!user) {
-    console.log('❌ User not found:', email);
-    return { isValid: false, message: 'Invalid email or password' };
-  }
-  
-  console.log('✅ User found:', user.email);
-  console.log('🔍 User password hash:', user.password);
-  console.log('🔍 Entered password:', password);
-  
-  // If password is hashed, use bcrypt compare
-  if (user.password && (user.password.startsWith('$2a$') || user.password.startsWith('$2b$'))) {
-    console.log('🔍 Using bcrypt comparison');
-    const isValid = bcrypt.compareSync(password, user.password);
-    console.log('🔍 Bcrypt comparison result:', isValid);
-    if (!isValid) {
-      return { isValid: false, message: 'Invalid email or password' };
-    }
-  } else {
-    // Support legacy plain text passwords (for demo)
-    console.log('🔍 Using plain text comparison');
-    if (user.password !== password) {
-      console.log('❌ Plain text password mismatch');
-      return { isValid: false, message: 'Invalid email or password' };
-    }
-  }
-  
-  console.log('✅ Login successful for:', email);
-  return {
-    isValid: true,
-    user: {
-      email: user.email,
-      username: user.username,
-      role: user.role,
-      fullName: user.fullName
-    }
-  };
-};
-
-// Authentication provider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [users, setUsers] = useState(() => {
-    console.log('🚀 Initializing users state...');
-    
-    // Initialize with demo users
-    const demoUsers = [
-      {
-        email: 'admin@acs.com',
-        username: 'admin',
-        password: bcrypt.hashSync('admin123', 10),
-        role: 'admin',
-        fullName: 'Admin User'
-      },
-      {
-        email: 'editor@acs.com',
-        username: 'editor',
-        password: bcrypt.hashSync('editor123', 10),
-        role: 'editor',
-        fullName: 'Editor User'
-      },
-      {
-        email: 'analyst@acs.com',
-        username: 'analyst',
-        password: bcrypt.hashSync('analyst123', 10),
-        role: 'analyst',
-        fullName: 'Analyst User'
+
+  // Fetch profile by userId
+  const fetchProfile = async (userId) => {
+    try {
+      const res = await appwrite.databases.listDocuments(
+        DATABASE_ID,
+        PROFILES_COLLECTION_ID,
+        [Query.equal('userId', userId)]
+      );
+      if (res.documents.length > 0) {
+        setProfile(res.documents[0]);
+        console.log('Fetched profile:', res.documents[0]);
+        return res.documents[0];
+      } else {
+        setProfile(null);
+        console.log('Fetched profile: null');
+        return null;
       }
-    ];
-    
-    console.log('🚀 Demo users created:', demoUsers.map(u => ({ email: u.email, username: u.username, password: u.password.substring(0, 10) + '...' })));
-    
-    // Try to load users from localStorage, else use demo users
-    const saved = localStorage.getItem('acs_users');
-    if (saved) {
-      try {
-        const loadedUsers = JSON.parse(saved);
-        console.log('📦 Loaded users from localStorage:', loadedUsers.map(u => ({ email: u.email, username: u.username, password: u.password.substring(0, 10) + '...' })));
-        return loadedUsers;
-      } catch (error) {
-        console.log('❌ Failed to parse localStorage, using demo users');
-        return demoUsers;
-      }
-    } else {
-      console.log('📦 No localStorage data, using demo users');
-      return demoUsers;
+    } catch (error) {
+      setProfile(null);
+      console.log('Fetched profile: error', error);
+      return null;
     }
-  });
+  };
 
-  // Persist users to localStorage
+  // Check for existing session on mount
   useEffect(() => {
-    console.log('💾 Saving users to localStorage:', users.map(u => ({ email: u.email, password: u.password.substring(0, 10) + '...' })));
-    localStorage.setItem('acs_users', JSON.stringify(users));
-  }, [users]);
-
-  // Check for existing session on component mount
-  useEffect(() => {
-    const savedUser = localStorage.getItem('acs_user');
-    const savedAuth = localStorage.getItem('acs_authenticated');
-    if (savedUser && savedAuth === 'true') {
+    const checkSession = async () => {
+      setIsLoading(true);
       try {
-        const userData = JSON.parse(savedUser);
-        setUser(userData);
+        const account = await appwrite.account.get();
+        setUser(account);
         setIsAuthenticated(true);
+        await fetchProfile(account.$id);
       } catch (error) {
-        localStorage.removeItem('acs_user');
-        localStorage.removeItem('acs_authenticated');
+        setUser(null);
+        setProfile(null);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
-    }
-    setIsLoading(false);
+    };
+    checkSession();
   }, []);
 
   // Login function
   const login = async (email, password) => {
-    console.log('🔐 Login attempt for:', email);
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
-      const result = validateCredentials(users, email, password);
-      if (result.isValid) {
-        setUser(result.user);
-        setIsAuthenticated(true);
-        localStorage.setItem('acs_user', JSON.stringify(result.user));
-        localStorage.setItem('acs_authenticated', 'true');
-        return { success: true };
-      } else {
-        return { success: false, message: result.message };
-      }
+      await appwrite.account.createEmailPasswordSession(email, password);
+      const account = await appwrite.account.get();
+      setUser(account);
+      setIsAuthenticated(true);
+      await fetchProfile(account.$id);
+      return { success: true };
     } catch (error) {
-      console.error('❌ Login error:', error);
-      return { success: false, message: 'An error occurred during login' };
+      return { success: false, message: error?.message || 'Login failed' };
     } finally {
       setIsLoading(false);
     }
   };
 
   // Logout function
-  const logout = () => {
-    setUser(null);
-    setIsAuthenticated(false);
-    localStorage.removeItem('acs_user');
-    localStorage.removeItem('acs_authenticated');
+  const logout = async () => {
+    setIsLoading(true);
+    try {
+      await appwrite.account.deleteSession('current');
+      setUser(null);
+      setProfile(null);
+      setIsAuthenticated(false);
+    } catch (error) {
+      // Ignore
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Add a new user (hash password before storing)
-  const addUser = (newUser) => {
-    const hashedPassword = bcrypt.hashSync(newUser.password, 10);
-    setUsers(prev => [...prev, { ...newUser, password: hashedPassword }]);
+  // Add a new user (admin only)
+  const addUser = async (newUser) => {
+    try {
+      // 1. Create the user in Appwrite Auth
+      const created = await appwrite.account.create(
+        'unique()',
+        newUser.email,
+        newUser.password,
+        newUser.fullName
+      );
+      // 2. Create the profile in the database
+      await appwrite.databases.createDocument(
+        DATABASE_ID, // Database ID
+        PROFILES_COLLECTION_ID,
+        'unique()',
+        {
+          userId: created.$id,
+          username: newUser.username,
+          role: newUser.role,
+          fullName: newUser.fullName,
+          email: newUser.email
+        }
+      );
+      return { success: true };
+    } catch (error) {
+      return { success: false, message: error?.message || 'Failed to add user' };
+    }
   };
 
-  // Get all users
-  const getUsers = () => users;
+  // Get all users (admin only) - not available from client for security
+  const getUsers = () => [];
 
-  // Check if user has specific role
-  const hasRole = (role) => {
-    return user && user.role === role;
-  };
-
-  // Check if user has any of the specified roles
-  const hasAnyRole = (roles) => {
-    return user && roles.includes(user.role);
-  };
+  // Role helpers
+  const hasRole = (role) => profile && profile.role === role;
+  const hasAnyRole = (roles) => profile && roles.includes(profile.role);
 
   const value = {
     user,
+    profile,
     isAuthenticated,
     isLoading,
     login,

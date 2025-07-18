@@ -6,9 +6,12 @@ import { useAuth } from '../contexts/AuthContext';
 import UserManagementModal from './UserManagementModal';
 
 const Header = () => {
+  const { user, profile, isAuthenticated, logout } = useAuth();
   const { isDark } = useTheme();
-  const { user, isAuthenticated, logout } = useAuth();
   const [isUserMgmtOpen, setIsUserMgmtOpen] = useState(false);
+
+  // Debug: Log the profile object
+  console.log('Header profile:', profile);
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 py-4 px-6 mb-2 transition-colors duration-200">
@@ -27,7 +30,7 @@ const Header = () => {
           </div>
         </div>
         <div className="flex items-center space-x-4">
-          {isAuthenticated && user?.role === 'admin' && (
+          {isAuthenticated && profile?.role === 'admin' && (
             <button
               onClick={() => setIsUserMgmtOpen(true)}
               className="px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded transition-colors font-semibold border border-blue-200 dark:border-blue-700"
@@ -38,7 +41,7 @@ const Header = () => {
           {isAuthenticated && (
             <div className="flex items-center space-x-2 text-sm">
               <span className="text-gray-600 dark:text-gray-400">
-                Logged in as: <span className="font-medium text-gray-900 dark:text-white">{user?.fullName || user?.username || user?.email}</span>
+                Logged in as: <span className="font-medium text-gray-900 dark:text-white">{profile?.fullName || profile?.username || user?.email}</span>
               </span>
               <button
                 onClick={logout}
