@@ -146,7 +146,7 @@ export const exportToPDF = (reports) => {
       throw new Error('No reports data available for export');
     }
 
-    // Create new PDF document
+  // Create new PDF document
     const doc = new jsPDF({
       orientation: 'portrait',
       unit: 'mm',
@@ -492,9 +492,9 @@ export const exportToPDF = (reports) => {
         pageHeight - margin,
         { align: 'right' }
       );
-    });
-    
-    // Save the PDF
+  });
+  
+  // Save the PDF
     const fileTimestamp = new Date().toISOString().split('T')[0];
     const filename = `acs-country-report-${fileTimestamp}.pdf`;
     doc.save(filename);

@@ -5,7 +5,7 @@ import { XMarkIcon, EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 const LoginModal = ({ isOpen, onClose, onSuccess }) => {
   const { login, isLoading } = useAuth();
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -25,8 +25,8 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!formData.username.trim() || !formData.password.trim()) {
-      setError('Please enter both username and password');
+    if (!formData.email.trim() || !formData.password.trim()) {
+      setError('Please enter both email and password');
       return;
     }
 
@@ -34,13 +34,13 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
     setError('');
 
     try {
-      const result = await login(formData.username, formData.password);
+      const result = await login(formData.email, formData.password);
       
       if (result.success) {
         onSuccess();
         onClose();
         // Reset form
-        setFormData({ username: '', password: '' });
+        setFormData({ email: '', password: '' });
       } else {
         setError(result.message);
       }
@@ -53,7 +53,7 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
 
   const handleClose = () => {
     if (!isSubmitting) {
-      setFormData({ username: '', password: '' });
+      setFormData({ email: '', password: '' });
       setError('');
       setShowPassword(false);
       onClose();
@@ -86,21 +86,21 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
 
         {/* Login Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username field */}
+          {/* Email field */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Username
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Email
             </label>
             <input
-              type="text"
-              id="username"
-              name="username"
-              value={formData.username}
+              type="email"
+              id="email"
+              name="email"
+              value={formData.email}
               onChange={handleInputChange}
               disabled={isSubmitting}
               className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-slate-700 dark:text-white disabled:opacity-50"
-              placeholder="Enter your username"
-              autoComplete="username"
+              placeholder="Enter your email"
+              autoComplete="email"
             />
           </div>
 
@@ -159,9 +159,6 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
             )}
           </button>
         </form>
-
-        {/* Demo credentials hint */}
-        {/* Removed demo credentials for production */}
       </div>
     </div>
   );

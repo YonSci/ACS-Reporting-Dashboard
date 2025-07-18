@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { authorizedUsers as initialUsers } from '../utils/userData';
+import bcrypt from 'bcryptjs';
 
 // Create the authentication context
 const AuthContext = createContext();
@@ -14,17 +14,42 @@ export const useAuth = () => {
 };
 
 // Helper function to validate credentials against a user list
-const validateCredentials = (users, username, password) => {
-  const user = users.find(u => u.username === username);
+const validateCredentials = (users, email, password) => {
+  console.log('🔍 Validating credentials for:', email);
+  console.log('🔍 Available users:', users.map(u => ({ email: u.email, password: u.password.substring(0, 10) + '...' })));
+  
+  const user = users.find(u => u.email === email);
   if (!user) {
-    return { isValid: false, message: 'Invalid username or password' };
+    console.log('❌ User not found:', email);
+    return { isValid: false, message: 'Invalid email or password' };
   }
-  if (user.password !== password) {
-    return { isValid: false, message: 'Invalid username or password' };
+  
+  console.log('✅ User found:', user.email);
+  console.log('🔍 User password hash:', user.password);
+  console.log('🔍 Entered password:', password);
+  
+  // If password is hashed, use bcrypt compare
+  if (user.password && (user.password.startsWith('$2a$') || user.password.startsWith('$2b$'))) {
+    console.log('🔍 Using bcrypt comparison');
+    const isValid = bcrypt.compareSync(password, user.password);
+    console.log('🔍 Bcrypt comparison result:', isValid);
+    if (!isValid) {
+      return { isValid: false, message: 'Invalid email or password' };
+    }
+  } else {
+    // Support legacy plain text passwords (for demo)
+    console.log('🔍 Using plain text comparison');
+    if (user.password !== password) {
+      console.log('❌ Plain text password mismatch');
+      return { isValid: false, message: 'Invalid email or password' };
+    }
   }
+  
+  console.log('✅ Login successful for:', email);
   return {
     isValid: true,
     user: {
+      email: user.email,
       username: user.username,
       role: user.role,
       fullName: user.fullName
@@ -38,20 +63,55 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState(() => {
-    // Try to load users from localStorage, else use initialUsers
+    console.log('🚀 Initializing users state...');
+    
+    // Initialize with demo users
+    const demoUsers = [
+      {
+        email: 'admin@acs.com',
+        username: 'admin',
+        password: bcrypt.hashSync('admin123', 10),
+        role: 'admin',
+        fullName: 'Admin User'
+      },
+      {
+        email: 'editor@acs.com',
+        username: 'editor',
+        password: bcrypt.hashSync('editor123', 10),
+        role: 'editor',
+        fullName: 'Editor User'
+      },
+      {
+        email: 'analyst@acs.com',
+        username: 'analyst',
+        password: bcrypt.hashSync('analyst123', 10),
+        role: 'analyst',
+        fullName: 'Analyst User'
+      }
+    ];
+    
+    console.log('🚀 Demo users created:', demoUsers.map(u => ({ email: u.email, username: u.username, password: u.password.substring(0, 10) + '...' })));
+    
+    // Try to load users from localStorage, else use demo users
     const saved = localStorage.getItem('acs_users');
     if (saved) {
       try {
-        return JSON.parse(saved);
-      } catch {
-        return [...initialUsers];
+        const loadedUsers = JSON.parse(saved);
+        console.log('📦 Loaded users from localStorage:', loadedUsers.map(u => ({ email: u.email, username: u.username, password: u.password.substring(0, 10) + '...' })));
+        return loadedUsers;
+      } catch (error) {
+        console.log('❌ Failed to parse localStorage, using demo users');
+        return demoUsers;
       }
+    } else {
+      console.log('📦 No localStorage data, using demo users');
+      return demoUsers;
     }
-    return [...initialUsers];
   });
 
   // Persist users to localStorage
   useEffect(() => {
+    console.log('💾 Saving users to localStorage:', users.map(u => ({ email: u.email, password: u.password.substring(0, 10) + '...' })));
     localStorage.setItem('acs_users', JSON.stringify(users));
   }, [users]);
 
@@ -73,11 +133,12 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (username, password) => {
+  const login = async (email, password) => {
+    console.log('🔐 Login attempt for:', email);
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const result = validateCredentials(users, username, password);
+      await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+      const result = validateCredentials(users, email, password);
       if (result.isValid) {
         setUser(result.user);
         setIsAuthenticated(true);
@@ -88,6 +149,7 @@ export const AuthProvider = ({ children }) => {
         return { success: false, message: result.message };
       }
     } catch (error) {
+      console.error('❌ Login error:', error);
       return { success: false, message: 'An error occurred during login' };
     } finally {
       setIsLoading(false);
@@ -102,9 +164,10 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('acs_authenticated');
   };
 
-  // Add a new user
+  // Add a new user (hash password before storing)
   const addUser = (newUser) => {
-    setUsers(prev => [...prev, newUser]);
+    const hashedPassword = bcrypt.hashSync(newUser.password, 10);
+    setUsers(prev => [...prev, { ...newUser, password: hashedPassword }]);
   };
 
   // Get all users

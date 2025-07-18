@@ -4,7 +4,7 @@
 
 export const authorizedUsers = [
   {
-    username: "admin",
+    username: "admin@acs.com",
     password: "admin123", // In production, this should be hashed
     role: "admin",
     fullName: "Administrator"

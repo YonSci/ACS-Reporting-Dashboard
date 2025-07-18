@@ -38,7 +38,7 @@ const Header = () => {
           {isAuthenticated && (
             <div className="flex items-center space-x-2 text-sm">
               <span className="text-gray-600 dark:text-gray-400">
-                Logged in as: <span className="font-medium text-gray-900 dark:text-white">{user?.fullName}</span>
+                Logged in as: <span className="font-medium text-gray-900 dark:text-white">{user?.fullName || user?.username || user?.email}</span>
               </span>
               <button
                 onClick={logout}
