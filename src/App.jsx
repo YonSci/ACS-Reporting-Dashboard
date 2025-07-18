@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ResetPassword from './pages/ResetPassword';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
-import { useTheme, ThemeProvider } from './utils/themeContext';
+import { useTheme } from './utils/themeContext';
 import { AuthProvider } from './contexts/AuthContext';
 
 import Header from './components/Header';
@@ -21,7 +23,8 @@ import InterventionHeatMap from './components/InterventionHeatMap';
 import RegionalBarChart from './components/RegionalBarChart';
 import Pagination from './components/Pagination';
 
-const App = () => {
+// MainAppUI contains the main dashboard UI
+const MainAppUI = (props) => {
   const { isDark } = useTheme();
   
   const theme = useMemo(() => createTheme({
@@ -307,209 +310,220 @@ const App = () => {
   const isSubSraDropdownDisabled = !filters.strategicResultArea || !strategicResultHierarchy || strategicResultHierarchy[filters.strategicResultArea]?.length === 0;
 
   return (
-    <MuiThemeProvider theme={theme}>
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-        <Header />
-        <main className="container mx-auto px-4 py-8">
-            {/* Filters Section */}
-            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
-              <div className="flex flex-col space-y-4">
-                {/* Title and Actions Row */}
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-semibold flex items-center text-slate-900 dark:text-gray-200">
-                    <FunnelIcon className="w-6 h-6 mr-2 text-blue-400" />
-                    Filter Reports
-                    {activeFilterCount > 0 && (
-                      <span className="ml-2 text-sm font-normal text-slate-600 dark:text-gray-400">
-                        ({activeFilterCount} active)
-                      </span>
-                    )}
-                  </h2>
-                  <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 border-r border-slate-600 pr-3">
-                      <ExportSharePanel
-                        reports={filteredReports}
-                        filters={filters}
-                        selectedCountries={selectedCountries}
-                      />
-                    </div>
-                    <Button 
-                      onClick={() => setIsImportModalOpen(true)}
-                      variant="primary"
-                      size="sm"
-                      className="flex items-center whitespace-nowrap"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                      </svg>
-                      Add New Report
-                    </Button>
-                    <Button 
-                      onClick={handleClearFilters}
-                      disabled={activeFilterCount === 0}
-                      variant="danger"
-                      size="sm"
-                      className="flex items-center whitespace-nowrap"
-                    >
-                      <XCircleIcon className="w-4 h-4 mr-1" />
-                      Clear All
-                    </Button>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+      <Header />
+      <main className="container mx-auto px-4 py-8">
+          {/* Filters Section */}
+          <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
+            <div className="flex flex-col space-y-4">
+              {/* Title and Actions Row */}
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-semibold flex items-center text-slate-900 dark:text-gray-200">
+                  <FunnelIcon className="w-6 h-6 mr-2 text-blue-400" />
+                  Filter Reports
+                  {activeFilterCount > 0 && (
+                    <span className="ml-2 text-sm font-normal text-slate-600 dark:text-gray-400">
+                      ({activeFilterCount} active)
+                    </span>
+                  )}
+                </h2>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 border-r border-slate-600 pr-3">
+                    <ExportSharePanel
+                      reports={filteredReports}
+                      filters={filters}
+                      selectedCountries={selectedCountries}
+                    />
                   </div>
-                </div>
-
-                {/* Filter Controls */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                  <FilterDropdown
-                    label="Strategic Result Area"
-                    options={sraOptions}
-                    selectedValue={filters.strategicResultArea || 'All Strategic Result Areas'}
-                    onChange={value => handleFilterChange('strategicResultArea', value)}
-                    icon={<BriefcaseIcon className="w-5 h-5 text-blue-400" />}
-                  />
-                  <FilterDropdown
-                    label="Sub Strategic Result Area"
-                    options={subSraOptions}
-                    selectedValue={filters.subStrategicResultArea || 'All Sub Categories'}
-                    onChange={value => handleFilterChange('subStrategicResultArea', value)}
-                    icon={<ListBulletIcon className="w-5 h-5 text-cyan-400" />}
-                    disabled={isSubSraDropdownDisabled}
-                  />
-                  <FilterDropdown
-                    label="Intervention Countries"
-                    options={countryOptions}
-                    selectedValue={filters.interventionCountries.length === 1 ? filters.interventionCountries[0] : 'All Countries'}
-                    onChange={value => {
-                      if (value === 'All Countries') {
-                        setFilters(prev => ({...prev, interventionCountries: []}));
-                        setSelectedCountries(new Set());
-                      } else {
-                        setFilters(prev => ({...prev, interventionCountries: [value]}));
-                        setSelectedCountries(new Set([value]));
-                      }
-                    }}
-                    icon={<GlobeAltIcon className="w-5 h-5 text-green-400" />}
-                  />
-                  <FilterDropdown
-                    label="Partnership"
-                    options={partnershipOptions}
-                    selectedValue={filters.partnership || 'All Partnerships'}
-                    onChange={value => handleFilterChange('partnership', value)}
-                    icon={<UsersIcon className="w-5 h-5 text-purple-400" />}
-                  />
+                  <Button 
+                    onClick={() => setIsImportModalOpen(true)}
+                    variant="primary"
+                    size="sm"
+                    className="flex items-center whitespace-nowrap"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Add New Report
+                  </Button>
+                  <Button 
+                    onClick={handleClearFilters}
+                    disabled={activeFilterCount === 0}
+                    variant="danger"
+                    size="sm"
+                    className="flex items-center whitespace-nowrap"
+                  >
+                    <XCircleIcon className="w-4 h-4 mr-1" />
+                    Clear All
+                  </Button>
                 </div>
               </div>
-            </div>
 
-            {/* Main Content: Map, Chart and Reports */}
-            <div className="flex flex-col lg:flex-row gap-6">
-              {/* Left Column: Map and Chart */}
-              <div className="lg:w-1/2 flex flex-col gap-6">
-                {/* Africa Map */}
+              {/* Filter Controls */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                <FilterDropdown
+                  label="Strategic Result Area"
+                  options={sraOptions}
+                  selectedValue={filters.strategicResultArea || 'All Strategic Result Areas'}
+                  onChange={value => handleFilterChange('strategicResultArea', value)}
+                  icon={<BriefcaseIcon className="w-5 h-5 text-blue-400" />}
+                />
+                <FilterDropdown
+                  label="Sub Strategic Result Area"
+                  options={subSraOptions}
+                  selectedValue={filters.subStrategicResultArea || 'All Sub Categories'}
+                  onChange={value => handleFilterChange('subStrategicResultArea', value)}
+                  icon={<ListBulletIcon className="w-5 h-5 text-cyan-400" />}
+                  disabled={isSubSraDropdownDisabled}
+                />
+                <FilterDropdown
+                  label="Intervention Countries"
+                  options={countryOptions}
+                  selectedValue={filters.interventionCountries.length === 1 ? filters.interventionCountries[0] : 'All Countries'}
+                  onChange={value => {
+                    if (value === 'All Countries') {
+                      setFilters(prev => ({...prev, interventionCountries: []}));
+                      setSelectedCountries(new Set());
+                    } else {
+                      setFilters(prev => ({...prev, interventionCountries: [value]}));
+                      setSelectedCountries(new Set([value]));
+                    }
+                  }}
+                  icon={<GlobeAltIcon className="w-5 h-5 text-green-400" />}
+                />
+                <FilterDropdown
+                  label="Partnership"
+                  options={partnershipOptions}
+                  selectedValue={filters.partnership || 'All Partnerships'}
+                  onChange={value => handleFilterChange('partnership', value)}
+                  icon={<UsersIcon className="w-5 h-5 text-purple-400" />}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Main Content: Map, Chart and Reports */}
+          <div className="flex flex-col lg:flex-row gap-6">
+            {/* Left Column: Map and Chart */}
+            <div className="lg:w-1/2 flex flex-col gap-6">
+              {/* Africa Map */}
+              <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+                <AfricaMap
+                  mapData={mapData}
+                  selectedCountries={selectedCountries}
+                  onCountrySelect={handleCountrySelectOnMap}
+                  reportData={reports}
+                />
+              </div>
+              
+              {/* Heat Map and Regional Analysis Section */}
+              <div className="space-y-6">
                 <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
-                  <AfricaMap
+                  <InterventionHeatMap
                     mapData={mapData}
-                    selectedCountries={selectedCountries}
-                    onCountrySelect={handleCountrySelectOnMap}
                     reportData={reports}
                   />
                 </div>
-                
-                {/* Heat Map and Regional Analysis Section */}
-                <div className="space-y-6">
-                  <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
-                    <InterventionHeatMap
-                      mapData={mapData}
-                      reportData={reports}
-                    />
-                  </div>
-                  <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
-                    <RegionalBarChart reportData={reports} />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Reports List */}
-              <div className="lg:w-1/2">
-                <div id="reports-section" className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
-                  <div className="flex justify-between items-center mb-4">
-                    <div className="flex items-center gap-2">
-                      <svg
-                        className="w-6 h-6 text-slate-950 dark:text-gray-300"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                        />
-                      </svg>
-                      <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
-                        Reports
-                      </h2>
-                      <span className="ml-2 px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-950 dark:bg-blue-900 dark:text-blue-200">
-                        {filteredReports.length} reports
-                      </span>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    {currentItems.map(report => (
-                      <ReportCard
-                        key={report._id || report.id || `${report.interventionCountry}-${report.year}-${report.strategicResultArea}`}
-                        report={report}
-                      />
-                    ))}
-                    {filteredReports.length === 0 && (
-                      <div className="text-center py-8 text-gray-400">
-                        No reports match the selected filters
-                      </div>
-                    )}
-                  </div>
-                  {filteredReports.length > itemsPerPage && (
-                    <Pagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={handlePageChange}
-                    />
-                  )}
+                <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+                  <RegionalBarChart reportData={reports} />
                 </div>
               </div>
             </div>
-          </main>
 
-          {/* Confirm Dialog */}
-          <ConfirmDialog
-            isOpen={isConfirmDialogOpen}
-            onClose={() => setIsConfirmDialogOpen(false)}
-            onConfirm={confirmClearFilters}
-            title="Clear All Filters"
-            message="Are you sure you want to clear all filters? This will reset all your selections."
-          />
+            {/* Right Column: Reports List */}
+            <div className="lg:w-1/2">
+              <div id="reports-section" className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+                <div className="flex justify-between items-center mb-4">
+                  <div className="flex items-center gap-2">
+                    <svg
+                      className="w-6 h-6 text-slate-950 dark:text-gray-300"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                      />
+                    </svg>
+                    <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
+                      Reports
+                    </h2>
+                    <span className="ml-2 px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-950 dark:bg-blue-900 dark:text-blue-200">
+                      {filteredReports.length} reports
+                    </span>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  {currentItems.map(report => (
+                    <ReportCard
+                      key={report._id || report.id || `${report.interventionCountry}-${report.year}-${report.strategicResultArea}`}
+                      report={report}
+                    />
+                  ))}
+                  {filteredReports.length === 0 && (
+                    <div className="text-center py-8 text-gray-400">
+                      No reports match the selected filters
+                    </div>
+                  )}
+                </div>
+                {filteredReports.length > itemsPerPage && (
+                  <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                )}
+              </div>
+            </div>
+          </div>
+        </main>
 
-          {/* Protected Import Data Modal */}
-          <ProtectedForm
-            isOpen={isImportModalOpen}
-            onClose={() => setIsImportModalOpen(false)}
-          />
+        {/* Confirm Dialog */}
+        <ConfirmDialog
+          isOpen={isConfirmDialogOpen}
+          onClose={() => setIsConfirmDialogOpen(false)}
+          onConfirm={confirmClearFilters}
+          title="Clear All Filters"
+          message="Are you sure you want to clear all filters? This will reset all your selections."
+        />
 
-          <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
-            © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.
-          </footer>
-        </div>
-      </MuiThemeProvider>
+        {/* Protected Import Data Modal */}
+        <ProtectedForm
+          isOpen={isImportModalOpen}
+          onClose={() => setIsImportModalOpen(false)}
+        />
+
+        <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
+          © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.
+        </footer>
+      </div>
     );
   };
 
-const AppWrapper = () => {
+const App = () => {
+  const { isDark } = useTheme();
+  
+  const theme = useMemo(() => createTheme({
+    palette: {
+      mode: isDark ? 'dark' : 'light',
+    },
+  }), [isDark]);
+
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
-    </ThemeProvider>
+    <Router>
+      <MuiThemeProvider theme={theme}>
+        <AuthProvider>
+          <Routes>
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/*" element={<MainAppUI />} />
+          </Routes>
+        </AuthProvider>
+      </MuiThemeProvider>
+    </Router>
   );
 };
 
-export default AppWrapper;
+export default App;
