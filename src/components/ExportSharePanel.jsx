@@ -6,6 +6,30 @@ import { ArrowDownTrayIcon, ShareIcon, DocumentDuplicateIcon, XMarkIcon, Chevron
 import { useTheme } from '../utils/themeContext';
 
 const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
+  console.log('📤 ExportSharePanel received reports:', reports.length);
+  // Filter reports based on current filters
+  const filteredReports = reports.filter(report => {
+    // Only apply filter if a specific value (not "All") is selected
+    const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;
+    
+    let refinedSubSraMatch = true;
+    if (filters.subStrategicResultArea) {
+      refinedSubSraMatch = report.subStrategicResultArea === filters.subStrategicResultArea;
+    }
+
+    const countryMatch = filters.interventionCountries.length === 0 || 
+      filters.interventionCountries.includes(report.interventionCountry);
+    
+    const partnershipMatch = !filters.partnership || 
+      (Array.isArray(report.partnerships) ? 
+        report.partnerships.includes(filters.partnership) : 
+        report.partnerships === filters.partnership);
+    
+    return sraMatch && refinedSubSraMatch && countryMatch && partnershipMatch;
+  });
+
+  // Determine which reports to export (filtered if filters are applied, all if no filters)
+  const reportsToExport = Object.values(filters).some(value => value && value.length > 0) ? filteredReports : reports;
   const { isDark } = useTheme();
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -36,21 +60,21 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
   }, [showShareDialog, showExportOptions]);
 
   const handleExportCSV = () => {
-    const csvContent = convertToCSV(reports);
+    const csvContent = convertToCSV(reportsToExport);
     const timestamp = new Date().toISOString().split('T')[0];
     downloadCSV(csvContent, `african-development-reports-${timestamp}.csv`);
     setShowExportOptions(false);
   };
 
   const handleExportExcel = () => {
-    exportToExcel(reports);
+    exportToExcel(reportsToExport);
     setShowExportOptions(false);
   };
 
   const handleExportPDF = async () => {
     try {
       setExportError(null);
-      await exportToPDF(reports);
+      await exportToPDF(reportsToExport);
       setShowExportOptions(false);
     } catch (error) {
       console.error('PDF Export Error:', error);
@@ -129,7 +153,7 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
             <ul className={`text-sm ${isDark ? 'text-gray-400' : 'text-gray-600'} space-y-1`}>
               <li className="flex items-center">
                 <span className="w-4 h-4 rounded-full bg-blue-500/20 border border-blue-500/40 mr-2 flex-shrink-0" />
-                {reports.length} filtered reports
+                {reportsToExport.length} {Object.values(filters).some(value => value && value.length > 0) ? 'filtered' : 'total'} reports
               </li>
               <li className="flex items-center">
                 <span className="w-4 h-4 rounded-full bg-green-500/20 border border-green-500/40 mr-2 flex-shrink-0" />

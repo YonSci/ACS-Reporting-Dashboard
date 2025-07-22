@@ -2,8 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { MOCK_REPORTS, STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from './data.js';
-import connectDB from './config/db.js';
-import Report from './models/Report.js';
+import { reportsAPI } from './config/appwrite.js';
 
 // Load environment variables before any other code
 dotenv.config({ override: true });
@@ -37,30 +36,38 @@ app.use(cors({
 
 app.use(express.json());
 
-// Track database connection status
-let isDbConnected = false;
+// Track Appwrite connection status
+let isAppwriteConnected = false;
 
-// Initialize database connection
+// Initialize Appwrite connection
 (async () => {
-  isDbConnected = await connectDB();
+  try {
+    // Test Appwrite connection by getting reports
+    await reportsAPI.getAllReports();
+    isAppwriteConnected = true;
+    console.log('Appwrite Connected Successfully');
+  } catch (error) {
+    console.log('Appwrite Connection Error:', error.message);
+    console.log('Falling back to mock data...');
+  }
 })();
 
 app.get('/', (req, res) => {
   res.json({ 
     message: 'Welcome to the ACS Reporting Dashboard API!',
     status: 'healthy',
-    dbConnected: isDbConnected
+    dbConnected: isAppwriteConnected
   });
 });
 
 app.get('/api/reports', async (req, res) => {
   try {
-    if (isDbConnected) {
-      const reports = await Report.find().lean();
+    if (isAppwriteConnected) {
+      const reports = await reportsAPI.getAllReports();
       res.json(reports);
     } else {
       // Fallback to mock data
-      console.log('Using mock data for reports (database not connected)');
+      console.log('Using mock data for reports (Appwrite not connected)');
       res.json(MOCK_REPORTS);
     }
   } catch (error) {
@@ -80,9 +87,8 @@ app.get('/api/filters', (req, res) => {
 
 app.post('/api/reports', async (req, res) => {
   try {
-    if (isDbConnected) {
-      const newReport = new Report(req.body);
-      const savedReport = await newReport.save();
+    if (isAppwriteConnected) {
+      const savedReport = await reportsAPI.createReport(req.body);
       res.status(201).json(savedReport);
     } else {
       // Fallback to mock data behavior

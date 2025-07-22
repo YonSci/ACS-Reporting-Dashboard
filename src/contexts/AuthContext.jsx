@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { appwrite } from '../lib/appwrite';
+import { account, databases } from '../lib/appwrite';
 import { Query } from 'appwrite';
 
 const DATABASE_ID = '6879f6dd00088a1bd33b';
@@ -24,7 +24,7 @@ export const AuthProvider = ({ children }) => {
   // Fetch profile by userId
   const fetchProfile = async (userId) => {
     try {
-      const res = await appwrite.databases.listDocuments(
+      const res = await databases.listDocuments(
         DATABASE_ID,
         PROFILES_COLLECTION_ID,
         [Query.equal('userId', userId)]
@@ -50,7 +50,7 @@ export const AuthProvider = ({ children }) => {
     const checkSession = async () => {
       setIsLoading(true);
       try {
-        const account = await appwrite.account.get();
+        const account = await account.get();
         setUser(account);
         setIsAuthenticated(true);
         await fetchProfile(account.$id);
@@ -69,8 +69,8 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setIsLoading(true);
     try {
-      await appwrite.account.createEmailPasswordSession(email, password);
-      const account = await appwrite.account.get();
+      await account.createEmailPasswordSession(email, password);
+      const account = await account.get();
       setUser(account);
       setIsAuthenticated(true);
       await fetchProfile(account.$id);
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setIsLoading(true);
     try {
-      await appwrite.account.deleteSession('current');
+      await account.deleteSession('current');
       setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
@@ -101,14 +101,14 @@ export const AuthProvider = ({ children }) => {
   const addUser = async (newUser) => {
     try {
       // 1. Create the user in Appwrite Auth
-      const created = await appwrite.account.create(
+      const created = await account.create(
         'unique()',
         newUser.email,
         newUser.password,
         newUser.fullName
       );
       // 2. Create the profile in the database
-      await appwrite.databases.createDocument(
+      await databases.createDocument(
         DATABASE_ID, // Database ID
         PROFILES_COLLECTION_ID,
         'unique()',

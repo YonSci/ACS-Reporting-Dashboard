@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { appwrite } from '../lib/appwrite';
+import { account } from '../lib/appwrite';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -32,7 +32,7 @@ const ResetPassword = () => {
     }
     setIsSubmitting(true);
     try {
-      await appwrite.account.updateRecovery(userId, secret, password, confirm);
+      await account.updateRecovery(userId, secret, password, confirm);
       setSuccess('Password reset successful! You can now log in.');
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {

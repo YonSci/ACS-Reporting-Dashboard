@@ -1,75 +1,42 @@
-import { Client, Databases, Account, Teams, Query } from 'appwrite';
+import { Client, Databases, Account } from 'appwrite';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 // Appwrite Configuration
-const APPWRITE_ENDPOINT = import.meta.env.VITE_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1';
-const APPWRITE_PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID || 'your-project-id';
-const APPWRITE_DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || 'acs-dashboard';
-const APPWRITE_REPORTS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_REPORTS_COLLECTION_ID || 'reports';
+const APPWRITE_ENDPOINT = process.env.VITE_APPWRITE_ENDPOINT || 'https://cloud.appwrite.io/v1';
+const APPWRITE_PROJECT_ID = process.env.VITE_APPWRITE_PROJECT_ID;
+const APPWRITE_API_KEY = process.env.VITE_APPWRITE_API_KEY;
+const DATABASE_ID = process.env.VITE_APPWRITE_DATABASE_ID || 'acs-dashboard';
+const REPORTS_COLLECTION_ID = process.env.VITE_APPWRITE_REPORTS_COLLECTION_ID || 'reports';
 
 // Initialize Appwrite Client
 const client = new Client()
     .setEndpoint(APPWRITE_ENDPOINT)
-    .setProject(APPWRITE_PROJECT_ID);
+    .setProject(APPWRITE_PROJECT_ID)
+    .setKey(APPWRITE_API_KEY);
 
 // Initialize services
 export const databases = new Databases(client);
 export const account = new Account(client);
-export const teams = new Teams(client);
 
 // Database and Collection IDs
-export const DATABASE_ID = APPWRITE_DATABASE_ID;
-export const REPORTS_COLLECTION_ID = APPWRITE_REPORTS_COLLECTION_ID;
+export const APPWRITE_CONFIG = {
+    DATABASE_ID,
+    REPORTS_COLLECTION_ID
+};
 
 // Helper functions for reports
 export const reportsAPI = {
     // Get all reports
     async getAllReports() {
-        console.log('🚀 NEW PAGINATION CODE: Starting getAllReports with pagination...');
-        console.log(`🔧 Using DATABASE_ID: ${DATABASE_ID}`);
-        console.log(`🔧 Using REPORTS_COLLECTION_ID: ${REPORTS_COLLECTION_ID}`);
         try {
-            let allDocuments = [];
-            let offset = 0;
-            const limit = 100; // Appwrite Cloud max per request
-            let maxIterations = 50; // Safety limit
-            let iteration = 0;
-            while (iteration < maxIterations) {
-                iteration++;
-                const response = await databases.listDocuments(
-                    DATABASE_ID,
-                    REPORTS_COLLECTION_ID,
-                    [
-                        Query.limit(limit),
-                        Query.offset(offset)
-                    ],
-                );
-                allDocuments = allDocuments.concat(response.documents);
-                if (response.documents.length < limit) break;
-                offset += limit;
-            }
-            
-            // Step 2: Log ID counts to check for repeated $id
-            const idCounts = allDocuments.reduce((acc, doc) => {
-                acc[doc.$id] = (acc[doc.$id] || 0) + 1;
-                return acc;
-            }, {});
-            console.log('🆔 ID counts:', idCounts);
-            const repeatedIds = Object.entries(idCounts).filter(([id, count]) => count > 1);
-            if (repeatedIds.length > 0) {
-                console.warn('⚠️ Repeated $id detected:', repeatedIds);
-            } else {
-                console.log('✅ All $id values are unique.');
-            }
-            
-            // Deduplicate by $id as a safety net
-            const uniqueDocuments = Array.from(
-                new Map(allDocuments.map(doc => [doc.$id, doc])).values()
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                REPORTS_COLLECTION_ID
             );
-            // Sort by reportIndex in JS as a workaround for Appwrite Cloud
-            uniqueDocuments.sort((a, b) => (a.reportIndex ?? 0) - (b.reportIndex ?? 0));
-            console.log(`✅ Unique documents after deduplication and sorting: ${uniqueDocuments.length}`);
-            console.log(`🚀 NEW PAGINATION CODE: Fetched ${uniqueDocuments.length} reports from Appwrite using pagination!`);
-            return uniqueDocuments;
+            return response.documents;
         } catch (error) {
             console.error('Error fetching reports:', error);
             throw error;
@@ -206,4 +173,4 @@ export const reportsAPI = {
     }
 };
 
-export default client;
+export default client; 

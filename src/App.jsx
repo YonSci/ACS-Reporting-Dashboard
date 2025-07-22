@@ -4,6 +4,8 @@ import ResetPassword from './pages/ResetPassword';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import { useTheme } from './utils/themeContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { reportsAPI } from './lib/appwrite';
+import { STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../server/data.js';
 
 import Header from './components/Header';
 import Modal from './components/Modal';
@@ -59,12 +61,31 @@ const MainAppUI = (props) => {
 
   const fetchReports = useCallback(async () => {
     try {
-      const baseUrl = import.meta.env.PROD ? '/.netlify/functions' : 'http://localhost:3001/api';
-      const response = await fetch(`${baseUrl}/reports`);
-      if (!response.ok) {
-        throw new Error(`Failed to fetch reports: ${response.status}`);
+      const data = await reportsAPI.getAllReports();
+      console.log('📊 Loaded reports from Appwrite:', data.length);
+      
+      // Debug: Check for duplicates
+      const uniqueIds = new Set(data.map(r => r.$id));
+      console.log('🔍 Unique document IDs:', uniqueIds.size);
+      console.log('🔍 Total documents vs unique IDs:', data.length, 'vs', uniqueIds.size);
+      
+      if (data.length !== uniqueIds.size) {
+        console.log('🔍 Note: Some documents may have duplicate IDs, but this is normal for Appwrite');
+        const duplicates = data.filter((item, index) => data.findIndex(r => r.$id === item.$id) !== index);
+        console.log('🔍 Documents with duplicate IDs:', duplicates.length);
       }
-      const data = await response.json();
+      
+      // Debug: Check for Ethiopia reports
+      const ethiopiaReports = data.filter(r => r.interventionCountry === 'Ethiopia');
+      console.log('🇪🇹 Ethiopia reports found:', ethiopiaReports.length);
+      if (ethiopiaReports.length > 0) {
+        console.log('🇪🇹 Sample Ethiopia report:', ethiopiaReports[0]);
+      }
+      
+      // Debug: Check all unique countries
+      const uniqueCountries = [...new Set(data.map(r => r.interventionCountry))].sort();
+      console.log('🌍 All countries in data:', uniqueCountries);
+      
       setReports(data);
     } catch (error) {
       setError(error.message);
@@ -74,24 +95,16 @@ const MainAppUI = (props) => {
   }, []);
 
   useEffect(() => {
-    const fetchFilters = async () => {
+    const loadFilters = () => {
       try {
-        const baseUrl = import.meta.env.PROD ? '/.netlify/functions' : 'http://localhost:3001/api';
-        const response = await fetch(`${baseUrl}/filters`);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch filters: ${response.status}`);
-        }
-        const data = await response.json();
-        const { strategicResultHierarchy, allAfricanCountries, partnerships } = data;
-
-        setStrategicResultHierarchy(strategicResultHierarchy);
-        const sraOptions = ['All Strategic Result Areas', ...Object.keys(strategicResultHierarchy)];
+        setStrategicResultHierarchy(STRATEGIC_RESULTS_HIERARCHY);
+        const sraOptions = ['All Strategic Result Areas', ...Object.keys(STRATEGIC_RESULTS_HIERARCHY)];
         setSraOptions(sraOptions);
 
-        const countryOptions = ['All Countries', ...allAfricanCountries];
+        const countryOptions = ['All Countries', ...ALL_AFRICAN_COUNTRIES];
         setCountryOptions(countryOptions);
 
-        const partnershipOptions = ['All Partnerships', ...partnerships];
+        const partnershipOptions = ['All Partnerships', ...PARTNERSHIPS];
         setPartnershipOptions(partnershipOptions);
 
       } catch (error) {
@@ -99,7 +112,7 @@ const MainAppUI = (props) => {
       }
     };
 
-    fetchFilters();
+    loadFilters();
     fetchReports();
   }, [fetchReports]); // Added fetchReports to dependency array
 
@@ -176,27 +189,47 @@ const MainAppUI = (props) => {
     });
   }, []);
 
-  const handleCountrySelectOnMap = useCallback((countryName) => {
+  const handleCountrySelectOnMap = useCallback((countryName, newSelectedCountries = null) => {
+    console.log('🗺️ Map clicked:', countryName, 'newSelectedCountries:', newSelectedCountries);
+    
+    // If newSelectedCountries is provided (from clear selection), use it
+    if (newSelectedCountries !== null) {
+      setSelectedCountries(newSelectedCountries);
+      setFilters(prevFilters => {
+        const newFilters = {
+          ...prevFilters,
+          interventionCountries: [] // Clear country filter
+        };
+        console.log('🔧 Updated filters (clear):', newFilters);
+        return newFilters;
+      });
+      return;
+    }
+    
     setSelectedCountries(prev => {
       const newSelection = new Set(prev);
       if (countryName) {
         if (newSelection.has(countryName)) {
           newSelection.delete(countryName);
         } else {
-          newSelection.add(countryName);
+          newSelection.clear(); // Clear previous selection
+          newSelection.add(countryName); // Add only the new country
         }
       } else {
         newSelection.clear();
       }
+      console.log('🗺️ Updated selected countries:', Array.from(newSelection));
       return newSelection;
     });
 
-    setFilters(prevFilters => ({
-      ...prevFilters,
-      interventionCountries: countryName ? 
-        Array.from(new Set([...prevFilters.interventionCountries, countryName])) :
-        []
-    }));
+    setFilters(prevFilters => {
+      const newFilters = {
+        ...prevFilters,
+        interventionCountries: countryName ? [countryName] : [] // Replace with single country or empty array
+      };
+      console.log('🔧 Updated filters:', newFilters);
+      return newFilters;
+    });
   }, []);
 
   const handleClearFilters = () => {
@@ -229,7 +262,13 @@ const MainAppUI = (props) => {
   };
 
   const filteredReports = useMemo(() => {
-    return reports.filter(report => {
+    console.log('🔍 Filtering reports:', {
+      totalReports: reports.length,
+      filters: filters,
+      selectedCountries: Array.from(selectedCountries)
+    });
+    
+    const filtered = reports.filter(report => {
       // Only apply filter if a specific value (not "All") is selected
       const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;
       
@@ -246,9 +285,20 @@ const MainAppUI = (props) => {
           report.partnerships.includes(filters.partnership) : 
           report.partnerships === filters.partnership);
       
+      // Debug individual report filtering
+      if (filters.interventionCountries.length > 0) {
+        console.log(`🔍 Report "${report.interventionCountry}": countryMatch=${countryMatch}, sraMatch=${sraMatch}, subSraMatch=${refinedSubSraMatch}, partnershipMatch=${partnershipMatch}`);
+      }
+      
       return sraMatch && refinedSubSraMatch && countryMatch && partnershipMatch;
     });
-  }, [reports, filters]);
+    
+    console.log('🔍 Filtered results:', filtered.length, 'reports');
+    if (filtered.length === 0 && filters.interventionCountries.length > 0) {
+      console.log('⚠️ No reports found for selected country. Available countries in data:', [...new Set(reports.map(r => r.interventionCountry))].sort());
+    }
+    return filtered;
+  }, [reports, filters, selectedCountries]);
 
   const activeFilterCount = useMemo(() => {
     return Object.values(filters).filter(value => value !== '').length;
@@ -330,7 +380,7 @@ const MainAppUI = (props) => {
                 <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2 border-r border-slate-600 pr-3">
                     <ExportSharePanel
-                      reports={filteredReports}
+                      reports={reports}
                       filters={filters}
                       selectedCountries={selectedCountries}
                     />
@@ -457,9 +507,9 @@ const MainAppUI = (props) => {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  {currentItems.map(report => (
+                  {currentItems.map((report, index) => (
                     <ReportCard
-                      key={report._id || report.id || `${report.interventionCountry}-${report.year}-${report.strategicResultArea}`}
+                      key={report.$id || report._id || report.id || `${report.interventionCountry}-${report.year}-${report.strategicResultArea}-${index}`}
                       report={report}
                     />
                   ))}
