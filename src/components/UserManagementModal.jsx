@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import { useAuth } from '../contexts/AuthContext';
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
@@ -10,7 +10,7 @@ const roles = [
 ];
 
 const UserManagementModal = ({ isOpen, onClose }) => {
-  const { profile, addUser } = useAuth();
+  const { profile, addUser, getUsers, deleteUserProfile } = useAuth();
   const [form, setForm] = useState({
     fullName: '',
     username: '',
@@ -22,6 +22,15 @@ const UserManagementModal = ({ isOpen, onClose }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [loadingUsers, setLoadingUsers] = useState(false);
+
+  useEffect(() => {
+    if (isOpen && profile?.role === 'admin') {
+      setLoadingUsers(true);
+      getUsers().then(setUsers).finally(() => setLoadingUsers(false));
+    }
+  }, [isOpen, profile, getUsers]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -64,6 +73,17 @@ const UserManagementModal = ({ isOpen, onClose }) => {
       setError('An error occurred while adding the user.');
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleDeleteUser = async (profileId) => {
+    if (window.confirm('Delete this user?')) {
+      const result = await deleteUserProfile(profileId);
+      if (result.success) {
+        setUsers(users.filter(u => u.$id !== profileId));
+      } else {
+        alert(result.message);
+      }
     }
   };
 
@@ -192,6 +212,44 @@ const UserManagementModal = ({ isOpen, onClose }) => {
             )}
           </button>
         </form>
+      </div>
+      {/* User List Table */}
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">Existing Users</h3>
+        {loadingUsers ? (
+          <div>Loading users...</div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="min-w-full border text-sm">
+              <thead>
+                <tr className="bg-gray-100 dark:bg-gray-700">
+                  <th className="p-2 border">Name</th>
+                  <th className="p-2 border">Email</th>
+                  <th className="p-2 border">Role</th>
+                  <th className="p-2 border">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.map(user => (
+                  <tr key={user.$id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                    <td className="p-2 border">{user.fullName || user.username}</td>
+                    <td className="p-2 border">{user.email}</td>
+                    <td className="p-2 border">{user.role}</td>
+                    <td className="p-2 border">
+                      <button
+                        onClick={() => handleDeleteUser(user.$id)}
+                        className="px-2 py-1 bg-red-500 text-white rounded text-xs"
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {users.length === 0 && <div className="text-center text-gray-500 py-4">No users found.</div>}
+          </div>
+        )}
       </div>
     </Modal>
   );

@@ -1,9 +1,18 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { account, databases } from '../lib/appwrite';
-import { Query } from 'appwrite';
+import { Client, Account, Databases, Query } from 'appwrite';
 
-const DATABASE_ID = '6879f6dd00088a1bd33b';
+// Profiles Project/Database/Collection IDs (hardcoded for user auth/profile)
+const PROFILES_PROJECT_ID = '6879ef820031fa4dd590';
+const PROFILES_DATABASE_ID = '6879f6dd00088a1bd33b';
 const PROFILES_COLLECTION_ID = '687a07e9001db8b275db';
+
+// Separate Appwrite client for profiles/auth
+const profilesClient = new Client()
+  .setEndpoint('https://cloud.appwrite.io/v1')
+  .setProject(PROFILES_PROJECT_ID);
+
+const profilesAccount = new Account(profilesClient);
+const profilesDatabases = new Databases(profilesClient);
 
 const AuthContext = createContext();
 
@@ -24,8 +33,8 @@ export const AuthProvider = ({ children }) => {
   // Fetch profile by userId
   const fetchProfile = async (userId) => {
     try {
-      const res = await databases.listDocuments(
-        DATABASE_ID,
+      const res = await profilesDatabases.listDocuments(
+        PROFILES_DATABASE_ID,
         PROFILES_COLLECTION_ID,
         [Query.equal('userId', userId)]
       );
@@ -50,10 +59,10 @@ export const AuthProvider = ({ children }) => {
     const checkSession = async () => {
       setIsLoading(true);
       try {
-        const account = await account.get();
-        setUser(account);
+        const userAccount = await profilesAccount.get();
+        setUser(userAccount);
         setIsAuthenticated(true);
-        await fetchProfile(account.$id);
+        await fetchProfile(userAccount.$id);
       } catch (error) {
         setUser(null);
         setProfile(null);
@@ -69,11 +78,11 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setIsLoading(true);
     try {
-      await account.createEmailPasswordSession(email, password);
-      const account = await account.get();
-      setUser(account);
+      await profilesAccount.createEmailPasswordSession(email, password);
+      const userAccount = await profilesAccount.get();
+      setUser(userAccount);
       setIsAuthenticated(true);
-      await fetchProfile(account.$id);
+      await fetchProfile(userAccount.$id);
       return { success: true };
     } catch (error) {
       return { success: false, message: error?.message || 'Login failed' };
@@ -86,7 +95,7 @@ export const AuthProvider = ({ children }) => {
   const logout = async () => {
     setIsLoading(true);
     try {
-      await account.deleteSession('current');
+      await profilesAccount.deleteSession('current');
       setUser(null);
       setProfile(null);
       setIsAuthenticated(false);
@@ -101,19 +110,19 @@ export const AuthProvider = ({ children }) => {
   const addUser = async (newUser) => {
     try {
       // 1. Create the user in Appwrite Auth
-      const created = await account.create(
+      const createdAccount = await profilesAccount.create(
         'unique()',
         newUser.email,
         newUser.password,
         newUser.fullName
       );
       // 2. Create the profile in the database
-      await databases.createDocument(
-        DATABASE_ID, // Database ID
+      await profilesDatabases.createDocument(
+        PROFILES_DATABASE_ID, // Database ID
         PROFILES_COLLECTION_ID,
         'unique()',
         {
-          userId: created.$id,
+          userId: createdAccount.$id,
           username: newUser.username,
           role: newUser.role,
           fullName: newUser.fullName,
@@ -126,8 +135,34 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // Get all users (admin only) - not available from client for security
-  const getUsers = () => [];
+  // Fetch all user profiles (admin only)
+  const getUsers = async () => {
+    try {
+      const res = await profilesDatabases.listDocuments(
+        PROFILES_DATABASE_ID,
+        PROFILES_COLLECTION_ID
+      );
+      return res.documents;
+    } catch (error) {
+      console.error('Failed to fetch users:', error);
+      return [];
+    }
+  };
+
+  // Delete a user profile (admin only)
+  const deleteUserProfile = async (profileId) => {
+    try {
+      await profilesDatabases.deleteDocument(
+        PROFILES_DATABASE_ID,
+        PROFILES_COLLECTION_ID,
+        profileId
+      );
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to delete user profile:', error);
+      return { success: false, message: error?.message || 'Delete failed' };
+    }
+  };
 
   // Role helpers
   const hasRole = (role) => profile && profile.role === role;
@@ -143,7 +178,8 @@ export const AuthProvider = ({ children }) => {
     hasRole,
     hasAnyRole,
     addUser,
-    getUsers
+    getUsers,
+    deleteUserProfile
   };
 
   return (
