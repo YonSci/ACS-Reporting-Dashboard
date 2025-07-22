@@ -7,9 +7,11 @@ import { reportSchema, uiSchema } from '../schemas/reportSchema';
 import { submitReportData } from '../utils/reportUtils';
 import { STRATEGIC_RESULT_AREAS, STRATEGIC_RESULTS_HIERARCHY } from '../constants';
 import { useTheme } from '../utils/themeContext';
+import { useAuth } from '../contexts/AuthContext';
 
 const DataImportForm = () => {
   const { isDark } = useTheme();
+  const { user } = useAuth();
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -56,7 +58,7 @@ const DataImportForm = () => {
     setError(null);
     setSuccess(false);
     try {
-      await submitReportData(formData);
+      await submitReportData(formData, user);
       setSuccess(true);
       setFormData({});
     } catch (err) {

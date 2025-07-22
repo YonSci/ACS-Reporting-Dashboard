@@ -4,11 +4,13 @@ import ThemeToggle from '../components/ThemeToggle';
 import { useTheme } from '../utils/themeContext';
 import { useAuth } from '../contexts/AuthContext';
 import UserManagementModal from './UserManagementModal';
+import EnhancedDataManagement from './EnhancedDataManagement';
 
 const Header = () => {
   const { user, profile, isAuthenticated, logout } = useAuth();
   const { isDark } = useTheme();
   const [isUserMgmtOpen, setIsUserMgmtOpen] = useState(false);
+  const [isDataMgmtOpen, setIsDataMgmtOpen] = useState(false);
 
   // Debug: Log the profile object
   console.log('Header profile:', profile);
@@ -31,12 +33,20 @@ const Header = () => {
         </div>
         <div className="flex items-center space-x-4">
           {isAuthenticated && profile?.role === 'admin' && (
-            <button
-              onClick={() => setIsUserMgmtOpen(true)}
-              className="px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded transition-colors font-semibold border border-blue-200 dark:border-blue-700"
-            >
-              User Management
-            </button>
+            <>
+              <button
+                onClick={() => setIsDataMgmtOpen(true)}
+                className="px-3 py-1 text-xs bg-green-100 hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 text-green-700 dark:text-green-300 rounded transition-colors font-semibold border border-green-200 dark:border-green-700"
+              >
+                Data Management
+              </button>
+              <button
+                onClick={() => setIsUserMgmtOpen(true)}
+                className="px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded transition-colors font-semibold border border-blue-200 dark:border-blue-700"
+              >
+                User Management
+              </button>
+            </>
           )}
           {isAuthenticated && (
             <div className="flex items-center space-x-2 text-sm">
@@ -55,6 +65,11 @@ const Header = () => {
         </div>
       </div>
       <UserManagementModal isOpen={isUserMgmtOpen} onClose={() => setIsUserMgmtOpen(false)} />
+      <EnhancedDataManagement 
+        isOpen={isDataMgmtOpen} 
+        onClose={() => setIsDataMgmtOpen(false)} 
+        admin={profile} 
+      />
     </header>
   );
 };

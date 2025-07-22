@@ -1,3 +1,4 @@
+import { reportsAPI } from '../lib/appwrite';
 // Search and filter utilities for reports
 export const searchReports = (reports, searchTerm) => {
   if (!searchTerm) return reports;
@@ -91,22 +92,41 @@ export const deleteFilterPreset = (presetId) => {
   return updatedPresets;
 }; 
 
-export const submitReportData = async (reportData) => {
+export const submitReportData = async (reportData, user) => {
   try {
-    const response = await fetch('http://localhost:3001/api/reports', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(reportData),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to submit report data');
-    }
-
-    return await response.json();
+    const now = new Date().toISOString();
+    
+    // Get current reports to determine next reportIndex
+    const existingReports = await reportsAPI.getAllReports();
+    const maxIndex = existingReports.reduce((max, report) => 
+      Math.max(max, report.reportIndex || 0), 0
+    );
+    const nextIndex = maxIndex + 1;
+    
+    const report = {
+      ...reportData,
+      status: 'pending_approval',
+      createdBy: user?.$id || 'system', // Required field - use 'system' to match migration
+      approvedBy: 'system', // Required field - use 'system' to match migration
+      reportIndex: nextIndex, // Add sequential index
+      // Add submitter username for display
+      submitterName: user?.fullName || user?.username || user?.email || 'Anonymous User',
+      // Ensure year is an integer
+      year: parseInt(reportData.year) || new Date().getFullYear(),
+      // Ensure partnerships is an array
+      partnerships: Array.isArray(reportData.partnerships) 
+        ? reportData.partnerships 
+        : (reportData.partnerships ? [reportData.partnerships] : []),
+      // Ensure details is an array
+      details: Array.isArray(reportData.details) 
+        ? reportData.details 
+        : (reportData.details ? [reportData.details] : [])
+    };
+    
+    console.log('📝 Submitting report data:', report);
+    console.log('📝 Report fields:', Object.keys(report));
+    
+    return await reportsAPI.createReport(report);
   } catch (error) {
     console.error('Error submitting report data:', error);
     throw error;

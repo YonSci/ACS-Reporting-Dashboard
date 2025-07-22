@@ -113,19 +113,24 @@ export const reportsAPI = {
     // Create new report
     async createReport(reportData) {
         try {
+            console.log('📝 Creating report with data:', reportData);
+            console.log('📝 Report data fields:', Object.keys(reportData));
+            
             const response = await databases.createDocument(
                 DATABASE_ID,
                 REPORTS_COLLECTION_ID,
                 'unique()',
                 {
                     ...reportData,
-                    status: reportData.status || 'draft',
-                    createdAt: new Date().toISOString()
+                    status: reportData.status || 'draft'
                 }
             );
+            
+            console.log('✅ Created report response:', response);
             return response;
         } catch (error) {
-            console.error('Error creating report:', error);
+            console.error('❌ Error creating report:', error);
+            console.error('❌ Error details:', error.message);
             throw error;
         }
     },
@@ -137,10 +142,7 @@ export const reportsAPI = {
                 DATABASE_ID,
                 REPORTS_COLLECTION_ID,
                 documentId,
-                {
-                    ...updates,
-                    updatedAt: new Date().toISOString()
-                }
+                updates
             );
             return response;
         } catch (error) {
@@ -174,6 +176,42 @@ export const reportsAPI = {
             return results;
         } catch (error) {
             console.error('Error bulk updating reports:', error);
+            throw error;
+        }
+    },
+
+    // Update report status (for admin approval workflow)
+    async updateReportStatus(reportId, newStatus, admin) {
+        try {
+            // Start with just the essential status field
+            const updateData = {
+                status: newStatus
+            };
+
+            // Try to add approver info for approved reports (may not exist in schema)
+            if (newStatus === 'approved' && admin) {
+                try {
+                    updateData.approverName = admin.fullName || admin.username || admin.email || 'Admin';
+                } catch (err) {
+                    console.log('ℹ️ approverName attribute may not exist in collection, skipping');
+                }
+            }
+
+            console.log('📝 Updating report with data:', updateData);
+            
+            const response = await databases.updateDocument(
+                DATABASE_ID,
+                REPORTS_COLLECTION_ID,
+                reportId,
+                updateData
+            );
+            
+            console.log('✅ Update response:', response);
+            return response;
+        } catch (error) {
+            console.error('❌ Error updating report status:', error);
+            console.error('❌ Error details:', error.message);
+            console.error('❌ Full error object:', error);
             throw error;
         }
     },

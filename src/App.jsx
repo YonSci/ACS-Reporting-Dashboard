@@ -4,6 +4,7 @@ import ResetPassword from './pages/ResetPassword';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import { useTheme } from './utils/themeContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { ThemeProvider } from './utils/themeContext';
 import { reportsAPI } from './lib/appwrite';
 import { STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../server/data.js';
 
@@ -114,7 +115,7 @@ const MainAppUI = (props) => {
 
     loadFilters();
     fetchReports();
-  }, [fetchReports]); // Added fetchReports to dependency array
+  }, [fetchReports]);
 
   useEffect(() => {
     const loadMapData = async () => {
@@ -139,10 +140,10 @@ const MainAppUI = (props) => {
       if (relatedSubSras.length > 0) {
         setSubSraOptions(['All Sub Categories', ...relatedSubSras.sort()]);
       } else {
-        setSubSraOptions(['All Sub Categories']); // Keep this default if no sub-SRAs
+        setSubSraOptions(['All Sub Categories']);
       }
     } else {
-      setSubSraOptions(['All Sub Categories']); // Reset to default if no SRA selected
+      setSubSraOptions(['All Sub Categories']);
     }
   }, [filters.strategicResultArea, strategicResultHierarchy]);
 
@@ -162,7 +163,6 @@ const MainAppUI = (props) => {
       const newFilters = { ...prevFilters };
       
       if (filterName === 'interventionCountries') {
-        // Handle array of countries
         newFilters.interventionCountries = value === 'All Countries' ? [] : value;
       } else {
         const resetValue = 
@@ -175,12 +175,10 @@ const MainAppUI = (props) => {
         newFilters[filterName] = resetValue;
       }
 
-      // If main SRA is changed, reset sub SRA
       if (filterName === 'strategicResultArea') {
         newFilters.subStrategicResultArea = ''; 
       }
 
-      // Reset selected countries if clearing country filter
       if (filterName === 'interventionCountries' && value === 'All Countries') {
         setSelectedCountries(new Set());
       }
@@ -192,13 +190,12 @@ const MainAppUI = (props) => {
   const handleCountrySelectOnMap = useCallback((countryName, newSelectedCountries = null) => {
     console.log('🗺️ Map clicked:', countryName, 'newSelectedCountries:', newSelectedCountries);
     
-    // If newSelectedCountries is provided (from clear selection), use it
     if (newSelectedCountries !== null) {
       setSelectedCountries(newSelectedCountries);
       setFilters(prevFilters => {
         const newFilters = {
           ...prevFilters,
-          interventionCountries: [] // Clear country filter
+          interventionCountries: []
         };
         console.log('🔧 Updated filters (clear):', newFilters);
         return newFilters;
@@ -212,8 +209,8 @@ const MainAppUI = (props) => {
         if (newSelection.has(countryName)) {
           newSelection.delete(countryName);
         } else {
-          newSelection.clear(); // Clear previous selection
-          newSelection.add(countryName); // Add only the new country
+          newSelection.clear();
+          newSelection.add(countryName);
         }
       } else {
         newSelection.clear();
@@ -225,7 +222,7 @@ const MainAppUI = (props) => {
     setFilters(prevFilters => {
       const newFilters = {
         ...prevFilters,
-        interventionCountries: countryName ? [countryName] : [] // Replace with single country or empty array
+        interventionCountries: countryName ? [countryName] : []
       };
       console.log('🔧 Updated filters:', newFilters);
       return newFilters;
@@ -237,7 +234,6 @@ const MainAppUI = (props) => {
   };
 
   const confirmClearFilters = () => {
-    // Reset all filters to their default values
     setFilters({
       strategicResultArea: '',
       subStrategicResultArea: '',
@@ -245,19 +241,10 @@ const MainAppUI = (props) => {
       partnership: '',
     });
     
-    // Reset selected countries on map
     setSelectedCountries(new Set());
-    
-    // Reset sub-SRA options to include all
     setSubSraOptions(['All Sub Categories']);
-
-    // Force a reset of reports and map data with new references
     setReports([]);
-
-    // Refetch reports based on cleared filters
     fetchReports();
-    
-    // Close the dialog
     setIsConfirmDialogOpen(false);
   };
 
@@ -268,8 +255,18 @@ const MainAppUI = (props) => {
       selectedCountries: Array.from(selectedCountries)
     });
     
-    const filtered = reports.filter(report => {
-      // Only apply filter if a specific value (not "All") is selected
+    // Debug: Check report statuses
+    const statusCounts = reports.reduce((acc, r) => {
+      const status = r.status || 'no-status';
+      acc[status] = (acc[status] || 0) + 1;
+      return acc;
+    }, {});
+    console.log('📊 Report status breakdown:', statusCounts);
+    
+    // Show only approved reports on the main dashboard
+    const approvedReports = reports.filter(r => r.status === 'approved');
+    
+    const filtered = approvedReports.filter(report => {
       const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;
       
       let refinedSubSraMatch = true;
@@ -285,7 +282,6 @@ const MainAppUI = (props) => {
           report.partnerships.includes(filters.partnership) : 
           report.partnerships === filters.partnership);
       
-      // Debug individual report filtering
       if (filters.interventionCountries.length > 0) {
         console.log(`🔍 Report "${report.interventionCountry}": countryMatch=${countryMatch}, sraMatch=${sraMatch}, subSraMatch=${refinedSubSraMatch}, partnershipMatch=${partnershipMatch}`);
       }
@@ -313,7 +309,6 @@ const MainAppUI = (props) => {
   // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    // Scroll to top of reports section
     const reportsSection = document.querySelector('#reports-section');
     if (reportsSection) {
       reportsSection.scrollIntoView({ behavior: 'smooth' });
@@ -529,50 +524,42 @@ const MainAppUI = (props) => {
               </div>
             </div>
           </div>
-        </main>
+      </main>
 
-        {/* Confirm Dialog */}
-        <ConfirmDialog
-          isOpen={isConfirmDialogOpen}
-          onClose={() => setIsConfirmDialogOpen(false)}
-          onConfirm={confirmClearFilters}
-          title="Clear All Filters"
-          message="Are you sure you want to clear all filters? This will reset all your selections."
-        />
+      {/* Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={isConfirmDialogOpen}
+        onClose={() => setIsConfirmDialogOpen(false)}
+        onConfirm={confirmClearFilters}
+        title="Clear All Filters"
+        message="Are you sure you want to clear all filters? This will reset all your selections."
+      />
 
-        {/* Protected Import Data Modal */}
-        <ProtectedForm
-          isOpen={isImportModalOpen}
-          onClose={() => setIsImportModalOpen(false)}
-        />
+      {/* Protected Import Data Modal */}
+      <ProtectedForm
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
 
-        <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
-          © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.
-        </footer>
-      </div>
-    );
-  };
+      <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
+        © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.
+      </footer>
+    </div>
+  );
+};
 
 const App = () => {
-  const { isDark } = useTheme();
-  
-  const theme = useMemo(() => createTheme({
-    palette: {
-      mode: isDark ? 'dark' : 'light',
-    },
-  }), [isDark]);
-
   return (
-    <Router>
-      <MuiThemeProvider theme={theme}>
-        <AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <Router>
           <Routes>
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/*" element={<MainAppUI />} />
           </Routes>
-        </AuthProvider>
-      </MuiThemeProvider>
-    </Router>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
   );
 };
 

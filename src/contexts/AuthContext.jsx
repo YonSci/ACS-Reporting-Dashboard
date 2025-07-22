@@ -64,6 +64,10 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
         await fetchProfile(userAccount.$id);
       } catch (error) {
+        // 401 errors are expected when not logged in - don't log them
+        if (error.code !== 401) {
+          console.error('Session check error:', error);
+        }
         setUser(null);
         setProfile(null);
         setIsAuthenticated(false);
