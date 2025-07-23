@@ -12,16 +12,21 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
   
   // Filter reports based on current filters
   const filteredReports = safeReports.filter(report => {
-    // Check if this is APRRM data or Strategic Result Area data
-    const isAPRRMData = report.hasOwnProperty('year') && report.hasOwnProperty('quarter');
+    // Check if this is APPRM data or Strategic Result Area data
+    const isAPPRMData = (report.hasOwnProperty('year') && report.hasOwnProperty('quarter')) || 
+                        (report.hasOwnProperty('Year') && report.hasOwnProperty('Quarter'));
     
-    if (isAPRRMData) {
-      // APRRM filtering logic
-      const countryMatch = !filters.country || report.country === filters.country;
-      const yearMatch = !filters.year || report.year.toString() === filters.year;
-      const quarterMatch = !filters.quarter || report.quarter === filters.quarter;
+         if (isAPPRMData) {
+       // APPRM filtering logic
+       const countryMatch = !filters.country || report.country === filters.country;
+       const yearMatch = !filters.year || (report.year || report.Year)?.toString() === filters.year;
+       const quarterMatch = !filters.quarter || (report.quarter || report.Quarter) === filters.quarter;
+      const partnershipMatch = !filters.partnership || 
+        (Array.isArray(report.partnerships) ? 
+          report.partnerships.includes(filters.partnership) : 
+          report.partnership === filters.partnership);
       
-      return countryMatch && yearMatch && quarterMatch;
+      return countryMatch && yearMatch && quarterMatch && partnershipMatch;
     } else {
       // Strategic Result Area filtering logic
       const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;

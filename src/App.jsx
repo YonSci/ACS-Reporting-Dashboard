@@ -4,6 +4,7 @@ import ResetPassword from './pages/ResetPassword';
 import { ThemeProvider as MuiThemeProvider, createTheme } from '@mui/material/styles';
 import { useTheme } from './utils/themeContext';
 import { AuthProvider } from './contexts/AuthContext';
+import { useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './utils/themeContext';
 import { reportsAPI } from './lib/appwrite';
 import { STRATEGIC_RESULTS_HIERARCHY, ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../server/data.js';
@@ -20,6 +21,7 @@ import ExportSharePanel from './components/ExportSharePanel';
 import ProtectedForm from './components/ProtectedForm';
 import TabNavigation from './components/TabNavigation';
 import APPRMDashboard from './components/APPRMDashboard';
+import EnhancedDataManagement from './components/EnhancedDataManagement';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
@@ -30,6 +32,7 @@ import Pagination from './components/Pagination';
 // MainAppUI contains the main dashboard UI
 const MainAppUI = (props) => {
   const { isDark } = useTheme();
+  const { profile } = useAuth();
   
   const theme = useMemo(() => createTheme({
     palette: {
@@ -45,6 +48,7 @@ const MainAppUI = (props) => {
   const [error, setError] = useState(null);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isStrategicDataMgmtOpen, setIsStrategicDataMgmtOpen] = useState(false);
 
   const [filters, setFilters] = useState({
     strategicResultArea: '',
@@ -360,7 +364,7 @@ const MainAppUI = (props) => {
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-      <Header />
+      <Header activeTab={activeTab} />
       
       {/* Tab Navigation */}
       <div className="container mx-auto px-4 pt-4">
@@ -406,6 +410,17 @@ const MainAppUI = (props) => {
                     </svg>
                     Add New Report
                   </Button>
+                  {profile && (
+                    <button
+                      onClick={() => setIsStrategicDataMgmtOpen(true)}
+                      className="px-3 py-2 text-sm bg-green-100 hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 text-green-700 dark:text-green-300 rounded transition-colors font-semibold border border-green-200 dark:border-green-700 flex items-center whitespace-nowrap"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3-6.75h3.75M3.75 6.75h16.5A1.125 1.125 0 0 1 21 7.875v10.5A1.125 1.125 0 0 1 19.875 18H3.75A1.125 1.125 0 0 0 3 17.625V7.875A1.125 1.125 0 0 1 3.75 6.75Z" />
+                      </svg>
+                      Strategic Data Management
+                    </button>
+                  )}
                   <Button 
                     onClick={handleClearFilters}
                     disabled={activeFilterCount === 0}
@@ -570,6 +585,12 @@ const MainAppUI = (props) => {
       <ProtectedForm
         isOpen={isImportModalOpen}
         onClose={() => setIsImportModalOpen(false)}
+      />
+
+      <EnhancedDataManagement 
+        isOpen={isStrategicDataMgmtOpen} 
+        onClose={() => setIsStrategicDataMgmtOpen(false)} 
+        admin={profile} 
       />
 
       <ConfirmDialog

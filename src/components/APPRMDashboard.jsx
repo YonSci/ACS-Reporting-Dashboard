@@ -8,10 +8,14 @@ import Pagination from './Pagination';
 import Button from './Button';
 import ExportSharePanel from './ExportSharePanel';
 import APPRMProtectedForm from './APPRMProtectedForm';
+import APPRMDataManagement from './APPRMDataManagement';
+import { apprmAPI } from '../lib/appwrite';
+import { useAuth } from '../contexts/AuthContext';
 import { ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../../server/data.js';
 import { generateMapData } from '../utils/geoUtils';
 
 const APPRMDashboard = () => {
+  const { profile } = useAuth();
   const [countryFootprints, setCountryFootprints] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -19,6 +23,7 @@ const APPRMDashboard = () => {
   const [selectedCountries, setSelectedCountries] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isAPPRMDataMgmtOpen, setIsAPPRMDataMgmtOpen] = useState(false);
   const itemsPerPage = 5;
 
   const [filters, setFilters] = useState({
@@ -44,120 +49,43 @@ const APPRMDashboard = () => {
   // Partnership options
   const partnershipOptions = ['All Partnerships', ...PARTNERSHIPS];
 
-  // Fetch APPRM data (placeholder for now)
+  // Fetch APPRM data from Appwrite
   const fetchCountryFootprints = async () => {
     try {
       setIsLoading(true);
-      // TODO: Replace with actual API call to fetch country footprints
-      // const data = await footprintAPI.getAllCountryFootprints();
+      console.log('📊 Fetching APPRM data from Appwrite...');
       
-      // Mock data for now - more extensive sample with partnerships and merged SDG/UNSDCF field
-      const mockData = [
-        {
-          $id: '1',
-          country: 'Ethiopia',
-          year: 2024,
-          quarter: 'Q2',
-          partnerships: ['AfDB', 'National Statistics Offices'],
-          deliverables: [
-            'Delivered training on statistical capacity building',
-            'Provided technical assistance for census preparation',
-            'Developed geospatial databases for administrative boundaries'
-          ],
-          outcomes: [
-            'Improved statistical capacity in national statistical office',
-            'Enhanced data governance framework',
-            'Strengthened institutional coordination mechanisms'
-          ],
-          relevantSDGsAndResultAreas: [
-            'SDG 16: Peace, Justice and Strong Institutions',
-            'SDG 17: Partnerships for the Goals',
-            'Sustainable Development and Climate Action',
-            'Governance, Rule of Law and Human Rights'
-          ]
-        },
-        {
-          $id: '2',
-          country: 'Kenya',
-          year: 2024,
-          quarter: 'Q2',
-          partnerships: ['AFRISTAT', 'AUC'],
-          deliverables: [
-            'Supported implementation of statistical master plan',
-            'Facilitated regional data harmonization workshop'
-          ],
-          outcomes: [
-            'Improved data quality and standardization',
-            'Enhanced regional statistical cooperation'
-          ],
-          relevantSDGsAndResultAreas: [
-            'SDG 8: Decent Work and Economic Growth',
-            'SDG 17: Partnerships for the Goals',
-            'Sustainable Development and Climate Action'
-          ]
-        },
-        {
-          $id: '3',
-          country: 'Nigeria',
-          year: 2024,
-          quarter: 'Q1',
-          partnerships: [],
-          deliverables: [
-            'Conducted statistical system assessment',
-            'Provided capacity building for data analysts'
-          ],
-          outcomes: [
-            'Strengthened national statistical capacity',
-            'Improved data collection methodologies'
-          ],
-          relevantSDGsAndResultAreas: []
-        },
-        {
-          $id: '4',
-          country: 'South Africa',
-          year: 2023,
-          quarter: 'Q4',
-          partnerships: ['OECD', 'European Union'],
-          deliverables: [
-            'Established regional statistical coordination framework',
-            'Delivered advanced training on survey methodologies'
-          ],
-          outcomes: [
-            'Enhanced regional statistical collaboration',
-            'Improved survey design and implementation'
-          ],
-          relevantSDGsAndResultAreas: [
-            'SDG 9: Industry, Innovation and Infrastructure',
-            'SDG 17: Partnerships for the Goals',
-            'Sustainable Development and Climate Action',
-            'Governance, Rule of Law and Human Rights'
-          ]
-        },
-        {
-          $id: '5',
-          country: 'Ghana',
-          year: 2024,
-          quarter: 'Q2',
-          partnerships: ['UNICEF', 'WFP'],
-          deliverables: [
-            'Supported digital transformation initiative',
-            'Provided technical assistance for administrative data integration'
-          ],
-          outcomes: [
-            'Modernized statistical infrastructure',
-            'Improved administrative data systems'
-          ],
-          relevantSDGsAndResultAreas: [
-            'SDG 2: Zero Hunger',
-            'SDG 9: Industry, Innovation and Infrastructure',
-            'Sustainable Development and Climate Action'
-          ]
-        }
-      ];
+      // Fetch all approved APPRM data
+      const data = await apprmAPI.getAPPRMDataByStatus('approved');
+      console.log('📊 Loaded APPRM data from Appwrite:', data.length);
       
-      setCountryFootprints(mockData);
+             // Transform data to match expected format (handle potential missing fields)
+       const transformedData = data.map(item => ({
+         ...item,
+         // Ensure arrays exist even if empty
+         deliverables: item.deliverables || [],
+         outcomes: item.outcomes || [],
+         sdgunsdcf: item.sdgunsdcf || [],
+         // Handle partnership field (single string vs array)
+         partnerships: item.partnership ? [item.partnership] : [],
+         // Map Appwrite field names to display format
+         year: item.Year,
+         quarter: item.Quarter
+       }));
+      
+      setCountryFootprints(transformedData);
+      
+      // If no approved data found, show info message
+      if (transformedData.length === 0) {
+        console.log('ℹ️ No approved APPRM data found. Check if there are pending entries that need approval.');
+      }
+      
     } catch (error) {
-      setError(error.message);
+      console.error('Error fetching APPRM data:', error);
+      setError(error.message || 'Failed to load APPRM data');
+      
+      // Fallback to empty array on error
+      setCountryFootprints([]);
     } finally {
       setIsLoading(false);
     }
@@ -334,6 +262,17 @@ const APPRMDashboard = () => {
                 </svg>
                 Add New Data
               </Button>
+              {profile && (
+                <button
+                  onClick={() => setIsAPPRMDataMgmtOpen(true)}
+                  className="px-3 py-2 text-sm bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded transition-colors font-semibold border border-purple-200 dark:border-purple-700 flex items-center whitespace-nowrap"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3-6.75h3.75M3.75 6.75h16.5A1.125 1.125 0 0 1 21 7.875v10.5A1.125 1.125 0 0 1 19.875 18H3.75A1.125 1.125 0 0 0 3 17.625V7.875A1.125 1.125 0 0 1 3.75 6.75Z" />
+                  </svg>
+                  APPRM Data Management
+                </button>
+              )}
               <Button 
                 onClick={handleClearFilters}
                 disabled={activeFilterCount === 0}
@@ -546,14 +485,14 @@ const APPRMDashboard = () => {
                     </div>
 
                     {/* SDGs & UNSDCF Result Areas (merged field) */}
-                    {footprint.relevantSDGsAndResultAreas && footprint.relevantSDGsAndResultAreas.length > 0 && (
+                    {footprint.sdgunsdcf && footprint.sdgunsdcf.length > 0 && (
                       <div>
                         <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
                           <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                          SDGs & UNSDCF Result Areas ({footprint.relevantSDGsAndResultAreas.length})
+                          SDGs & UNSDCF Result Areas ({footprint.sdgunsdcf.length})
                         </h5>
                         <div className="flex flex-wrap gap-2">
-                          {footprint.relevantSDGsAndResultAreas.map((item, index) => (
+                          {footprint.sdgunsdcf.map((item, index) => (
                             <span
                               key={index}
                               className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
@@ -588,7 +527,16 @@ const APPRMDashboard = () => {
       {/* Modals */}
       <APPRMProtectedForm
         isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
+        onClose={() => {
+          setIsImportModalOpen(false);
+          // Refresh data when form is closed (in case new data was submitted)
+          fetchCountryFootprints();
+        }}
+      />
+      <APPRMDataManagement
+        isOpen={isAPPRMDataMgmtOpen}
+        onClose={() => setIsAPPRMDataMgmtOpen(false)}
+        admin={profile}
       />
     </div>
   );

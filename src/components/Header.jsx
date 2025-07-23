@@ -4,17 +4,16 @@ import ThemeToggle from '../components/ThemeToggle';
 import { useTheme } from '../utils/themeContext';
 import { useAuth } from '../contexts/AuthContext';
 import UserManagementModal from './UserManagementModal';
-import EnhancedDataManagement from './EnhancedDataManagement';
 import AdminNotifications from './AdminNotifications';
 
-const Header = () => {
+const Header = ({ activeTab }) => {
   const { user, profile, isAuthenticated, logout } = useAuth();
   const { isDark } = useTheme();
   const [isUserMgmtOpen, setIsUserMgmtOpen] = useState(false);
-  const [isDataMgmtOpen, setIsDataMgmtOpen] = useState(false);
 
   // Debug: Log the profile object
   console.log('Header profile:', profile);
+  console.log('Header activeTab:', activeTab);
 
   return (
     <header className="bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 py-4 px-6 mb-2 transition-colors duration-200">
@@ -37,14 +36,7 @@ const Header = () => {
             <>
               <AdminNotifications 
                 admin={profile} 
-                onNotificationClick={() => setIsDataMgmtOpen(true)}
               />
-              <button
-                onClick={() => setIsDataMgmtOpen(true)}
-                className="px-3 py-1 text-xs bg-green-100 hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 text-green-700 dark:text-green-300 rounded transition-colors font-semibold border border-green-200 dark:border-green-700"
-              >
-                Data Management
-              </button>
               <button
                 onClick={() => setIsUserMgmtOpen(true)}
                 className="px-3 py-1 text-xs bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/20 dark:hover:bg-blue-900/40 text-blue-700 dark:text-blue-300 rounded transition-colors font-semibold border border-blue-200 dark:border-blue-700"
@@ -70,11 +62,6 @@ const Header = () => {
         </div>
       </div>
       <UserManagementModal isOpen={isUserMgmtOpen} onClose={() => setIsUserMgmtOpen(false)} />
-      <EnhancedDataManagement 
-        isOpen={isDataMgmtOpen} 
-        onClose={() => setIsDataMgmtOpen(false)} 
-        admin={profile} 
-      />
     </header>
   );
 };

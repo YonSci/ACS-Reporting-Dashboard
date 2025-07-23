@@ -5,6 +5,7 @@ const APPWRITE_ENDPOINT = import.meta.env.VITE_APPWRITE_ENDPOINT || 'https://clo
 const APPWRITE_PROJECT_ID = import.meta.env.VITE_APPWRITE_PROJECT_ID || 'your-project-id';
 const APPWRITE_DATABASE_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID || 'acs-dashboard';
 const APPWRITE_REPORTS_COLLECTION_ID = import.meta.env.VITE_APPWRITE_REPORTS_COLLECTION_ID || 'reports';
+const APPWRITE_APPRM_COLLECTION_ID = import.meta.env.VITE_APPWRITE_APPRM_COLLECTION_ID || 'apprm';
 
 // Initialize Appwrite Client
 const client = new Client()
@@ -19,6 +20,7 @@ export const teams = new Teams(client);
 // Database and Collection IDs
 export const DATABASE_ID = APPWRITE_DATABASE_ID;
 export const REPORTS_COLLECTION_ID = APPWRITE_REPORTS_COLLECTION_ID;
+export const APPRM_COLLECTION_ID = APPWRITE_APPRM_COLLECTION_ID;
 
 // Helper functions for reports
 export const reportsAPI = {
@@ -233,6 +235,266 @@ export const reportsAPI = {
             };
         } catch (error) {
             console.error('Error getting statistics:', error);
+            throw error;
+        }
+    }
+};
+
+// Helper functions for APPRM data
+export const apprmAPI = {
+    // Get all APPRM country data
+    async getAllAPPRMData() {
+        console.log('🚀 Starting getAllAPPRMData with pagination...');
+        console.log(`🔧 Using DATABASE_ID: ${DATABASE_ID}`);
+        console.log(`🔧 Using APPRM_COLLECTION_ID: ${APPRM_COLLECTION_ID}`);
+        try {
+            let allDocuments = [];
+            let offset = 0;
+            const limit = 100; // Appwrite Cloud max per request
+            let maxIterations = 50; // Safety limit
+            let iteration = 0;
+            
+            while (iteration < maxIterations) {
+                iteration++;
+                const response = await databases.listDocuments(
+                    DATABASE_ID,
+                    APPRM_COLLECTION_ID,
+                    [
+                        Query.limit(limit),
+                        Query.offset(offset)
+                    ],
+                );
+                
+                allDocuments = allDocuments.concat(response.documents);
+                if (response.documents.length < limit) break;
+                offset += limit;
+            }
+            
+            // Deduplicate by $id as a safety net
+            const uniqueDocuments = Array.from(
+                new Map(allDocuments.map(doc => [doc.$id, doc])).values()
+            );
+            
+            // Sort by reportIndex in JS
+            uniqueDocuments.sort((a, b) => (b.reportIndex ?? 0) - (a.reportIndex ?? 0));
+            
+            console.log(`✅ Fetched ${uniqueDocuments.length} APPRM records from Appwrite!`);
+            return uniqueDocuments;
+        } catch (error) {
+            console.error('Error fetching APPRM data:', error);
+            throw error;
+        }
+    },
+
+    // Get APPRM data by status
+    async getAPPRMDataByStatus(status) {
+        try {
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                [
+                    Query.equal("status", status)
+                ]
+            );
+            return response.documents;
+        } catch (error) {
+            console.error('Error fetching APPRM data by status:', error);
+            throw error;
+        }
+    },
+
+    // Get APPRM data by country
+    async getAPPRMDataByCountry(country) {
+        try {
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                [
+                    Query.equal("country", country)
+                ]
+            );
+            return response.documents;
+        } catch (error) {
+            console.error('Error fetching APPRM data by country:', error);
+            throw error;
+        }
+    },
+
+    // Get APPRM data by year and quarter
+    async getAPPRMDataByPeriod(year, quarter = null) {
+        try {
+            const queries = [Query.equal("Year", year)];
+            if (quarter) {
+                queries.push(Query.equal("Quarter", quarter));
+            }
+            
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                queries
+            );
+            return response.documents;
+        } catch (error) {
+            console.error('Error fetching APPRM data by period:', error);
+            throw error;
+        }
+    },
+
+    // Get APPRM data by user
+    async getAPPRMDataByUser(userId) {
+        try {
+            const response = await databases.listDocuments(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                [
+                    Query.equal("createdBy", userId)
+                ]
+            );
+            return response.documents;
+        } catch (error) {
+            console.error('Error fetching user APPRM data:', error);
+            throw error;
+        }
+    },
+
+    // Create new APPRM entry
+    async createAPPRMData(apprmData) {
+        try {
+            console.log('📝 Creating APPRM data with:', apprmData);
+            console.log('📝 APPRM data fields:', Object.keys(apprmData));
+            
+            const response = await databases.createDocument(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                'unique()',
+                {
+                    ...apprmData,
+                    status: apprmData.status || 'pending'
+                }
+            );
+            
+            console.log('✅ Created APPRM data response:', response);
+            return response;
+        } catch (error) {
+            console.error('❌ Error creating APPRM data:', error);
+            console.error('❌ Error details:', error.message);
+            throw error;
+        }
+    },
+
+    // Update APPRM entry
+    async updateAPPRMData(documentId, updates) {
+        try {
+            const response = await databases.updateDocument(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                documentId,
+                updates
+            );
+            return response;
+        } catch (error) {
+            console.error('Error updating APPRM data:', error);
+            throw error;
+        }
+    },
+
+    // Delete APPRM entry
+    async deleteAPPRMData(documentId) {
+        try {
+            await databases.deleteDocument(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                documentId
+            );
+            return true;
+        } catch (error) {
+            console.error('Error deleting APPRM data:', error);
+            throw error;
+        }
+    },
+
+    // Update APPRM status (for admin approval workflow)
+    async updateAPPRMStatus(documentId, newStatus, approver = null) {
+        try {
+            const updateData = {
+                status: newStatus
+            };
+            
+            // Add approver info if provided
+            if (approver && newStatus === 'approved') {
+                updateData.approvedBy = approver;
+            }
+
+            console.log('📝 Updating APPRM status with data:', updateData);
+            
+            const response = await databases.updateDocument(
+                DATABASE_ID,
+                APPRM_COLLECTION_ID,
+                documentId,
+                updateData
+            );
+            
+            console.log('✅ APPRM status update response:', response);
+            return response;
+        } catch (error) {
+            console.error('❌ Error updating APPRM status:', error);
+            console.error('❌ Error details:', error.message);
+            throw error;
+        }
+    },
+
+    // Get APPRM statistics
+    async getAPPRMStatistics() {
+        try {
+            const [allData, pendingData, approvedData] = await Promise.all([
+                this.getAllAPPRMData(),
+                this.getAPPRMDataByStatus('pending'),
+                this.getAPPRMDataByStatus('approved')
+            ]);
+
+            // Calculate country distribution
+            const countryDistribution = allData.reduce((acc, item) => {
+                acc[item.country] = (acc[item.country] || 0) + 1;
+                return acc;
+            }, {});
+
+            // Calculate year distribution
+            const yearDistribution = allData.reduce((acc, item) => {
+                acc[item.Year] = (acc[item.Year] || 0) + 1;
+                return acc;
+            }, {});
+
+            return {
+                totalEntries: allData.length,
+                statusCounts: {
+                    pending: pendingData.length,
+                    approved: approvedData.length
+                },
+                countryDistribution,
+                yearDistribution,
+                recentEntries: allData.slice(0, 5)
+            };
+        } catch (error) {
+            console.error('Error getting APPRM statistics:', error);
+            throw error;
+        }
+    },
+
+    // Bulk operations for APPRM data
+    async bulkUpdateAPPRMStatus(documentIds, newStatus, approver = null) {
+        try {
+            const updateData = { status: newStatus };
+            if (approver && newStatus === 'approved') {
+                updateData.approvedBy = approver;
+            }
+
+            const promises = documentIds.map(id => 
+                this.updateAPPRMData(id, updateData)
+            );
+            const results = await Promise.all(promises);
+            return results;
+        } catch (error) {
+            console.error('Error bulk updating APPRM status:', error);
             throw error;
         }
     }

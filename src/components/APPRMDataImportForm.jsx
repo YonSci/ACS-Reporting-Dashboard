@@ -5,6 +5,7 @@ import { Button, Box, Typography, Alert, ThemeProvider, Paper } from '@mui/mater
 import { createTheme } from '@mui/material/styles';
 import { useTheme } from '../utils/themeContext';
 import { useAuth } from '../contexts/AuthContext';
+import { apprmAPI } from '../lib/appwrite';
 import { ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../../server/data.js';
 
 const APPRMDataImportForm = ({ onClose }) => {
@@ -17,10 +18,17 @@ const APPRMDataImportForm = ({ onClose }) => {
 
   // No predefined options - users can input custom SDGs and UNSDCF Result Areas
 
-  // APPRM Form Schema
+  // Generate year options (current year and past 5 years + next year)
+  const currentYear = new Date().getFullYear();
+  const yearOptions = [];
+  for (let i = 2020; i <= currentYear + 1; i++) {
+    yearOptions.push(i.toString());
+  }
+
+  // APPRM Form Schema (matching Appwrite collection exactly)
   const apprmSchema = {
     type: "object",
-    required: ["country", "year", "quarter", "deliverables", "outcomes"],
+    required: ["country", "Year", "Quarter", "deliverables", "outcomes"],
     properties: {
       country: {
         type: "string",
@@ -28,14 +36,14 @@ const APPRMDataImportForm = ({ onClose }) => {
         enum: ALL_AFRICAN_COUNTRIES,
         enumNames: ALL_AFRICAN_COUNTRIES
       },
-      year: {
-        type: "integer",
+      Year: {
+        type: "string",
         title: "Year",
-        minimum: 2020,
-        maximum: new Date().getFullYear() + 1,
-        default: new Date().getFullYear()
+        enum: yearOptions,
+        enumNames: yearOptions,
+        default: currentYear.toString()
       },
-      quarter: {
+      Quarter: {
         type: "string",
         title: "Quarter",
         enum: ["Q1", "Q2", "Q3", "Q4"],
@@ -62,14 +70,20 @@ const APPRMDataImportForm = ({ onClose }) => {
         description: "List of outcomes achieved"
       },
       partnership: {
-        type: "string",
-        title: "Partnership (Optional)",
-        enum: ['', ...PARTNERSHIPS],
-        enumNames: ['No Partnership', ...PARTNERSHIPS]
-      },
-      relevantSDGsAndResultAreas: {
         type: "array",
-        title: "Relevant SDGs & UNSDCF Result Areas (Optional)",
+        title: "Partnerships (Optional)",
+        items: {
+          type: "string",
+          enum: PARTNERSHIPS,
+          enumNames: PARTNERSHIPS
+        },
+        minItems: 0,
+        uniqueItems: true,
+        description: "Select multiple partner organizations"
+      },
+      sdgunsdcf: {
+        type: "array",
+        title: "SDGs & UNSDCF Result Areas (Optional)",
         items: {
           type: "string",
           title: "SDG or UNSDCF Result Area"
@@ -85,10 +99,10 @@ const APPRMDataImportForm = ({ onClose }) => {
     country: {
       "ui:help": "Select the African country where activities took place"
     },
-    year: {
-      "ui:help": "Year of activity implementation"
+    Year: {
+      "ui:help": "Select year from the dropdown when activities were implemented"
     },
-    quarter: {
+    Quarter: {
       "ui:help": "Quarter when activities were implemented"
     },
     deliverables: {
@@ -104,9 +118,17 @@ const APPRMDataImportForm = ({ onClose }) => {
       }
     },
     partnership: {
-      "ui:help": "Select the main partner organization (optional)"
+      "ui:help": "Select multiple partner organizations (optional)",
+      "ui:options": {
+        orderable: false,
+        addable: true,
+        removable: true
+      },
+      items: {
+        "ui:placeholder": "Select partnership..."
+      }
     },
-    relevantSDGsAndResultAreas: {
+    sdgunsdcf: {
       "ui:help": "Add SDGs (e.g., 'SDG 16: Peace, Justice') and UNSDCF Result Areas (e.g., 'Sustainable Development and Climate Action') - This field is optional",
       items: {
         "ui:placeholder": "Enter SDG or UNSDCF Result Area..."
@@ -132,20 +154,26 @@ const APPRMDataImportForm = ({ onClose }) => {
     setError(null);
 
     try {
-      // Add metadata
-      const finalData = {
+      // Convert Year string to integer for database storage
+      const processedData = {
         ...submitData,
-        submittedBy: user?.fullName || 'Unknown User',
-        submittedAt: new Date().toISOString(),
-        status: 'pending', // Default status for new APPRM entries
-        dataType: 'apprm' // Identifier for APPRM data
+        Year: parseInt(submitData.Year)
       };
 
-      // TODO: Replace with actual APPRM API submission
-      console.log('Final APPRM data to submit:', finalData);
+      // Add metadata to match Appwrite collection structure
+      const finalData = {
+        ...processedData,
+        createdBy: user?.fullName || 'Unknown User',
+        approvedBy: '', // Empty initially, to be filled by admin approval process
+        status: 'pending', // Default status for new APPRM entries
+        reportIndex: Date.now() // Use timestamp as unique index for now
+      };
+
+      console.log('Final APPRM data to submit to Appwrite:', finalData);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Submit to Appwrite using the apprmAPI
+      const response = await apprmAPI.createAPPRMData(finalData);
+      console.log('✅ Successfully created APPRM data:', response);
       
       setSuccess(true);
       setTimeout(() => {
@@ -154,7 +182,14 @@ const APPRMDataImportForm = ({ onClose }) => {
 
     } catch (err) {
       console.error('APPRM submission error:', err);
-      setError(err.message || 'Failed to submit APPRM data. Please try again.');
+      // Handle specific Appwrite errors
+      if (err.code === 401) {
+        setError('Authentication required. Please log in and try again.');
+      } else if (err.code === 400) {
+        setError('Invalid data format. Please check your entries and try again.');
+      } else {
+        setError(err.message || 'Failed to submit APPRM data. Please try again.');
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -188,7 +223,7 @@ const APPRMDataImportForm = ({ onClose }) => {
         </Typography>
         <Typography variant="body2" color="textSecondary" sx={{ mb: 3 }}>
           Submit country footprint data. Required fields: Country, Year, Quarter, Deliverables, and Outcomes. 
-          Partnership and SDGs/UNSDCF Result Areas are optional.
+          You can select multiple partnerships as needed. Partnership and SDGs/UNSDCF Result Areas are optional.
         </Typography>
 
         {error && (
