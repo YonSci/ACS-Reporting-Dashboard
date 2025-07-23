@@ -6,6 +6,7 @@ import { createTheme } from '@mui/material/styles';
 import { useTheme } from '../utils/themeContext';
 import { useAuth } from '../contexts/AuthContext';
 import { apprmAPI } from '../lib/appwrite';
+import { sendAPPRMAdminNotification } from '../utils/reportUtils';
 import { ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../../server/data.js';
 
 const APPRMDataImportForm = ({ onClose }) => {
@@ -174,6 +175,15 @@ const APPRMDataImportForm = ({ onClose }) => {
       // Submit to Appwrite using the apprmAPI
       const response = await apprmAPI.createAPPRMData(finalData);
       console.log('✅ Successfully created APPRM data:', response);
+      
+      // Send notification to admins about new APPRM submission
+      try {
+        await sendAPPRMAdminNotification(finalData, user);
+        console.log('✅ APPRM notification sent to admins');
+      } catch (notificationError) {
+        console.warn('⚠️ APPRM data saved but notification failed:', notificationError);
+        // Don't fail the submission if notification fails
+      }
       
       setSuccess(true);
       setTimeout(() => {

@@ -1,6 +1,6 @@
 import { reportsAPI } from '../lib/appwrite';
 
-// Email notification function
+// Email notification function for Strategic Result Area reports
 const sendAdminNotification = async (reportData, user) => {
   try {
     // For now, we'll use a simple email service or webhook
@@ -48,17 +48,66 @@ const sendAdminNotification = async (reportData, user) => {
     
     const results = await Promise.all(emailPromises);
     const successful = results.filter(r => r.success).length;
-    const failed = results.filter(r => !r.success).length;
-
-    console.log(`📧 Email Results: ${successful} successful, ${failed} failed out of ${notificationData.adminEmails.length} total admin(s)`);
     
-    if (failed > 0) {
-      const failedEmails = results.filter(r => !r.success).map(r => r.email);
-      console.warn(`⚠️ Failed to send emails to: ${failedEmails.join(', ')}`);
+    console.log(`📧 Notification summary: ${successful}/${results.length} emails sent successfully`);
+    
+    if (successful === 0) {
+      throw new Error('Failed to send notification emails to all administrators');
     }
+    
   } catch (error) {
-    console.error('❌ Failed to send admin notification:', error);
-    // Don't throw error - report submission should succeed even if notification fails
+    console.error('❌ Admin notification failed:', error);
+    // Don't throw the error to prevent form submission failure
+    // Just log it for debugging
+  }
+};
+
+// Email notification function for APPRM reports
+const sendAPPRMAdminNotification = async (apprmData, user) => {
+  try {
+    const notificationData = {
+      type: 'new_apprm_submission',
+      reportDetails: {
+        country: apprmData.country,
+        year: Array.isArray(apprmData.Year) ? apprmData.Year.join(', ') : apprmData.Year,
+        quarter: apprmData.Quarter,
+        partnership: Array.isArray(apprmData.partnership) ? apprmData.partnership.join(', ') : (apprmData.partnership || 'None'),
+        deliverables: Array.isArray(apprmData.deliverables) ? apprmData.deliverables.length : 0,
+        outcomes: Array.isArray(apprmData.outcomes) ? apprmData.outcomes.length : 0,
+        submittedBy: user?.fullName || user?.username || user?.email || 'Anonymous User',
+        submittedAt: new Date().toISOString()
+      },
+      adminEmails: [
+        'yonas.mersha14@gmail.com',
+        'yonas.yigezu@un.org',
+      ],
+      dashboardUrl: window.location.origin + '/apprm-data-management'
+    };
+
+    // Send to each admin email
+    const emailPromises = notificationData.adminEmails.map(async (adminEmail) => {
+      try {
+        await sendAPPRMEmailNotification({ ...notificationData, adminEmail });
+        console.log(`✅ APPRM Email sent to: ${adminEmail}`);
+        return { email: adminEmail, success: true };
+      } catch (error) {
+        console.error(`❌ Failed to send APPRM email to ${adminEmail}:`, error.message);
+        return { email: adminEmail, success: false, error: error.message };
+      }
+    });
+    
+    const results = await Promise.all(emailPromises);
+    const successful = results.filter(r => r.success).length;
+    
+    console.log(`📧 APPRM Notification summary: ${successful}/${results.length} emails sent successfully`);
+    
+    if (successful === 0) {
+      throw new Error('Failed to send APPRM notification emails to all administrators');
+    }
+    
+  } catch (error) {
+    console.error('❌ APPRM Admin notification failed:', error);
+    // Don't throw the error to prevent form submission failure
   }
 };
 
@@ -131,6 +180,79 @@ const sendEmailNotification = async (notificationData) => {
     throw error;
   }
 };
+
+// APPRM EmailJS implementation
+const sendAPPRMEmailNotification = async (notificationData) => {
+  try {
+    // EmailJS Configuration for APPRM - can use same or different template
+    const emailjsConfig = {
+      serviceId: 'service_2e3pbqx', // ✅ EmailJS Service ID
+      templateId: 'template_xwg784v', // ✅ You can create a specific APPRM template or use the same
+      publicKey: 'sCf0lxIhgQjrHLsAj' // ✅ EmailJS Public Key
+    };
+
+    // Check if EmailJS is configured
+    if (emailjsConfig.serviceId.includes('acs_reports') || 
+        emailjsConfig.templateId.includes('new_report') || 
+        emailjsConfig.publicKey.includes('your_emailjs')) {
+      
+      // Not configured yet - just log
+      console.log('📧 APPRM EmailJS not configured yet. Email notification preview:', {
+        to: notificationData.adminEmail,
+        subject: 'New APPRM Data Submitted for Approval',
+        data: {
+          country: notificationData.reportDetails.country,
+          year: notificationData.reportDetails.year,
+          quarter: notificationData.reportDetails.quarter,
+          partnership: notificationData.reportDetails.partnership,
+          deliverables_count: notificationData.reportDetails.deliverables,
+          outcomes_count: notificationData.reportDetails.outcomes,
+          submitted_by: notificationData.reportDetails.submittedBy,
+          dashboard_url: notificationData.dashboardUrl
+        }
+      });
+      
+      console.log('ℹ️ To enable APPRM emails: Update emailjsConfig in sendAPPRMEmailNotification');
+      return;
+    }
+
+    // Send actual email using EmailJS
+    console.log('📧 Attempting to send APPRM email with EmailJS...');
+    
+    const { default: emailjs } = await import('@emailjs/browser');
+    
+    const emailParams = {
+      to_email: notificationData.adminEmail,
+      report_type: 'APPRM Country Footprint Data',
+      report_country: notificationData.reportDetails.country,
+      report_year: notificationData.reportDetails.year,
+      report_quarter: notificationData.reportDetails.quarter,
+      report_partnership: notificationData.reportDetails.partnership,
+      deliverables_count: notificationData.reportDetails.deliverables,
+      outcomes_count: notificationData.reportDetails.outcomes,
+      submitted_by: notificationData.reportDetails.submittedBy,
+      submission_date: new Date(notificationData.reportDetails.submittedAt).toLocaleDateString(),
+      dashboard_url: notificationData.dashboardUrl
+    };
+    
+    console.log('📝 APPRM Email parameters:', emailParams);
+    
+    const response = await emailjs.send(
+      emailjsConfig.serviceId,
+      emailjsConfig.templateId,
+      emailParams,
+      emailjsConfig.publicKey
+    );
+
+    console.log('✅ APPRM Email sent successfully via EmailJS');
+    console.log('📧 APPRM EmailJS Response:', response);
+
+  } catch (error) {
+    console.error('❌ Failed to send APPRM email notification:', error);
+    throw error;
+  }
+};
+
 // Search and filter utilities for reports
 export const searchReports = (reports, searchTerm) => {
   if (!searchTerm) return reports;
@@ -264,6 +386,22 @@ export const submitReportData = async (reportData, user) => {
     return createdReport;
   } catch (error) {
     console.error('Error submitting report data:', error);
+    throw error;
+  }
+};
+
+// Export APPRM notification function
+export { sendAPPRMAdminNotification };
+
+// Submit APPRM data with notification
+export const submitAPPRMData = async (apprmData, user) => {
+  try {
+    // This function is provided for convenience, but APPRM form handles submission directly
+    // It's mainly here to provide notification functionality
+    await sendAPPRMAdminNotification(apprmData, user);
+    return apprmData;
+  } catch (error) {
+    console.error('Error in APPRM submission notification:', error);
     throw error;
   }
 };

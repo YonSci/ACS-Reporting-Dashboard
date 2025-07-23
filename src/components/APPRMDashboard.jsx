@@ -8,14 +8,11 @@ import Pagination from './Pagination';
 import Button from './Button';
 import ExportSharePanel from './ExportSharePanel';
 import APPRMProtectedForm from './APPRMProtectedForm';
-import APPRMDataManagement from './APPRMDataManagement';
 import { apprmAPI } from '../lib/appwrite';
-import { useAuth } from '../contexts/AuthContext';
 import { ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../../server/data.js';
 import { generateMapData } from '../utils/geoUtils';
 
 const APPRMDashboard = () => {
-  const { profile } = useAuth();
   const [countryFootprints, setCountryFootprints] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,7 +20,6 @@ const APPRMDashboard = () => {
   const [selectedCountries, setSelectedCountries] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
-  const [isAPPRMDataMgmtOpen, setIsAPPRMDataMgmtOpen] = useState(false);
   const itemsPerPage = 5;
 
   const [filters, setFilters] = useState({
@@ -262,17 +258,6 @@ const APPRMDashboard = () => {
                 </svg>
                 Add New Data
               </Button>
-              {profile && (
-                <button
-                  onClick={() => setIsAPPRMDataMgmtOpen(true)}
-                  className="px-3 py-2 text-sm bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded transition-colors font-semibold border border-purple-200 dark:border-purple-700 flex items-center whitespace-nowrap"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3-6.75h3.75M3.75 6.75h16.5A1.125 1.125 0 0 1 21 7.875v10.5A1.125 1.125 0 0 1 19.875 18H3.75A1.125 1.125 0 0 0 3 17.625V7.875A1.125 1.125 0 0 1 3.75 6.75Z" />
-                  </svg>
-                  APPRM Data Management
-                </button>
-              )}
               <Button 
                 onClick={handleClearFilters}
                 disabled={activeFilterCount === 0}
@@ -532,11 +517,6 @@ const APPRMDashboard = () => {
           // Refresh data when form is closed (in case new data was submitted)
           fetchCountryFootprints();
         }}
-      />
-      <APPRMDataManagement
-        isOpen={isAPPRMDataMgmtOpen}
-        onClose={() => setIsAPPRMDataMgmtOpen(false)}
-        admin={profile}
       />
     </div>
   );
