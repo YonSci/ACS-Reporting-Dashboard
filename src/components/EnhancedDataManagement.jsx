@@ -10,6 +10,7 @@ function EnhancedDataManagement({ isOpen, onClose, admin }) {
   const [error, setError] = useState(null);
   const [sortField, setSortField] = useState('reportIndex');
   const [sortDirection, setSortDirection] = useState('asc');
+  const [expandedRows, setExpandedRows] = useState(new Set());
 
   useEffect(() => {
     if (isOpen) {
@@ -64,6 +65,46 @@ function EnhancedDataManagement({ isOpen, onClose, admin }) {
       setSortField(field);
       setSortDirection('asc');
     }
+  };
+
+  // Toggle row expansion
+  const toggleRowExpansion = (reportId) => {
+    const newExpanded = new Set(expandedRows);
+    if (newExpanded.has(reportId)) {
+      newExpanded.delete(reportId);
+    } else {
+      newExpanded.add(reportId);
+    }
+    setExpandedRows(newExpanded);
+  };
+
+  // Helper function to convert index to Roman numeral
+  const toRomanNumeral = (num) => {
+    const romanNumerals = [
+      { value: 1000, symbol: 'm' },
+      { value: 900, symbol: 'cm' },
+      { value: 500, symbol: 'd' },
+      { value: 400, symbol: 'cd' },
+      { value: 100, symbol: 'c' },
+      { value: 90, symbol: 'xc' },
+      { value: 50, symbol: 'l' },
+      { value: 40, symbol: 'xl' },
+      { value: 10, symbol: 'x' },
+      { value: 9, symbol: 'ix' },
+      { value: 5, symbol: 'v' },
+      { value: 4, symbol: 'iv' },
+      { value: 1, symbol: 'i' }
+    ];
+    
+    let result = '';
+    for (const { value, symbol } of romanNumerals) {
+      const count = Math.floor(num / value);
+      if (count) {
+        result += symbol.repeat(count);
+        num -= value * count;
+      }
+    }
+    return result;
   };
 
   // Filtering and sorting logic
@@ -266,6 +307,9 @@ function EnhancedDataManagement({ isOpen, onClose, admin }) {
               <table className="min-w-full border border-gray-200 dark:border-gray-700">
                 <thead>
                   <tr className="bg-gray-100 dark:bg-gray-700">
+                    <th className="p-2 border border-gray-200 dark:border-gray-600 text-left w-8">
+                      <span className="text-xs text-gray-600 dark:text-gray-400">Details</span>
+                    </th>
                     <th 
                       className="p-2 border border-gray-200 dark:border-gray-600 text-left cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
                       onClick={() => handleSort('strategicResultArea')}
@@ -349,8 +393,26 @@ function EnhancedDataManagement({ isOpen, onClose, admin }) {
                 </thead>
                 <tbody>
                   {filteredAndSortedReports.map(report => (
-                    <tr key={report.$id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
-                      <td className="p-2 border border-gray-200 dark:border-gray-600">{report.strategicResultArea}</td>
+                    <>
+                      <tr key={report.$id} className="hover:bg-gray-50 dark:hover:bg-gray-900">
+                        <td className="p-2 border border-gray-200 dark:border-gray-600">
+                          <button
+                            onClick={() => toggleRowExpansion(report.$id)}
+                            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                            title={expandedRows.has(report.$id) ? "Hide details" : "Show details"}
+                          >
+                            {expandedRows.has(report.$id) ? (
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                              </svg>
+                            ) : (
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                              </svg>
+                            )}
+                          </button>
+                        </td>
+                        <td className="p-2 border border-gray-200 dark:border-gray-600">{report.strategicResultArea}</td>
                       <td className="p-2 border border-gray-200 dark:border-gray-600">{report.subStrategicResultArea}</td>
                       <td className="p-2 border border-gray-200 dark:border-gray-600">{report.interventionCountry}</td>
                       <td className="p-2 border border-gray-200 dark:border-gray-600">{report.year}</td>
@@ -402,6 +464,94 @@ function EnhancedDataManagement({ isOpen, onClose, admin }) {
                         </div>
                       </td>
                     </tr>
+                    
+                    {/* Expanded Details Row */}
+                    {expandedRows.has(report.$id) && (
+                      <tr className="bg-gray-50 dark:bg-gray-800">
+                        <td colSpan="8" className="p-4 border border-gray-200 dark:border-gray-600">
+                          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            
+                            {/* Project Details */}
+                            <div>
+                              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
+                                📋 Project Details:
+                              </h4>
+                              {Array.isArray(report.details) && report.details.length > 0 ? (
+                                <ol className="list-none space-y-1 text-sm text-gray-700 dark:text-gray-300">
+                                  {report.details.map((detail, index) => (
+                                    <li key={index} className="flex items-start">
+                                      <span className="text-blue-600 dark:text-blue-400 mr-2 font-medium">
+                                        {toRomanNumeral(index + 1)}.
+                                      </span>
+                                      <span>{detail}</span>
+                                    </li>
+                                  ))}
+                                </ol>
+                              ) : (
+                                <p className="text-sm text-gray-500 dark:text-gray-400 italic">No details available</p>
+                              )}
+                            </div>
+
+                            {/* SDG Contribution */}
+                            <div>
+                              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
+                                🎯 SDG Contribution:
+                              </h4>
+                              <p className="text-sm text-gray-700 dark:text-gray-300">
+                                {report.sdgContribution || 'Not specified'}
+                              </p>
+                            </div>
+
+                            {/* Partnerships */}
+                            <div>
+                              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
+                                🤝 Partnerships:
+                              </h4>
+                              {Array.isArray(report.partnerships) && report.partnerships.length > 0 ? (
+                                <div className="flex flex-wrap gap-1">
+                                  {report.partnerships.map((partnership, index) => (
+                                    <span
+                                      key={index}
+                                      className="inline-block px-2 py-1 text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded"
+                                    >
+                                      {partnership}
+                                    </span>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-sm text-gray-500 dark:text-gray-400 italic">No partnerships listed</p>
+                              )}
+                            </div>
+
+                            {/* Supporting Links */}
+                            <div>
+                              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-200 mb-2">
+                                🔗 Supporting Links:
+                              </h4>
+                              {Array.isArray(report.supportingLinks) && report.supportingLinks.length > 0 ? (
+                                <div className="space-y-1">
+                                  {report.supportingLinks.map((link, index) => (
+                                    <a
+                                      key={index}
+                                      href={link}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="block text-sm text-blue-600 dark:text-blue-400 hover:underline truncate"
+                                    >
+                                      {link}
+                                    </a>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-sm text-gray-500 dark:text-gray-400 italic">No supporting links</p>
+                              )}
+                            </div>
+
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
                   ))}
                 </tbody>
               </table>
