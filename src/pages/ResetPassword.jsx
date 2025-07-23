@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { account } from '../lib/appwrite';
+import { Client, Account } from 'appwrite';
+
+// Profiles project configuration for password reset
+const profilesClient = new Client()
+  .setEndpoint('https://cloud.appwrite.io/v1')
+  .setProject('6879ef820031fa4dd590'); // Profiles project ID
+
+const profilesAccount = new Account(profilesClient);
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -32,7 +39,7 @@ const ResetPassword = () => {
     }
     setIsSubmitting(true);
     try {
-      await account.updateRecovery(userId, secret, password, confirm);
+      await profilesAccount.updateRecovery(userId, secret, password, confirm);
       setSuccess('Password reset successful! You can now log in.');
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {

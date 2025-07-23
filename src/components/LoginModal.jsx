@@ -126,9 +126,15 @@ const LoginModal = ({ isOpen, onClose, onSuccess }) => {
     try {
       // Use your frontend URL for redirect (update as needed)
       const redirectUrl = window.location.origin + '/reset-password';
-      await import('../lib/appwrite').then(({ appwrite }) =>
-        appwrite.account.createRecovery(email, redirectUrl)
-      );
+      
+      // Import the profiles account from AuthContext for password reset
+      const { Client, Account } = await import('appwrite');
+      const profilesClient = new Client()
+        .setEndpoint('https://cloud.appwrite.io/v1')
+        .setProject('6879ef820031fa4dd590'); // Profiles project ID
+      const profilesAccount = new Account(profilesClient);
+      
+      await profilesAccount.createRecovery(email, redirectUrl);
       setForgotSuccess('If this email exists, a reset link has been sent.');
     } catch (err) {
       setForgotError(err?.message || 'Failed to send reset link.');
