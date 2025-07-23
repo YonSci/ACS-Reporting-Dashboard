@@ -109,8 +109,6 @@ export const submitReportData = async (reportData, user) => {
       createdBy: user?.$id || 'system', // Required field - use 'system' to match migration
       approvedBy: 'system', // Required field - use 'system' to match migration
       reportIndex: nextIndex, // Add sequential index
-      // Add submitter username for display
-      submitterName: user?.fullName || user?.username || user?.email || 'Anonymous User',
       // Ensure year is an integer
       year: parseInt(reportData.year) || new Date().getFullYear(),
       // Ensure partnerships is an array

@@ -33,17 +33,26 @@ function EnhancedDataManagement({ isOpen, onClose, admin }) {
 
   // Helper function to get user display name
   const getUserDisplayName = (report) => {
-    // For approved reports, show the approver (if available) or admin
-    if (report.status === 'approved') {
-      if (report.approverName) {
-        return report.approverName; // Explicit approver name
+    // For submitted reports (pending), show the submitter
+    if (report.status === 'pending_approval') {
+      if (report.createdByUsername) return report.createdByUsername; // Existing reports
+      
+      // For new reports, try to identify the submitter by createdBy ID
+      if (report.createdBy && report.createdBy !== 'system') {
+        // If it's the current admin's ID, show admin name
+        if (report.createdBy === admin?.$id) {
+          return admin?.fullName || admin?.username || admin?.email || 'Admin';
+        }
+        return 'User'; // Other user
       }
-      // If no approverName but approved, show current admin as approver
+      return 'System'; // System submitted
+    }
+    
+    // For approved reports, show the current admin as approver
+    if (report.status === 'approved') {
       return admin?.fullName || admin?.username || admin?.email || 'Admin';
     }
-    // For submitted reports, show the submitter
-    if (report.submitterName) return report.submitterName; // New reports
-    if (report.createdByUsername) return report.createdByUsername; // Existing reports
+    
     return 'System'; // Default
   };
 
@@ -359,7 +368,7 @@ function EnhancedDataManagement({ isOpen, onClose, admin }) {
                         {report.status === 'approved' && (
                           <span className="text-xs text-green-600 dark:text-green-400 ml-1">(Approver)</span>
                         )}
-                        {(report.submitterName || report.createdByUsername) && report.status !== 'approved' && (
+                        {report.status === 'pending_approval' && (
                           <span className="text-xs text-blue-600 dark:text-blue-400 ml-1">(Submitter)</span>
                         )}
                       </td>

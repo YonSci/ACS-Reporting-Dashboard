@@ -188,14 +188,8 @@ export const reportsAPI = {
                 status: newStatus
             };
 
-            // Try to add approver info for approved reports (may not exist in schema)
-            if (newStatus === 'approved' && admin) {
-                try {
-                    updateData.approverName = admin.fullName || admin.username || admin.email || 'Admin';
-                } catch (err) {
-                    console.log('ℹ️ approverName attribute may not exist in collection, skipping');
-                }
-            }
+            // Note: approverName attribute doesn't exist in collection
+            // Approval tracking is handled by the admin user in the Data Management UI
 
             console.log('📝 Updating report with data:', updateData);
             

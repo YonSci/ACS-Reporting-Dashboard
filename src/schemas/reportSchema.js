@@ -56,9 +56,14 @@ export const reportSchema = {
       }
     },
     details: {
-      type: "string",
+      type: "array",
       title: "Details",
-      description: "List the key details and achievements of this intervention"
+      description: "List the key details and achievements of this intervention",
+      items: {
+        type: "string",
+        title: "Detail"
+      },
+      minItems: 1
     }
   }
 };
@@ -109,10 +114,17 @@ export const uiSchema = {
     }
   },
   details: {
-    "ui:widget": "textarea",
     "ui:options": {
-      rows: 6
+      orderable: true,
+      addable: true,
+      removable: true
     },
-    "ui:placeholder": "Enter intervention details"
+    items: {
+      "ui:widget": "textarea",
+      "ui:options": {
+        rows: 3
+      },
+      "ui:placeholder": "Enter a specific detail or achievement (e.g., 'Geospatial databases developed')"
+    }
   }
 }; 
