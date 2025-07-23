@@ -19,7 +19,7 @@ import ConfirmDialog from './components/ConfirmDialog';
 import ExportSharePanel from './components/ExportSharePanel';
 import ProtectedForm from './components/ProtectedForm';
 import TabNavigation from './components/TabNavigation';
-import APRRMDashboard from './components/APRRMDashboard';
+import APPRMDashboard from './components/APPRMDashboard';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
@@ -560,18 +560,17 @@ const MainAppUI = (props) => {
           </div>
         </main>
       ) : (
-        /* APRRM Reports Tab */
+        /* APPRM Reports Tab */
         <main className="container mx-auto px-4 py-8">
-          <APRRMDashboard />
+          <APPRMDashboard />
         </main>
       )}
 
       {/* Modals */}
-      <Modal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} title="Add New Report">
-        <ProtectedForm>
-          <DataImportForm onClose={() => setIsImportModalOpen(false)} />
-        </ProtectedForm>
-      </Modal>
+      <ProtectedForm
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
 
       <ConfirmDialog
         isOpen={isConfirmDialogOpen}

@@ -7,16 +7,18 @@ import RegionalBarChart from './RegionalBarChart';
 import Pagination from './Pagination';
 import Button from './Button';
 import ExportSharePanel from './ExportSharePanel';
+import APPRMProtectedForm from './APPRMProtectedForm';
 import { ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../../server/data.js';
 import { generateMapData } from '../utils/geoUtils';
 
-const APRRMDashboard = () => {
+const APPRMDashboard = () => {
   const [countryFootprints, setCountryFootprints] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [mapData, setMapData] = useState([]);
   const [selectedCountries, setSelectedCountries] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const itemsPerPage = 5;
 
   const [filters, setFilters] = useState({
@@ -42,14 +44,14 @@ const APRRMDashboard = () => {
   // Partnership options
   const partnershipOptions = ['All Partnerships', ...PARTNERSHIPS];
 
-  // Fetch APRRM data (placeholder for now)
+  // Fetch APPRM data (placeholder for now)
   const fetchCountryFootprints = async () => {
     try {
       setIsLoading(true);
       // TODO: Replace with actual API call to fetch country footprints
       // const data = await footprintAPI.getAllCountryFootprints();
       
-      // Mock data for now - more extensive sample with partnerships
+      // Mock data for now - more extensive sample with partnerships and merged SDG/UNSDCF field
       const mockData = [
         {
           $id: '1',
@@ -67,7 +69,9 @@ const APRRMDashboard = () => {
             'Enhanced data governance framework',
             'Strengthened institutional coordination mechanisms'
           ],
-          unsdcfResultAreas: [
+          relevantSDGsAndResultAreas: [
+            'SDG 16: Peace, Justice and Strong Institutions',
+            'SDG 17: Partnerships for the Goals',
             'Sustainable Development and Climate Action',
             'Governance, Rule of Law and Human Rights'
           ]
@@ -86,7 +90,9 @@ const APRRMDashboard = () => {
             'Improved data quality and standardization',
             'Enhanced regional statistical cooperation'
           ],
-          unsdcfResultAreas: [
+          relevantSDGsAndResultAreas: [
+            'SDG 8: Decent Work and Economic Growth',
+            'SDG 17: Partnerships for the Goals',
             'Sustainable Development and Climate Action'
           ]
         },
@@ -95,7 +101,7 @@ const APRRMDashboard = () => {
           country: 'Nigeria',
           year: 2024,
           quarter: 'Q1',
-          partnerships: ['UNSD', 'WTO'],
+          partnerships: [],
           deliverables: [
             'Conducted statistical system assessment',
             'Provided capacity building for data analysts'
@@ -104,9 +110,7 @@ const APRRMDashboard = () => {
             'Strengthened national statistical capacity',
             'Improved data collection methodologies'
           ],
-          unsdcfResultAreas: [
-            'Governance, Rule of Law and Human Rights'
-          ]
+          relevantSDGsAndResultAreas: []
         },
         {
           $id: '4',
@@ -122,7 +126,9 @@ const APRRMDashboard = () => {
             'Enhanced regional statistical collaboration',
             'Improved survey design and implementation'
           ],
-          unsdcfResultAreas: [
+          relevantSDGsAndResultAreas: [
+            'SDG 9: Industry, Innovation and Infrastructure',
+            'SDG 17: Partnerships for the Goals',
             'Sustainable Development and Climate Action',
             'Governance, Rule of Law and Human Rights'
           ]
@@ -141,7 +147,9 @@ const APRRMDashboard = () => {
             'Modernized statistical infrastructure',
             'Improved administrative data systems'
           ],
-          unsdcfResultAreas: [
+          relevantSDGsAndResultAreas: [
+            'SDG 2: Zero Hunger',
+            'SDG 9: Industry, Innovation and Infrastructure',
             'Sustainable Development and Climate Action'
           ]
         }
@@ -187,7 +195,7 @@ const APRRMDashboard = () => {
   };
 
   const handleCountrySelectOnMap = (countryName, newSelectedCountries = null) => {
-    console.log('🗺️ APRRM Map clicked:', countryName, 'newSelectedCountries:', newSelectedCountries);
+    console.log('🗺️ APPRM Map clicked:', countryName, 'newSelectedCountries:', newSelectedCountries);
     
     if (newSelectedCountries !== null) {
       setSelectedCountries(newSelectedCountries);
@@ -252,7 +260,7 @@ const APRRMDashboard = () => {
   // Handle page change
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    const reportsSection = document.querySelector('#aprrm-reports-section');
+    const reportsSection = document.querySelector('#apprm-reports-section');
     if (reportsSection) {
       reportsSection.scrollIntoView({ behavior: 'smooth' });
     }
@@ -267,7 +275,7 @@ const APRRMDashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-64 bg-red-50 dark:bg-red-900 rounded-xl mx-4">
         <div className="text-center">
-          <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mb-2">Error Loading APRRM Data</h3>
+          <h3 className="text-lg font-bold text-red-600 dark:text-red-400 mb-2">Error Loading APPRM Data</h3>
           <p className="text-gray-700 dark:text-gray-300">{error}</p>
           <button 
             onClick={fetchCountryFootprints} 
@@ -285,7 +293,7 @@ const APRRMDashboard = () => {
       <div className="flex items-center justify-center min-h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600 dark:text-gray-400">Loading APRRM Data...</p>
+          <p className="text-gray-600 dark:text-gray-400">Loading APPRM Data...</p>
         </div>
       </div>
     );
@@ -300,7 +308,7 @@ const APRRMDashboard = () => {
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-semibold flex items-center text-slate-900 dark:text-gray-200">
               <FunnelIcon className="w-6 h-6 mr-2 text-blue-400" />
-              Filter APRRM Reports
+              Filter APPRM Reports
               {activeFilterCount > 0 && (
                 <span className="ml-2 text-sm font-normal text-slate-600 dark:text-gray-400">
                   ({activeFilterCount} active)
@@ -316,7 +324,7 @@ const APRRMDashboard = () => {
                 />
               </div>
               <Button 
-                onClick={() => {/* TODO: Add APRRM data import functionality */}}
+                onClick={() => setIsImportModalOpen(true)}
                 variant="primary"
                 size="sm"
                 className="flex items-center whitespace-nowrap"
@@ -411,7 +419,7 @@ const APRRMDashboard = () => {
 
         {/* Right Column: Country Footprints List */}
         <div className="lg:w-1/2">
-          <div id="aprrm-reports-section" className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
+          <div id="apprm-reports-section" className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-2">
                 <svg
@@ -428,7 +436,7 @@ const APRRMDashboard = () => {
                   />
                 </svg>
                 <h2 className="text-2xl font-bold text-slate-950 dark:text-white">
-                  APRRM Reports
+                  APPRM Reports
                 </h2>
                 <span className="ml-2 px-3 py-1 text-sm font-semibold rounded-full bg-blue-100 text-blue-950 dark:bg-blue-900 dark:text-blue-200">
                   {filteredCountryFootprints.length} reports
@@ -437,7 +445,7 @@ const APRRMDashboard = () => {
             </div>
             
             <p className="mb-4 text-slate-900 dark:text-gray-300 font-medium">
-              Explore APRRM country footprints and achievements across African countries
+              Explore APPRM country footprints and achievements across African countries
             </p>
 
             {/* Country Footprint Cards */}
@@ -480,22 +488,24 @@ const APRRMDashboard = () => {
                     </div>
 
                     {/* Partnerships */}
-                    <div className="mb-4">
-                      <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
-                        <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
-                        Partnerships ({footprint.partnerships.length})
-                      </h5>
-                      <div className="flex flex-wrap gap-2">
-                        {footprint.partnerships.map((partnership, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
-                          >
-                            {partnership}
-                          </span>
-                        ))}
+                    {footprint.partnerships && footprint.partnerships.length > 0 && (
+                      <div className="mb-4">
+                        <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                          <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+                          Partnerships ({footprint.partnerships.length})
+                        </h5>
+                        <div className="flex flex-wrap gap-2">
+                          {footprint.partnerships.map((partnership, index) => (
+                            <span
+                              key={index}
+                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
+                            >
+                              {partnership}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
 
                     {/* Deliverables */}
                     <div className="mb-4">
@@ -535,23 +545,29 @@ const APRRMDashboard = () => {
                       </ul>
                     </div>
 
-                    {/* UNSDCF Result Areas */}
-                    <div>
-                      <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
-                        <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                        UNSDCF Result Areas
-                      </h5>
-                      <div className="flex flex-wrap gap-2">
-                        {footprint.unsdcfResultAreas.map((area, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
-                          >
-                            {area}
-                          </span>
-                        ))}
+                    {/* SDGs & UNSDCF Result Areas (merged field) */}
+                    {footprint.relevantSDGsAndResultAreas && footprint.relevantSDGsAndResultAreas.length > 0 && (
+                      <div>
+                        <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                          <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                          SDGs & UNSDCF Result Areas ({footprint.relevantSDGsAndResultAreas.length})
+                        </h5>
+                        <div className="flex flex-wrap gap-2">
+                          {footprint.relevantSDGsAndResultAreas.map((item, index) => (
+                            <span
+                              key={index}
+                              className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ${
+                                item.startsWith('SDG') 
+                                  ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+                                  : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+                              }`}
+                            >
+                              {item}
+                            </span>
+                          ))}
+                        </div>
                       </div>
-                    </div>
+                    )}
                   </div>
                 ))
               )}
@@ -568,8 +584,14 @@ const APRRMDashboard = () => {
           </div>
         </div>
       </div>
+
+      {/* Modals */}
+      <APPRMProtectedForm
+        isOpen={isImportModalOpen}
+        onClose={() => setIsImportModalOpen(false)}
+      />
     </div>
   );
 };
 
-export default APRRMDashboard; 
+export default APPRMDashboard; 
