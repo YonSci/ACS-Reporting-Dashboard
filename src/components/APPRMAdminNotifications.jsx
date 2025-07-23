@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apprmAPI } from '../lib/appwrite';
 
-const APPRMAdminNotifications = ({ admin, onNotificationClick }) => {
+const APPRMAdminNotifications = ({ admin }) => {
   const [pendingCount, setPendingCount] = useState(0);
   const [showNotifications, setShowNotifications] = useState(false);
   const [pendingRecords, setPendingRecords] = useState([]);
@@ -67,7 +67,6 @@ const APPRMAdminNotifications = ({ admin, onNotificationClick }) => {
                 className="p-4 border-b border-gray-100 dark:border-gray-700 hover:bg-purple-50 dark:hover:bg-purple-900/20 cursor-pointer transition-colors"
                 onClick={() => {
                   setShowNotifications(false);
-                  onNotificationClick && onNotificationClick();
                 }}
               >
                 <div className="flex items-start space-x-3">
@@ -94,17 +93,6 @@ const APPRMAdminNotifications = ({ admin, onNotificationClick }) => {
             ))}
           </div>
           
-          <div className="p-4 bg-purple-50 dark:bg-purple-900/20">
-            <button
-              onClick={() => {
-                setShowNotifications(false);
-                onNotificationClick && onNotificationClick();
-              }}
-              className="w-full px-4 py-2 text-sm bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-            >
-              View All in APPRM Data Management
-            </button>
-          </div>
         </div>
       )}
     </div>

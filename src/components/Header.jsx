@@ -6,13 +6,11 @@ import { useAuth } from '../contexts/AuthContext';
 import UserManagementModal from './UserManagementModal';
 import AdminNotifications from './AdminNotifications';
 import APPRMAdminNotifications from './APPRMAdminNotifications';
-import APPRMDataManagement from './APPRMDataManagement';
 
 const Header = ({ activeTab }) => {
   const { user, profile, isAuthenticated, logout } = useAuth();
   const { isDark } = useTheme();
   const [isUserMgmtOpen, setIsUserMgmtOpen] = useState(false);
-  const [isAPPRMDataMgmtOpen, setIsAPPRMDataMgmtOpen] = useState(false);
 
   // Debug: Log the profile object
   console.log('Header profile:', profile);
@@ -42,7 +40,6 @@ const Header = ({ activeTab }) => {
               />
               <APPRMAdminNotifications 
                 admin={profile} 
-                onNotificationClick={() => setIsAPPRMDataMgmtOpen(true)}
               />
               <button
                 onClick={() => setIsUserMgmtOpen(true)}
@@ -69,11 +66,6 @@ const Header = ({ activeTab }) => {
         </div>
       </div>
       <UserManagementModal isOpen={isUserMgmtOpen} onClose={() => setIsUserMgmtOpen(false)} />
-      <APPRMDataManagement 
-        isOpen={isAPPRMDataMgmtOpen} 
-        onClose={() => setIsAPPRMDataMgmtOpen(false)} 
-        admin={profile} 
-      />
     </header>
   );
 };

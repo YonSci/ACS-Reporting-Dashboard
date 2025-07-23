@@ -8,11 +8,14 @@ import Pagination from './Pagination';
 import Button from './Button';
 import ExportSharePanel from './ExportSharePanel';
 import APPRMProtectedForm from './APPRMProtectedForm';
+import APPRMDataManagement from './APPRMDataManagement';
 import { apprmAPI } from '../lib/appwrite';
 import { ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../../server/data.js';
 import { generateMapData } from '../utils/geoUtils';
+import { useAuth } from '../contexts/AuthContext';
 
 const APPRMDashboard = () => {
+  const { profile } = useAuth();
   const [countryFootprints, setCountryFootprints] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -20,6 +23,7 @@ const APPRMDashboard = () => {
   const [selectedCountries, setSelectedCountries] = useState(new Set());
   const [currentPage, setCurrentPage] = useState(1);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [isAPPRMDataMgmtOpen, setIsAPPRMDataMgmtOpen] = useState(false);
   const itemsPerPage = 5;
 
   const [filters, setFilters] = useState({
@@ -49,39 +53,52 @@ const APPRMDashboard = () => {
   const fetchCountryFootprints = async () => {
     try {
       setIsLoading(true);
-      console.log('📊 Fetching APPRM data from Appwrite...');
+      console.log('📊 Fetching approved APPRM data from Appwrite...');
       
-      // Fetch all approved APPRM data
+      // Fetch only approved APPRM data
       const data = await apprmAPI.getAPPRMDataByStatus('approved');
-      console.log('📊 Loaded APPRM data from Appwrite:', data.length);
+      console.log('📊 Loaded approved APPRM data from Appwrite:', data.length);
       
-             // Transform data to match expected format (handle potential missing fields)
-       const transformedData = data.map(item => ({
-         ...item,
-         // Ensure arrays exist even if empty
-         deliverables: item.deliverables || [],
-         outcomes: item.outcomes || [],
-         sdgunsdcf: item.sdgunsdcf || [],
-         // Handle partnership field (single string vs array)
-         partnerships: item.partnership ? [item.partnership] : [],
-         // Map Appwrite field names to display format
-         year: item.Year,
-         quarter: item.Quarter
-       }));
+      // Check partnership formats in the data
+      data.forEach((doc, index) => {
+        console.log(`Document ${index} partnerships:`, doc.partnership, typeof doc.partnership);
+      });
+      
+      // Transform data to match expected format (handle potential missing fields)
+      const transformedData = data.map(item => ({
+        ...item,
+        // Ensure arrays exist even if empty
+        deliverables: item.deliverables || [],
+        outcomes: item.outcomes || [],
+        sdgunsdcf: item.sdgunsdcf || [],
+        // Handle partnership field - keep original value for parsing in display
+        partnerships: item.partnership,
+        // Map Appwrite field names to display format
+        year: item.Year,
+        quarter: item.Quarter
+      }));
       
       setCountryFootprints(transformedData);
+      
+      // Generate map data from APPRM reports - await the async function
+      try {
+        const mapDataResult = await generateMapData();
+        setMapData(mapDataResult || []);
+      } catch (mapError) {
+        console.error('Error generating map data:', mapError);
+        setMapData([]); // Fallback to empty array
+      }
       
       // If no approved data found, show info message
       if (transformedData.length === 0) {
         console.log('ℹ️ No approved APPRM data found. Check if there are pending entries that need approval.');
       }
       
-    } catch (error) {
-      console.error('Error fetching APPRM data:', error);
-      setError(error.message || 'Failed to load APPRM data');
-      
-      // Fallback to empty array on error
+    } catch (err) {
+      console.error('Error fetching APPRM data:', err);
+      setError(err.message || 'Failed to load APPRM data');
       setCountryFootprints([]);
+      setMapData([]);
     } finally {
       setIsLoading(false);
     }
@@ -258,6 +275,17 @@ const APPRMDashboard = () => {
                 </svg>
                 Add New Data
               </Button>
+              {profile && (
+                <button
+                  onClick={() => setIsAPPRMDataMgmtOpen(true)}
+                  className="px-3 py-2 text-sm bg-purple-100 hover:bg-purple-200 dark:bg-purple-900/20 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded transition-colors font-semibold border border-purple-200 dark:border-purple-700 flex items-center whitespace-nowrap"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4 mr-1">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3-6.75h3.75M3.75 6.75h16.5A1.125 1.125 0 0 1 21 7.875v10.5A1.125 1.125 0 0 1 19.875 18H3.75A1.125 1.125 0 0 0 3 17.625V7.875A1.125 1.125 0 0 1 3.75 6.75Z" />
+                  </svg>
+                  APPRM Data Management
+                </button>
+              )}
               <Button 
                 onClick={handleClearFilters}
                 disabled={activeFilterCount === 0}
@@ -412,23 +440,65 @@ const APPRMDashboard = () => {
                     </div>
 
                     {/* Partnerships */}
-                    {footprint.partnerships && footprint.partnerships.length > 0 && (
-                      <div className="mb-4">
-                        <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
-                          <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
-                          Partnerships ({footprint.partnerships.length})
-                        </h5>
-                        <div className="flex flex-wrap gap-2">
-                          {footprint.partnerships.map((partnership, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
-                            >
-                              {partnership}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
+                    {footprint.partnerships && (
+                      (() => {
+                        // Handle both array and string formats for partnerships
+                        let partnershipsArray = [];
+                        if (Array.isArray(footprint.partnerships)) {
+                          partnershipsArray = footprint.partnerships;
+                        } else if (typeof footprint.partnerships === 'string' && footprint.partnerships.trim()) {
+                          const partnershipString = footprint.partnerships.trim();
+                          
+                          // First try normal splitting by common separators
+                          let splitResult = partnershipString
+                            .split(/,|;|\||and\s+|\s+and\s+/i)
+                            .map(p => p.trim())
+                            .filter(p => p.length > 0);
+                          
+                          // If we still have one long string, try to add spaces before capital letters and known patterns
+                          if (splitResult.length === 1 && partnershipString.length > 15) {
+                            let processed = partnershipString
+                              // Add commas before specific patterns like "IONMinistries", "STATIONMinistries", etc.
+                              .replace(/([A-Z]{3,})(Ministries|Ministry|of|the|World|Bank|UN|WHO|UNICEF|UNESCO|UNDP|AfDB|EU|AU|Union|Government|Department|Agency|Organization|Institute|Centre|Center)/gi, '$1, $2')
+                              // Add commas before capital letters following lowercase
+                              .replace(/([a-z])([A-Z][a-z])/g, '$1, $2')
+                              // Handle specific patterns like ACRONYM followed by normal words
+                              .replace(/([A-Z]{4,})([A-Z][a-z])/g, '$1, $2')
+                              // Clean up multiple spaces and normalize
+                              .replace(/\s*,\s*/g, ', ')
+                              .replace(/\s+/g, ' ')
+                              .trim();
+                            
+                            console.log('Partnership parsing:', partnershipString, '->', processed);
+                            
+                            splitResult = processed
+                              .split(',')
+                              .map(p => p.trim())
+                              .filter(p => p.length > 0);
+                          }
+                          
+                          partnershipsArray = splitResult;
+                        }
+                        
+                        return partnershipsArray.length > 0 && (
+                          <div className="mb-4">
+                            <h5 className="text-lg font-semibold text-gray-900 dark:text-white mb-2 flex items-center">
+                              <span className="w-2 h-2 bg-indigo-500 rounded-full mr-2"></span>
+                              Partnerships ({partnershipsArray.length})
+                            </h5>
+                            <div className="flex flex-wrap gap-2">
+                              {partnershipsArray.map((partnership, index) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200"
+                                >
+                                  {partnership}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()
                     )}
 
                     {/* Deliverables */}
@@ -517,6 +587,11 @@ const APPRMDashboard = () => {
           // Refresh data when form is closed (in case new data was submitted)
           fetchCountryFootprints();
         }}
+      />
+      <APPRMDataManagement 
+        isOpen={isAPPRMDataMgmtOpen} 
+        onClose={() => setIsAPPRMDataMgmtOpen(false)} 
+        admin={profile} 
       />
     </div>
   );

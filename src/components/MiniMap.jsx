@@ -62,7 +62,7 @@ const MiniMap = ({ mapData, zoom, pan, viewportWidth, viewportHeight, onViewport
         
         {/* Render simplified country shapes */}
         <g>
-          {mapData.map(country => (
+          {mapData && Array.isArray(mapData) && mapData.map(country => (
             <path
               key={country.id}
               d={country.path}

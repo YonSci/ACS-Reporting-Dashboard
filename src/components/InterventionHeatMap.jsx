@@ -32,6 +32,10 @@ const InterventionHeatMap = ({ mapData, reportData }) => {
 
   // Calculate ranges for the legend
   const ranges = useMemo(() => {
+    if (!mapData || !Array.isArray(mapData)) {
+      return { maxCount: 0, lowThreshold: 0, highThreshold: 0 };
+    }
+    
     const counts = mapData.map(country => 
       reportData.filter(r => r.interventionCountry === country.name).length
     );
@@ -49,6 +53,11 @@ const InterventionHeatMap = ({ mapData, reportData }) => {
   // Calculate heat map color based on report count
   const getHeatMapColor = (countryName, isDark = false) => {
     const reports = reportData.filter(r => r.interventionCountry === countryName).length;
+    
+    if (!mapData || !Array.isArray(mapData) || mapData.length === 0) {
+      return isDark ? colors.heatmap.dark[0] : colors.heatmap.light[0];
+    }
+    
     const maxReports = Math.max(...mapData.map(country => 
       reportData.filter(r => r.interventionCountry === country.name).length
     ));
@@ -99,7 +108,7 @@ const InterventionHeatMap = ({ mapData, reportData }) => {
             }}
           >
             <g className="countries dark:hidden">
-              {mapData.map(country => (
+              {mapData && Array.isArray(mapData) && mapData.map(country => (
                 <path
                   key={`light-${country.name}`}
                   d={country.path}
@@ -112,7 +121,7 @@ const InterventionHeatMap = ({ mapData, reportData }) => {
               ))}
             </g>
             <g className="countries hidden dark:block">
-              {mapData.map(country => (
+              {mapData && Array.isArray(mapData) && mapData.map(country => (
                 <path
                   key={`dark-${country.name}`}
                   d={country.path}

@@ -305,7 +305,7 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
         </defs>
 
         <g className="countries">
-          {mapData.map(country => {
+          {mapData && Array.isArray(mapData) && mapData.map(country => {
             const isSelected = selectedCountries.has(country.name);
             const reports = reportData.filter(r => r.interventionCountry === country.name);
 
