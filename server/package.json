@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@mui/icons-material": "^7.2.0",
     "appwrite": "^14.0.1",
     "cors": "^2.8.5",

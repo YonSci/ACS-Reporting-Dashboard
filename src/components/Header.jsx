@@ -5,6 +5,7 @@ import { useTheme } from '../utils/themeContext';
 import { useAuth } from '../contexts/AuthContext';
 import UserManagementModal from './UserManagementModal';
 import EnhancedDataManagement from './EnhancedDataManagement';
+import AdminNotifications from './AdminNotifications';
 
 const Header = () => {
   const { user, profile, isAuthenticated, logout } = useAuth();
@@ -34,6 +35,10 @@ const Header = () => {
         <div className="flex items-center space-x-4">
           {isAuthenticated && profile?.role === 'admin' && (
             <>
+              <AdminNotifications 
+                admin={profile} 
+                onNotificationClick={() => setIsDataMgmtOpen(true)}
+              />
               <button
                 onClick={() => setIsDataMgmtOpen(true)}
                 className="px-3 py-1 text-xs bg-green-100 hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 text-green-700 dark:text-green-300 rounded transition-colors font-semibold border border-green-200 dark:border-green-700"
