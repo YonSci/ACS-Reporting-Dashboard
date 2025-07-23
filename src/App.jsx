@@ -16,9 +16,10 @@ import AfricaMap from './components/AfricaMap';
 import ReportCard from './components/ReportCard';
 import Button from './components/Button';
 import ConfirmDialog from './components/ConfirmDialog';
-import InterventionChart from './components/InterventionChart';
 import ExportSharePanel from './components/ExportSharePanel';
 import ProtectedForm from './components/ProtectedForm';
+import TabNavigation from './components/TabNavigation';
+import APRRMDashboard from './components/APRRMDashboard';
 import { parseShareableLink } from './utils/exportUtils';
 import { BriefcaseIcon, GlobeAltIcon, UsersIcon, FunnelIcon, XCircleIcon, ListBulletIcon } from './components/icons/MiniIcons';
 import { generateMapData } from './utils/geoUtils';
@@ -35,6 +36,9 @@ const MainAppUI = (props) => {
       mode: isDark ? 'dark' : 'light',
     },
   }), [isDark]);
+
+  // Add active tab state
+  const [activeTab, setActiveTab] = useState('strategic-reports');
 
   const [reports, setReports] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -357,7 +361,18 @@ const MainAppUI = (props) => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <Header />
-      <main className="container mx-auto px-4 py-8">
+      
+      {/* Tab Navigation */}
+      <div className="container mx-auto px-4 pt-4">
+        <TabNavigation 
+          activeTab={activeTab} 
+          onTabChange={setActiveTab}
+        />
+      </div>
+
+      {/* Conditional Content Based on Active Tab */}
+      {activeTab === 'strategic-reports' ? (
+        <main className="container mx-auto px-4 py-8">
           {/* Filters Section */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
             <div className="flex flex-col space-y-4">
@@ -501,20 +516,39 @@ const MainAppUI = (props) => {
                     </span>
                   </div>
                 </div>
-                <div className="space-y-4">
-                  {currentItems.map((report, index) => (
-                    <ReportCard
-                      key={report.$id || report._id || report.id || `${report.interventionCountry}-${report.year}-${report.strategicResultArea}-${index}`}
-                      report={report}
-                    />
-                  ))}
-                  {filteredReports.length === 0 && (
-                    <div className="text-center py-8 text-gray-400">
-                      No reports match the selected filters
+                
+                <p className="mb-4 text-slate-900 dark:text-gray-300 font-medium">
+                  Explore detailed reports from across African countries
+                </p>
+
+                {/* Reports Cards */}
+                <div className="space-y-4 mb-6">
+                  {currentItems.length === 0 ? (
+                    <div className="text-center py-12">
+                      <div className="text-gray-400 dark:text-gray-600 mb-4">
+                        <svg className="w-16 h-16 mx-auto" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm2 3a1 1 0 000 2h10a1 1 0 100-2H5zm0 4a1 1 0 100 2h6a1 1 0 100-2H5z" clipRule="evenodd" />
+                        </svg>
+                      </div>
+                      <p className="text-gray-600 dark:text-gray-400 text-lg">
+                        No reports found matching your current filters
+                      </p>
+                      <p className="text-gray-500 dark:text-gray-500 text-sm mt-2">
+                        Try adjusting your filter criteria or clearing all filters to see more reports
+                      </p>
                     </div>
+                  ) : (
+                    currentItems.map((report) => (
+                      <ReportCard
+                        key={`${report.$id}-${report.reportIndex || 'fallback'}-${report.strategicResultArea}`}
+                        report={report}
+                      />
+                    ))
                   )}
                 </div>
-                {filteredReports.length > itemsPerPage && (
+
+                {/* Pagination */}
+                {totalPages > 1 && (
                   <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
@@ -524,26 +558,28 @@ const MainAppUI = (props) => {
               </div>
             </div>
           </div>
-      </main>
+        </main>
+      ) : (
+        /* APRRM Reports Tab */
+        <main className="container mx-auto px-4 py-8">
+          <APRRMDashboard />
+        </main>
+      )}
 
-      {/* Confirm Dialog */}
+      {/* Modals */}
+      <Modal isOpen={isImportModalOpen} onClose={() => setIsImportModalOpen(false)} title="Add New Report">
+        <ProtectedForm>
+          <DataImportForm onClose={() => setIsImportModalOpen(false)} />
+        </ProtectedForm>
+      </Modal>
+
       <ConfirmDialog
         isOpen={isConfirmDialogOpen}
         onClose={() => setIsConfirmDialogOpen(false)}
         onConfirm={confirmClearFilters}
         title="Clear All Filters"
-        message="Are you sure you want to clear all filters? This will reset all your selections."
+        message="Are you sure you want to clear all active filters? This will reset the dashboard to show all reports."
       />
-
-      {/* Protected Import Data Modal */}
-      <ProtectedForm
-        isOpen={isImportModalOpen}
-        onClose={() => setIsImportModalOpen(false)}
-      />
-
-      <footer className="text-center p-4 text-sm text-gray-500 border-t border-slate-700">
-        © {new Date().getFullYear()} African Centre for Statistics (ACS) Reporting Dashboard. All rights reserved.
-      </footer>
     </div>
   );
 };

@@ -6,30 +6,45 @@ import { ArrowDownTrayIcon, ShareIcon, DocumentDuplicateIcon, XMarkIcon, Chevron
 import { useTheme } from '../utils/themeContext';
 
 const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
-  console.log('📤 ExportSharePanel received reports:', reports.length);
+  // Add null checking for reports
+  const safeReports = reports || [];
+  console.log('📤 ExportSharePanel received reports:', safeReports.length);
+  
   // Filter reports based on current filters
-  const filteredReports = reports.filter(report => {
-    // Only apply filter if a specific value (not "All") is selected
-    const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;
+  const filteredReports = safeReports.filter(report => {
+    // Check if this is APRRM data or Strategic Result Area data
+    const isAPRRMData = report.hasOwnProperty('year') && report.hasOwnProperty('quarter');
     
-    let refinedSubSraMatch = true;
-    if (filters.subStrategicResultArea) {
-      refinedSubSraMatch = report.subStrategicResultArea === filters.subStrategicResultArea;
-    }
+    if (isAPRRMData) {
+      // APRRM filtering logic
+      const countryMatch = !filters.country || report.country === filters.country;
+      const yearMatch = !filters.year || report.year.toString() === filters.year;
+      const quarterMatch = !filters.quarter || report.quarter === filters.quarter;
+      
+      return countryMatch && yearMatch && quarterMatch;
+    } else {
+      // Strategic Result Area filtering logic
+      const sraMatch = !filters.strategicResultArea || report.strategicResultArea === filters.strategicResultArea;
+      
+      let refinedSubSraMatch = true;
+      if (filters.subStrategicResultArea) {
+        refinedSubSraMatch = report.subStrategicResultArea === filters.subStrategicResultArea;
+      }
 
-    const countryMatch = filters.interventionCountries.length === 0 || 
-      filters.interventionCountries.includes(report.interventionCountry);
-    
-    const partnershipMatch = !filters.partnership || 
-      (Array.isArray(report.partnerships) ? 
-        report.partnerships.includes(filters.partnership) : 
-        report.partnerships === filters.partnership);
-    
-    return sraMatch && refinedSubSraMatch && countryMatch && partnershipMatch;
+      const countryMatch = !filters.interventionCountries || filters.interventionCountries.length === 0 || 
+        filters.interventionCountries.includes(report.interventionCountry);
+      
+      const partnershipMatch = !filters.partnership || 
+        (Array.isArray(report.partnerships) ? 
+          report.partnerships.includes(filters.partnership) : 
+          report.partnerships === filters.partnership);
+      
+      return sraMatch && refinedSubSraMatch && countryMatch && partnershipMatch;
+    }
   });
 
   // Determine which reports to export (filtered if filters are applied, all if no filters)
-  const reportsToExport = Object.values(filters).some(value => value && value.length > 0) ? filteredReports : reports;
+  const reportsToExport = Object.values(filters).some(value => value && value.length > 0) ? filteredReports : safeReports;
   const { isDark } = useTheme();
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
@@ -185,7 +200,7 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
               Export
               <ChevronDownIcon className="w-4 h-4 ml-1" />
               <span className="ml-1 text-xs text-blue-200">
-                ({reports.length})
+                ({safeReports.length})
               </span>
             </Button>
             {showExportOptions && (
