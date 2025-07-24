@@ -2,23 +2,39 @@ import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-export const convertToCSV = (reports) => {
-  // Define the columns we want to export
-  const columns = [
-    //'id',
-    'interventionCountry',
-    'strategicResultArea',
-    'subStrategicResultArea',
-    'partnerships',
-    'sdgContribution',
-    'supportingLinks',
-    'details',
-    'year'
-  ];
+export const convertToCSV = (reports, reportType = 'strategic') => {
+  // Define the columns based on report type
+  let columns;
+  
+  if (reportType === 'apprm') {
+    // APPRM-specific columns
+    columns = [
+      'country',
+      'year',
+      'quarter',
+      'partnerships',
+      'deliverables',
+      'outcomes',
+      'sdgunsdcf'
+    ];
+  } else {
+    // Strategic Result Area columns (default)
+    columns = [
+      'interventionCountry',
+      'strategicResultArea',
+      'subStrategicResultArea',
+      'partnerships',
+      'sdgContribution',
+      'supportingLinks',
+      'details',
+      'year'
+    ];
+  }
 
   // Create the header row
   const header = columns.map(col => {
-    // Convert camelCase to Title Case
+    // Convert camelCase to Title Case and handle special cases
+    if (col === 'sdgunsdcf') return 'SDGs & UNSDCF Result Areas';
     return col.replace(/([A-Z])/g, ' $1')
       .replace(/^./, str => str.toUpperCase())
       .trim();
@@ -27,8 +43,16 @@ export const convertToCSV = (reports) => {
   // Convert each report to a row
   const rows = reports.map(report => {
     return columns.map(col => {
-      const value = report[col];
-      // Handle arrays (like partnerships)
+      let value = report[col];
+      
+      // Handle APPRM specific field mappings
+      if (reportType === 'apprm') {
+        if (col === 'year' && !value) value = report.Year;
+        if (col === 'quarter' && !value) value = report.Quarter;
+        if (col === 'partnerships' && !value) value = report.partnership;
+      }
+      
+      // Handle arrays (like partnerships, deliverables, outcomes)
       if (Array.isArray(value)) {
         return `"${value.join(', ')}"`;
       }
@@ -111,22 +135,35 @@ export const parseShareableLink = () => {
   return { filters, selectedCountries };
 };
 
-export const exportToExcel = (reports) => {
-  // Convert reports to worksheet format
-  const worksheet = XLSX.utils.json_to_sheet(reports.map(report => ({
-    // ID: report.id,
-    //ID: report._id || report.id,
-    //ID: report.id || report._id,
-    'Intervention Country': report.interventionCountry,
-    'Strategic Result Area': report.strategicResultArea,
-    'Sub Strategic Result Area': report.subStrategicResultArea,
-    Partnerships: Array.isArray(report.partnerships) ? report.partnerships.join(', ') : report.partnerships,
-    'SDG Contribution': report.sdgContribution,
-    'Supporting Links': Array.isArray(report.supportingLinks) ? report.supportingLinks.join(', ') : report.supportingLinks,
-    //Details: report.details,
-    Details: Array.isArray(report.details) ? report.details.join('\n') : report.details,
-    Year: report.year
-  })));
+export const exportToExcel = (reports, reportType = 'strategic') => {
+  // Convert reports to worksheet format based on report type
+  let worksheetData;
+  
+  if (reportType === 'apprm') {
+    // APPRM-specific fields
+    worksheetData = reports.map(report => ({
+      'Country': report.country,
+      'Year': report.year || report.Year,
+      'Quarter': report.quarter || report.Quarter,
+      'Partnerships': Array.isArray(report.partnerships) ? report.partnerships.join(', ') : (report.partnerships || report.partnership || ''),
+      'Deliverables': Array.isArray(report.deliverables) ? report.deliverables.join('; ') : (report.deliverables || ''),
+      'Outcomes': Array.isArray(report.outcomes) ? report.outcomes.join('; ') : (report.outcomes || ''),
+      'SDGs & UNSDCF Result Areas': Array.isArray(report.sdgunsdcf) ? report.sdgunsdcf.join('; ') : (report.sdgunsdcf || '')
+    }));
+  } else {
+    // Strategic Result Area fields (default)
+    worksheetData = reports.map(report => ({
+      'Intervention Country': report.interventionCountry,
+      'Strategic Result Area': report.strategicResultArea,
+      'Sub Strategic Result Area': report.subStrategicResultArea,
+      'Partnerships': Array.isArray(report.partnerships) ? report.partnerships.join(', ') : report.partnerships,
+      'SDG Contribution': report.sdgContribution,
+      'Supporting Links': Array.isArray(report.supportingLinks) ? report.supportingLinks.join(', ') : report.supportingLinks,
+      'Year': report.year
+    }));
+  }
+  
+  const worksheet = XLSX.utils.json_to_sheet(worksheetData);
 
   // Create workbook and append worksheet
   const workbook = XLSX.utils.book_new();
@@ -134,12 +171,13 @@ export const exportToExcel = (reports) => {
 
   // Generate Excel file
   const timestamp = new Date().toISOString().split('T')[0];
-  XLSX.writeFile(workbook, `african-development-reports-${timestamp}.xlsx`);
+  const filePrefix = reportType === 'apprm' ? 'ACS-apprm-report' : 'ACS-sra-report';
+  XLSX.writeFile(workbook, `${filePrefix}-${timestamp}.xlsx`);
 };
 
-export const exportToPDF = (reports) => {
+export const exportToPDF = (reports, reportType = 'strategic') => {
   try {
-    console.log('Starting PDF export with', reports.length, 'reports');
+    console.log(`Starting PDF export with ${reports.length} reports of type: ${reportType}`);
     
     // Validate reports data
     if (!Array.isArray(reports) || reports.length === 0) {
@@ -349,6 +387,21 @@ export const exportToPDF = (reports) => {
       doc.text(acsText, acsX, yPos);
       yPos += 15;
 
+      // Add APPRM-specific subtitle if it's an APPRM report
+      if (reportType === 'apprm') {
+        // Extract quarter from the report data for dynamic subtitle
+        const quarter = report.quarter || report.Quarter || 'Q1';
+        const apprmSubtitle = `Country level data extracted from the Accountability and Programme Performance Review Meeting (APPRM) ${quarter}`;
+        
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(44, 62, 80); // Same dark blue-gray color
+        
+        // Left-align the subtitle and wrap text if necessary
+        const lines = doc.splitTextToSize(apprmSubtitle, contentWidth);
+        doc.text(lines, margin, yPos);
+        yPos += (lines.length * 6) + 4; // Add spacing based on number of lines
+      }
 
       doc.setFontSize(12); // Set to any size you want, e.g., 10
       doc.setFont('helvetica', 'normal'); // Use 'normal' for regular, 'bold' for bold
@@ -365,31 +418,70 @@ export const exportToPDF = (reports) => {
 
       // Project Information Section
       yPos = addSectionTitle('Country Context', yPos);
-      const projectInfo = [
-        `Country: ${report.interventionCountry || 'N/A'}`,
-        `Reporting Year: ${report.year || 'N/A'}`,
-        `Strategic Result Area: ${report.strategicResultArea || 'N/A'}`,
-        `Sub Strategic Area: ${report.subStrategicResultArea || 'N/A'}`
-      ];
+      
+      let projectInfo = [];
+      if (reportType === 'apprm') {
+        // APPRM-specific fields
+        projectInfo = [
+          `Country: ${report.country || 'N/A'}`,
+          `Reporting Year: ${report.year || report.Year || 'N/A'}`,
+          `Quarter: ${report.quarter || report.Quarter || 'N/A'}`,
+          `Partnerships: ${Array.isArray(report.partnerships) ? report.partnerships.join(', ') : (report.partnerships || report.partnership || 'N/A')}`
+        ];
+      } else {
+        // Strategic Result Area fields (default)
+        projectInfo = [
+          `Country: ${report.interventionCountry || 'N/A'}`,
+          `Reporting Year: ${report.year || 'N/A'}`,
+          `Strategic Result Area: ${report.strategicResultArea || 'N/A'}`,
+          `Sub Strategic Area: ${report.subStrategicResultArea || 'N/A'}`
+        ];
+      }
+      
       projectInfo.forEach(info => {
         yPos = addContent(info, yPos, fontSizes.body);
       });
       yPos += 8;
 
       // Project Details Section
-      if (report.details) {
-        yPos = addSectionTitle('Project Details:', yPos);
+      if (reportType === 'apprm') {
+        // APPRM-specific sections: Deliverables and Outcomes
+        if (report.deliverables && Array.isArray(report.deliverables) && report.deliverables.length > 0) {
+          yPos = addSectionTitle('Deliverables:', yPos);
+          yPos += 3;
+          yPos = addRomanBulletPoints(report.deliverables, yPos, 10);
+          yPos += 5;
+        }
         
-        // Process the details into separate points
-        const details = processDetailsText(report.details);
+        if (report.outcomes && Array.isArray(report.outcomes) && report.outcomes.length > 0) {
+          yPos = addSectionTitle('Outcomes:', yPos);
+          yPos += 3;
+          yPos = addRomanBulletPoints(report.outcomes, yPos, 10);
+          yPos += 5;
+        }
         
-        if (details.length > 0) {
-          yPos += 3; // Reduced spacing
-          yPos = addRomanBulletPoints(details, yPos, 10);
-          yPos += 5; // Reduced spacing
-        } else {
-          yPos = addContent('No details available.', yPos);
-          yPos += 4; // Reduced spacing
+        if (report.sdgunsdcf && Array.isArray(report.sdgunsdcf) && report.sdgunsdcf.length > 0) {
+          yPos = addSectionTitle('SDGs & UNSDCF Result Areas:', yPos);
+          yPos += 3;
+          yPos = addRomanBulletPoints(report.sdgunsdcf, yPos, 10);
+          yPos += 5;
+        }
+      } else {
+        // Strategic Result Area details section
+        if (report.details) {
+          yPos = addSectionTitle('Project Details:', yPos);
+          
+          // Process the details into separate points
+          const details = processDetailsText(report.details);
+          
+          if (details.length > 0) {
+            yPos += 3; // Reduced spacing
+            yPos = addRomanBulletPoints(details, yPos, 10);
+            yPos += 5; // Reduced spacing
+          } else {
+            yPos = addContent('No details available.', yPos);
+            yPos += 4; // Reduced spacing
+          }
         }
       }
 
@@ -496,7 +588,8 @@ export const exportToPDF = (reports) => {
   
   // Save the PDF
     const fileTimestamp = new Date().toISOString().split('T')[0];
-    const filename = `acs-country-report-${fileTimestamp}.pdf`;
+    const filePrefix = reportType === 'apprm' ? 'ACS-apprm-report' : 'ACS-sra-report';
+    const filename = `${filePrefix}-${fileTimestamp}.pdf`;
     doc.save(filename);
     
     console.log('PDF saved successfully as:', filename);

@@ -10,11 +10,18 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
   const safeReports = reports || [];
   console.log('📤 ExportSharePanel received reports:', safeReports.length);
   
+  // Utility function to detect report type
+  const detectReportType = (reportsArray) => {
+    return reportsArray.length > 0 && 
+      (reportsArray[0].hasOwnProperty('year') && reportsArray[0].hasOwnProperty('quarter')) || 
+      (reportsArray[0].hasOwnProperty('Year') && reportsArray[0].hasOwnProperty('Quarter'))
+      ? 'apprm' : 'strategic';
+  };
+
   // Filter reports based on current filters
   const filteredReports = safeReports.filter(report => {
-    // Check if this is APPRM data or Strategic Result Area data
-    const isAPPRMData = (report.hasOwnProperty('year') && report.hasOwnProperty('quarter')) || 
-                        (report.hasOwnProperty('Year') && report.hasOwnProperty('Quarter'));
+    // Check if this is APPRM data or Strategic Result Area data using utility function
+    const isAPPRMData = detectReportType([report]) === 'apprm';
     
          if (isAPPRMData) {
        // APPRM filtering logic
@@ -80,21 +87,35 @@ const ExportSharePanel = ({ reports, filters, selectedCountries }) => {
   }, [showShareDialog, showExportOptions]);
 
   const handleExportCSV = () => {
-    const csvContent = convertToCSV(reportsToExport);
+    // Detect report type based on the data structure
+    const reportType = detectReportType(reportsToExport);
+    
+    console.log('🎯 Detected report type for CSV export:', reportType);
+    const csvContent = convertToCSV(reportsToExport, reportType);
     const timestamp = new Date().toISOString().split('T')[0];
-    downloadCSV(csvContent, `african-development-reports-${timestamp}.csv`);
+    const filePrefix = reportType === 'apprm' ? 'ACS-apprm-report' : 'ACS-sra-report';
+    downloadCSV(csvContent, `${filePrefix}-${timestamp}.csv`);
     setShowExportOptions(false);
   };
 
   const handleExportExcel = () => {
-    exportToExcel(reportsToExport);
+    // Detect report type based on the data structure
+    const reportType = detectReportType(reportsToExport);
+    
+    console.log('🎯 Detected report type for Excel export:', reportType);
+    exportToExcel(reportsToExport, reportType);
     setShowExportOptions(false);
   };
 
   const handleExportPDF = async () => {
     try {
       setExportError(null);
-      await exportToPDF(reportsToExport);
+      
+      // Detect report type based on the data structure
+      const reportType = detectReportType(reportsToExport);
+      
+      console.log('🎯 Detected report type for PDF export:', reportType);
+      await exportToPDF(reportsToExport, reportType);
       setShowExportOptions(false);
     } catch (error) {
       console.error('PDF Export Error:', error);
