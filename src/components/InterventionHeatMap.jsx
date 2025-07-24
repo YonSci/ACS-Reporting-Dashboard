@@ -54,14 +54,6 @@ const InterventionHeatMap = ({ mapData, reportData }) => {
   const getHeatMapColor = (countryName, isDark = false) => {
     const reports = reportData.filter(r => r.interventionCountry === countryName).length;
     
-    // Debug logging for the first few countries
-    if (countryName === 'Algeria' || countryName === 'Angola' || countryName === 'Nigeria') {
-      console.log(`🎨 Heat map color for ${countryName}: ${reports} reports`, {
-        reportData: reportData.length,
-        filteredReports: reportData.filter(r => r.interventionCountry === countryName)
-      });
-    }
-    
     if (!mapData || !Array.isArray(mapData) || mapData.length === 0) {
       return isDark ? colors.heatmap.dark[0] : colors.heatmap.light[0];
     }

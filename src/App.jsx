@@ -305,7 +305,12 @@ const MainAppUI = (props) => {
   }, [reports, filters, selectedCountries]);
 
   const activeFilterCount = useMemo(() => {
-    return Object.values(filters).filter(value => value !== '').length;
+    return Object.values(filters).filter(value => {
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      return value !== '';
+    }).length;
   }, [filters]);
 
   // Calculate pagination

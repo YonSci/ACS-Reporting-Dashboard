@@ -9,6 +9,7 @@ import Button from './Button';
 import ExportSharePanel from './ExportSharePanel';
 import APPRMProtectedForm from './APPRMProtectedForm';
 import APPRMDataManagement from './APPRMDataManagement';
+import ConfirmDialog from './ConfirmDialog';
 import { apprmAPI } from '../lib/appwrite';
 import { ALL_AFRICAN_COUNTRIES, PARTNERSHIPS } from '../../server/data.js';
 import { generateMapData } from '../utils/geoUtils';
@@ -24,6 +25,7 @@ const APPRMDashboard = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isAPPRMDataMgmtOpen, setIsAPPRMDataMgmtOpen] = useState(false);
+  const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const itemsPerPage = 5;
 
   const [filters, setFilters] = useState({
@@ -81,15 +83,6 @@ const APPRMDashboard = () => {
       }));
       
       setCountryFootprints(transformedData);
-      
-      // Debug: Log the transformed data to verify field mapping
-      console.log('🔍 Transformed APPRM data for map components:', transformedData.map(item => ({
-        country: item.country,
-        interventionCountry: item.interventionCountry,
-        year: item.year,
-        quarter: item.quarter,
-        partnerships: item.partnerships
-      })));
       
       // Generate map data from APPRM reports - await the async function
       try {
@@ -180,9 +173,14 @@ const APPRMDashboard = () => {
   };
 
   const handleClearFilters = () => {
+    setIsConfirmDialogOpen(true);
+  };
+
+  const confirmClearFilters = () => {
     setFilters({ country: '', year: '', quarter: '', partnership: '' });
     setSelectedCountries(new Set());
     setCurrentPage(1);
+    setIsConfirmDialogOpen(false);
   };
 
   const filteredCountryFootprints = useMemo(() => {
@@ -200,7 +198,13 @@ const APPRMDashboard = () => {
   }, [countryFootprints, filters]);
 
   const activeFilterCount = useMemo(() => {
-    return Object.values(filters).filter(value => value !== '').length;
+    const count = Object.values(filters).filter(value => {
+      if (Array.isArray(value)) {
+        return value.length > 0;
+      }
+      return value !== '';
+    }).length;
+    return count;
   }, [filters]);
 
   // Calculate pagination
@@ -317,11 +321,11 @@ const APPRMDashboard = () => {
               options={countryOptions}
               selectedValue={filters.country || 'All Countries'}
               onChange={value => {
+                handleFilterChange('country', value);
+                // Handle selected countries for map
                 if (value === 'All Countries') {
-                  setFilters(prev => ({...prev, country: ''}));
                   setSelectedCountries(new Set());
                 } else {
-                  setFilters(prev => ({...prev, country: value}));
                   setSelectedCountries(new Set([value]));
                 }
               }}
@@ -603,6 +607,13 @@ const APPRMDashboard = () => {
         isOpen={isAPPRMDataMgmtOpen} 
         onClose={() => setIsAPPRMDataMgmtOpen(false)} 
         admin={profile} 
+      />
+      <ConfirmDialog
+        isOpen={isConfirmDialogOpen}
+        onClose={() => setIsConfirmDialogOpen(false)}
+        onConfirm={confirmClearFilters}
+        title="Clear All Filters"
+        message="Are you sure you want to clear all active filters? This will reset the dashboard to show all reports."
       />
     </div>
   );
