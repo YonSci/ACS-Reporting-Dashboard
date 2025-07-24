@@ -53,9 +53,9 @@ The dashboard include the following core features:
 
 🔄 Dual Dashboard System
 
-  🎯 Strategic Result Area Reports: Data with direct linkage to UNECA's strategic frameworks (ABP & PPB) and delivery indicators
+    🎯 Strategic Result Area Reports: Data with direct linkage to UNECA's strategic frameworks (ABP & PPB) and delivery indicators
 
-  📋 APPRM Reports: Country-level data from Accountability and Programme Performance Review Meetings
+    📋 APPRM Reports: Country-level data from Accountability and Programme Performance Review Meetings
 
 
 ## 4. 🛠️ Tech Stack
@@ -96,11 +96,3 @@ The dashboard include the following core features:
 This project is licensed under the MIT License - see the LICENSE file for details.
 
 
-
-
-
-
-
-
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
