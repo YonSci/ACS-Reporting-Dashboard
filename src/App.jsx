@@ -372,7 +372,7 @@ const MainAppUI = (props) => {
       <Header activeTab={activeTab} />
       
       {/* Tab Navigation */}
-      <div className="container mx-auto px-4 pt-2 mt-2">
+      <div className="container mx-auto px-4 pt-1 mt-1">
         <TabNavigation 
           activeTab={activeTab} 
           onTabChange={setActiveTab}
@@ -581,7 +581,7 @@ const MainAppUI = (props) => {
         </main>
       ) : (
         /* APPRM Reports Tab */
-        <main className="container mx-auto px-4 py-6">
+        <main className="container mx-auto px-4 py-4">
           <APPRMDashboard />
         </main>
       )}

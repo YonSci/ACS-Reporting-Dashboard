@@ -23,7 +23,7 @@ const TabNavigation = ({ activeTab, onTabChange }) => {
   ];
 
   return (
-    <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-1 mb-4">
+    <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-1 mb-3">
       <div className="flex space-x-1">
         {tabs.map((tab) => (
           <button
