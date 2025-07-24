@@ -159,6 +159,7 @@ export const exportToExcel = (reports, reportType = 'strategic') => {
       'Partnerships': Array.isArray(report.partnerships) ? report.partnerships.join(', ') : report.partnerships,
       'SDG Contribution': report.sdgContribution,
       'Supporting Links': Array.isArray(report.supportingLinks) ? report.supportingLinks.join(', ') : report.supportingLinks,
+      'Details': Array.isArray(report.details) ? report.details.join('\n') : report.details,
       'Year': report.year
     }));
   }
