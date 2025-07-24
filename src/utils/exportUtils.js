@@ -387,9 +387,9 @@ export const exportToPDF = (reports, reportType = 'strategic') => {
       doc.text(acsText, acsX, yPos);
       yPos += 15;
 
-      // Add APPRM-specific subtitle if it's an APPRM report
+      // Add report-specific subtitle based on report type
       if (reportType === 'apprm') {
-        // Extract quarter from the report data for dynamic subtitle
+        // APPRM-specific subtitle
         const quarter = report.quarter || report.Quarter || 'Q1';
         const apprmSubtitle = `Country level data extracted from the Accountability and Programme Performance Review Meeting (APPRM) ${quarter}`;
         
@@ -399,6 +399,18 @@ export const exportToPDF = (reports, reportType = 'strategic') => {
         
         // Left-align the subtitle and wrap text if necessary
         const lines = doc.splitTextToSize(apprmSubtitle, contentWidth);
+        doc.text(lines, margin, yPos);
+        yPos += (lines.length * 6) + 4; // Add spacing based on number of lines
+      } else if (reportType === 'strategic') {
+        // Strategic Result Area subtitle
+        const strategicSubtitle = `Country level data with direct linkage to UNECA's strategic frameworks (ABP & PPB) and delivery indicators`;
+        
+        doc.setFontSize(12);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(44, 62, 80); // Same dark blue-gray color
+        
+        // Left-align the subtitle and wrap text if necessary
+        const lines = doc.splitTextToSize(strategicSubtitle, contentWidth);
         doc.text(lines, margin, yPos);
         yPos += (lines.length * 6) + 4; // Add spacing based on number of lines
       }
