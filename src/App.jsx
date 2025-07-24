@@ -372,7 +372,7 @@ const MainAppUI = (props) => {
       <Header activeTab={activeTab} />
       
       {/* Tab Navigation */}
-      <div className="container mx-auto px-4 pt-4">
+      <div className="container mx-auto px-4 pt-2 mt-2">
         <TabNavigation 
           activeTab={activeTab} 
           onTabChange={setActiveTab}
@@ -381,7 +381,7 @@ const MainAppUI = (props) => {
 
       {/* Conditional Content Based on Active Tab */}
       {activeTab === 'strategic-reports' ? (
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-4">
           {/* Filters Section */}
           <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4 md:p-6">
             <div className="flex flex-col space-y-4">
@@ -581,7 +581,7 @@ const MainAppUI = (props) => {
         </main>
       ) : (
         /* APPRM Reports Tab */
-        <main className="container mx-auto px-4 py-8">
+        <main className="container mx-auto px-4 py-6">
           <APPRMDashboard />
         </main>
       )}

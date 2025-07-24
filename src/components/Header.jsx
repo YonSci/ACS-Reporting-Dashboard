@@ -17,7 +17,7 @@ const Header = ({ activeTab }) => {
   console.log('Header activeTab:', activeTab);
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 py-4 px-6 mb-2 transition-colors duration-200">
+    <header className="bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 py-4 px-6 mb-4 transition-colors duration-200">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <img 
