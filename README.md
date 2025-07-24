@@ -1,88 +1,99 @@
-# African Centre for Statistics Reporting Dashboard
+# African Centre for Statistics Country-Based Reporting Dashboard
 
-## Overview
-**African Centre for Statistics Reporting Dashboard** is an **interactive web application** designed to **visualize** and **track** projects across Africa. 
+## 1. Overview
 
-The dashboard provides comprehensive **insights** into various strategic **interventions**, **partnerships**, and **development projects** implemented by the **African Centre for Statistics** Economic Commission for Africa (ECA) and its **partners**.
-
-
-- The reporting dashboard is built using **React**, a popular **JavaScript library** for building user interfaces.
-
-- **vite** is used for fast development.
-
-- **Tailwind CSS** for styling and **ESLint** for code quality.
-
-- **JSON** for data storage and structure.
-
-- **GeoJSON** for geographical data mapping.
+A comprehensive dashboard system for the African Centre for Statistics (ACS) under United Nations Economic Commission for Africa (UNECA), designed to manage and visualize country-based reporting data across strategic frameworks and programme performance reviews. 
 
 
-## Key Features
+The dashboard addresses the current lack of a centralized, dynamic platform for a country-level overview of ACS engagements. It aims to provide a clear and interactive overview of ACS activities and interventions in each African country, linked directly to UNECA's strategic frameworks.
 
-### 1: General Features
-- Modern and clean React-based architecture
-- Responsive design for all screen sizes
-- Dark/Light theme support
-- Data Export and Sharing: URL-based filter sharing
-- It support page pagination for long content 
+The dashboard will help in monitoring ACS's delivery, identifying gaps, and reporting results, particularly at the country level.
 
-### 2. Interactive African Map
-- Visual representation of intervention countries
-- Responsive tooltips showing country information
-- Multiple Country selection/deselection
-- Selection counter and clear selection button
-- Dynamic legends adapting to visualization modes
+## 2. Objectives
+
+The dashboard is designed to:
+
+- enable the visualization and management of ACS activities on a country-by-country basis, aligning them with the strategic priorities outlined in the Annual Business Plan (ABP) and the specific outputs defined within the Programme Planning and Budgeting (PPB) framework. 
+
+- Display and manage country-level data obtained from the Accountability and Programme Performance Review Meeting (APPRM).
+
+- Facilitate evidence-based reporting, strategic oversight, and coordination.
 
 
-### 3. Advanced Filtering System
-- Filter by Strategic Result Areas (4):
-  - Production and Dissemination of Comparable Economic Data
-  - Integration of Statistical and Geospatial Information Frameworks
-  - Digital Transformation and Modernization of Statistical Systems
-  - Improved CRVS System
-- Sub-strategic result area filtering
-- Country-specific filtering
-- Partnership-based filtering
-- Clear selection button
+## 3. Core Features
+
+The dashboard include the following core features:
 
 
-### 3. Detailed Report Cards
-- Comprehensive project information display
-- Expandable/collapsible detailed view
-- Report cards showing intervention details including:
-  - Strategic and sub-strategic result areas
-  - Intervention country
-  - Partnership information
-  - Project year
-  - SDG contributions
-  - Supporting links
-  - Detailed project descriptions
+## Core Features:
 
-### 4: Data Visualization Components:
-- Intervention Heat Map
-- Regional Bar Chart showing intervention distribution
+✨ Modern and clean React-based architecture
 
+📱 Responsive design for all screen sizes
 
+📄 Support page pagination for long content
 
+🗺️ Interactive Africa Map: Visual country selection with data availability indicators
 
+📊 Data Visualization: Charts, heat maps, and regional analysis
 
+🔍 Advanced Filtering: Multi-criteria filtering by country, year, quarter, partnerships, strategic areas
 
+📈 Real-time Analytics: Dynamic data updates and insights
 
+🔐 Authentication System: Secure login with role-based access control
 
+📝 Data Management: CRUD operations for reports with approval workflows
 
+🔔 Notification System: Email and in-app notifications for admin users
 
+📤 Export Capabilities: PDF, Excel, CSV exports with custom formatting and URL-based filter sharing
 
+🌙 Dark/Light Mode: Full theme support across all components
 
+🔄 Dual Dashboard System
 
+  🎯 Strategic Result Area Reports: Data with direct linkage to UNECA's strategic frameworks (ABP & PPB) and delivery indicators
 
-
-
-
-
+  📋 APPRM Reports: Country-level data from Accountability and Programme Performance Review Meetings
 
 
+## 4. 🛠️ Tech Stack
+### Frontend Framework
+  - React 18 - Modern UI library with hooks and context
+  - Vite - Fast build tool and development server
+  - React Router DOM - Client-side routing and navigation
+
+### UI & Styling
+  - Tailwind CSS - Utility-first CSS framework
+  - Material-UI (MUI) - React component library
+  - Heroicons - SVG icon library
+  - Responsive Design - Mobile-first approach
+
+### Backend & Database
+  - Appwrite: Backend-as-a-Service (BaaS)
+  - Authentication & User Management
+  - Database with collections and relationships
+  - Real-time data synchronization
+  - File storage and permissions
+
+###  Data Visualization
+  - D3.js - Interactive map rendering and geospatial data
+  - Custom Charts - Regional analysis and statistical visualizations
+  - GeoJSON - Africa map data processing
 
 
+
+## Lead and Collaborative Units
+  - Lead Unit: Project Management Office (PMO), African Centre for Statistics (ACS).
+  
+  - Statistical Development, Data Innovation and Outreach Section (SDDIOS).
+  
+  - Economic, Infrastructure and Agriculture Statistics Section (EIASS).
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 
 
