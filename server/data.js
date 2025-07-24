@@ -116,6 +116,7 @@ export const PARTNERSHIPS = [
   'UNICEF',
   'UNRCO',
   'UNSD',
+  'UNCTAD',
   'WFP',
   'WTO'
 ];
