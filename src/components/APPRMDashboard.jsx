@@ -75,10 +75,21 @@ const APPRMDashboard = () => {
         partnerships: item.partnership,
         // Map Appwrite field names to display format
         year: item.Year,
-        quarter: item.Quarter
+        quarter: item.Quarter,
+        // Map country field to interventionCountry for compatibility with map components
+        interventionCountry: item.country
       }));
       
       setCountryFootprints(transformedData);
+      
+      // Debug: Log the transformed data to verify field mapping
+      console.log('🔍 Transformed APPRM data for map components:', transformedData.map(item => ({
+        country: item.country,
+        interventionCountry: item.interventionCountry,
+        year: item.year,
+        quarter: item.quarter,
+        partnerships: item.partnerships
+      })));
       
       // Generate map data from APPRM reports - await the async function
       try {
