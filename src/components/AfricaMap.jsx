@@ -25,6 +25,10 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
       light: "#94a3b8",
       dark: "#475569"
     },
+    withData: {
+      light: "#bfdbfe", // Light blue for countries with APPRM data
+      dark: "#60a5fa"
+    },
     background: {
       light: "#ffffff",
       dark: "#10142c"
@@ -241,19 +245,23 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
       )}
 
              {/* Legend */}
-       <div className="absolute bottom-4 right-4 z-10 bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md border border-slate-200 dark:border-slate-700">
-         <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-sm mb-3">Map Legend</h4>
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 rounded" style={{ backgroundColor: colors.selected.light }}></div>
-            <span className="text-sm text-slate-900 dark:text-slate-100">Selected Countries</span>
+       <div className="absolute top-4 right-4 z-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur-sm p-3 rounded-lg shadow-md border border-slate-200 dark:border-slate-700">
+         <h4 className="font-semibold text-slate-900 dark:text-slate-100 text-xs mb-2">Map Legend</h4>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: isDark ? colors.selected.dark : colors.selected.light }}></div>
+            <span className="text-xs text-slate-900 dark:text-slate-100">Selected Countries</span>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="w-4 h-4 rounded" style={{ backgroundColor: colors.unselected.light }}></div>
-            <span className="text-sm text-slate-900 dark:text-slate-100">Available Countries</span>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: isDark ? colors.withData.dark : colors.withData.light }}></div>
+            <span className="text-xs text-slate-900 dark:text-slate-100">Countries with APPRM Data</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded" style={{ backgroundColor: isDark ? colors.unselected.dark : colors.unselected.light }}></div>
+            <span className="text-xs text-slate-900 dark:text-slate-100">Countries without Data</span>
           </div>
           <div className="flex items-center gap-2 mt-1">
-            <span className="text-xs text-slate-700 dark:text-slate-100">Click to select countries</span>
+            <span className="text-xs text-slate-600 dark:text-slate-400">Click to select countries</span>
           </div>
         </div>
       </div>
@@ -308,13 +316,24 @@ const AfricaMap = ({ mapData, selectedCountries, onCountrySelect, reportData }) 
           {mapData && Array.isArray(mapData) && mapData.map(country => {
             const isSelected = selectedCountries.has(country.name);
             const reports = reportData.filter(r => r.interventionCountry === country.name);
+            const hasData = reports.length > 0;
+
+            // Determine country fill color based on state
+            let fillColor;
+            if (isSelected) {
+              fillColor = isDark ? colors.selected.dark : colors.selected.light;
+            } else if (hasData) {
+              fillColor = isDark ? colors.withData.dark : colors.withData.light;
+            } else {
+              fillColor = isDark ? colors.unselected.dark : colors.unselected.light;
+            }
 
             return (
               <path
                 key={country.name}
                 d={country.path}
-                fill={isSelected ? colors.selected.light : colors.unselected.light}
-                stroke={colors.stroke.light}
+                fill={fillColor}
+                stroke={isDark ? colors.stroke.dark : colors.stroke.light}
                 strokeWidth={isSelected ? "1.5" : "0.5"}
                 className={`
                   transform-gpu

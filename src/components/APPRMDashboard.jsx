@@ -2,7 +2,6 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { FunnelIcon, GlobeAltIcon, CalendarIcon, ClockIcon, XCircleIcon, UsersIcon } from './icons/MiniIcons';
 import FilterDropdown from './FilterDropdown';
 import AfricaMap from './AfricaMap';
-import InterventionHeatMap from './InterventionHeatMap';
 import RegionalBarChart from './RegionalBarChart';
 import Pagination from './Pagination';
 import Button from './Button';
@@ -372,12 +371,6 @@ const APPRMDashboard = () => {
           
           {/* Heat Map and Regional Analysis Section */}
           <div className="space-y-6">
-            <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
-              <InterventionHeatMap
-                mapData={mapData}
-                reportData={countryFootprints}
-              />
-            </div>
             <div className="bg-white/50 dark:bg-slate-800/50 backdrop-blur-md shadow-2xl rounded-xl p-4">
               <RegionalBarChart reportData={countryFootprints} />
             </div>
